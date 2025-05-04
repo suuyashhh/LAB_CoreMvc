@@ -1,5 +1,6 @@
 ﻿using Lab_Mvc.Interfaces;
 using Lab_Mvc.Repositries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using System.Numerics;
@@ -7,14 +8,12 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TestController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+
         private readonly ITest testRepository;
 
         //private readonly IMemoryCache _memoryCache;

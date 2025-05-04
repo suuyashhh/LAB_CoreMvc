@@ -73,7 +73,7 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@GENDER", casepaper.GENDER);
                 parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
                 parameters.Add("@ADDRESS", casepaper.ADDRESS);
-                parameters.Add("@DOCTOR_REF", casepaper.DOCTOR_REF);
+                parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_REF);
                 parameters.Add("@DATE", casepaper.DATE);
                 parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
                 parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);

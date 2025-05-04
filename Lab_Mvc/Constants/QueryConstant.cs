@@ -2,6 +2,8 @@
 {
     public class QueryConstant
     {
+        public static string Login = "Login";
+
         public static string GetTests = "select * from MST_TEST";
         public static string GetTestById = "GetTestById"; 
         public static string InsertTest = "InsertTest";
