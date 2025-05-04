@@ -1,18 +1,16 @@
 ﻿using Lab_Mvc.Interfaces;
 using Lab_Mvc.Repositries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
 namespace Lab_Mvc.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DoctorController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         private readonly IDoctor doctorRepository;
 
