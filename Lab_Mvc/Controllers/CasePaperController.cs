@@ -11,8 +11,6 @@ namespace Lab_Mvc.Controllers
     [Route("api/[controller]")]
     public class CasePaperController : Controller
     {
-        
-
         private readonly ICasePaper casePaperRepository;
 
         //private readonly IMemoryCache _memoryCache;

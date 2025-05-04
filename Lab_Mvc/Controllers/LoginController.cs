@@ -24,7 +24,7 @@ namespace Lab_Mvc.Controllers
             this.loginRepository = loginrepository;
         }
 
-
+        
         [AllowAnonymous]
         [HttpGet]
         [Route("Login")]

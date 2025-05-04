@@ -11,7 +11,6 @@ namespace Lab_Mvc.Controllers
     [Route("api/[controller]")]
     public class DoctorController : Controller
     {
-       
 
         private readonly IDoctor doctorRepository;
 
