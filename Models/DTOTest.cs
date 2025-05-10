@@ -11,5 +11,7 @@
         public int? STATUS_CODE { get; set; }
         public string? SHORT_TRN_NO { get; set; }
         public string?DELETE_REASON { get; set; }
+        public string?COM_ID { get; set; }
+        public string?CRT_BY { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using Models;
 
 namespace Lab_Mvc.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CasePaperController : Controller
@@ -63,7 +63,7 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = casePaperRepository.SaveCasePaper(casepaper);
-                return Ok(casepaper);
+                return Ok(this);
             }
             catch (Exception)
             {

@@ -23,6 +23,7 @@ builder.Services.AddScoped<ILogin, LoginRepository>();
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myTestDB")));
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.AddAuthentication(options =>
 {

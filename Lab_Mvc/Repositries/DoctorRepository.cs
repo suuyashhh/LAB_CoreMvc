@@ -64,12 +64,16 @@ namespace Lab_Mvc.Repositries
                 var query = "sp_master";
 
 
+                Int64 newDoctorId = await GenerateDoctorId(doctor.COM_ID);
+
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.InsertDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor.DOCTOR_CODE);
+                parameters.Add("@DOCTOR_CODE", newDoctorId);
                 parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
                 parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
                 parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
+                parameters.Add("@COM_ID", doctor.COM_ID); 
+                parameters.Add("@CRT_BY", doctor.CRT_BY); 
 
 
 
@@ -137,5 +141,34 @@ namespace Lab_Mvc.Repositries
                 throw ex;
             }
         }
+
+        private async Task<long> GenerateDoctorId(int comId)
+        {
+            string fixedPart = "3";
+            string fixedPartSec = comId.ToString();
+            string likePattern = fixedPart + fixedPartSec + "%";
+
+            string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
+
+            using (var connection = context.CreateConnection())
+            {
+                string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
+
+                int nextNumber = 1;
+                if (!string.IsNullOrEmpty(lastId) && lastId.StartsWith(fixedPart + fixedPartSec))
+                {
+                    int prefixLength = (fixedPart + fixedPartSec).Length;
+                    int lastNumber = int.Parse(lastId.Substring(prefixLength));
+                    nextNumber = lastNumber + 1;
+                }
+
+                long newDoctorId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newDoctorId;
+            }
+        }
+
+
+
+
     }
 }

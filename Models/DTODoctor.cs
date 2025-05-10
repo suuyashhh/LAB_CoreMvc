@@ -13,5 +13,9 @@ namespace Models
         public string? DOCTOR_ADDRESS { get; set; }
         public string? DOCTOR_NUMBER { get; set; }
         public string? SHORT_TRN_NO { get; set; }
+        public int COM_ID { get; set; }
+        public string? CRT_BY { get; set; }
+
+
     }
 }
