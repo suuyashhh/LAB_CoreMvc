@@ -7,6 +7,7 @@ using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
 using System.Reflection;
+using System.Globalization;
 
 namespace Lab_Mvc.Repositries
 {
@@ -65,10 +66,10 @@ namespace Lab_Mvc.Repositries
             {
                 var query = "sp_master";
 
-
+                Int64 newPatientId = await GenerateNewPatientId(casepaper.COM_ID);
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.InsertCasePaper);
-                parameters.Add("@TRN_NO", casepaper.TRN_NO);
+                parameters.Add("@TRN_NO", newPatientId, DbType.Int64);
                 parameters.Add("@PATIENT_NAME", casepaper.PATIENT_NAME);
                 parameters.Add("@GENDER", casepaper.GENDER);
                 parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
@@ -79,6 +80,11 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
                 parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
                 parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
+                parameters.Add("@COM_ID", casepaper.COM_ID);
+                parameters.Add("@PAYMENT_AMOUNT", casepaper.PAYMENT_AMOUNT);
+                parameters.Add("@PAYMENT_METHOD", casepaper.PAYMENT_METHOD);
+                parameters.Add("@COLLECTION_TYPE", casepaper.COLLECTION_TYPE);
+                parameters.Add("@PAYMENT_STATUS", casepaper.PAYMENT_STATUS);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -151,5 +157,34 @@ namespace Lab_Mvc.Repositries
                 throw ex;
             }
         }
+
+
+        private async Task<long> GenerateNewPatientId(string comId)
+        {
+            // Format: yyMMdd (e.g., 250507 for May 7, 2025)
+            string datePart = DateTime.UtcNow.AddHours(5.5).ToString("yyMMdd", CultureInfo.InvariantCulture);
+            string dateComboKey = datePart + comId;
+
+            string query = "SELECT TOP 1 TRN_NO FROM MST_PATIENT WHERE TRN_NO LIKE @key + '%' ORDER BY TRN_NO DESC";
+
+            using (var conn = context.CreateConnection())
+            {
+                string lastId = await conn.ExecuteScalarAsync<string>(query, new { key = dateComboKey });
+
+                int nextNum = 1;
+                if (!string.IsNullOrEmpty(lastId))
+                {
+                    // Extract the numeric suffix after date+comId (assumes 9-character prefix)
+                    if (int.TryParse(lastId.Substring(9), out int lastNum))
+                        nextNum = lastNum + 1;
+                }
+
+                // Final TRN_NO: date + comId + nextNum (e.g., 250507101)
+                return long.Parse(dateComboKey + nextNum);
+            }
+        }
+
+
+
     }
 }
