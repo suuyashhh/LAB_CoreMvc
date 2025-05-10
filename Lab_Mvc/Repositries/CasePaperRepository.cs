@@ -65,31 +65,76 @@ namespace Lab_Mvc.Repositries
             try
             {
                 var query = "sp_master";
-
-                Int64 newPatientId = await GenerateNewPatientId(casepaper.COM_ID);
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.InsertCasePaper);
-                parameters.Add("@TRN_NO", newPatientId, DbType.Int64);
-                parameters.Add("@PATIENT_NAME", casepaper.PATIENT_NAME);
-                parameters.Add("@GENDER", casepaper.GENDER);
-                parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
-                parameters.Add("@ADDRESS", casepaper.ADDRESS);
-                parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_REF);
-                parameters.Add("@DATE", casepaper.DATE);
-                parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
-                parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
-                parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
-                parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
-                parameters.Add("@COM_ID", casepaper.COM_ID);
-                parameters.Add("@PAYMENT_AMOUNT", casepaper.PAYMENT_AMOUNT);
-                parameters.Add("@PAYMENT_METHOD", casepaper.PAYMENT_METHOD);
-                parameters.Add("@COLLECTION_TYPE", casepaper.COLLECTION_TYPE);
-                parameters.Add("@PAYMENT_STATUS", casepaper.PAYMENT_STATUS);
-
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            Int64 newPatientId = await GenerateNewPatientId(casepaper.COM_ID);
+
+                            // Step 1: Save CasePaper
+                            var parameters = new DynamicParameters();
+                            parameters.Add("@Action", QueryConstant.InsertCasePaper);
+                            parameters.Add("@TRN_NO", newPatientId);
+                            parameters.Add("@PATIENT_NAME", casepaper.PATIENT_NAME);
+                            parameters.Add("@GENDER", casepaper.GENDER);
+                            parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
+                            parameters.Add("@ADDRESS", casepaper.ADDRESS);
+                            parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_REF);
+                            parameters.Add("@DATE", casepaper.DATE);
+                            parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
+                            parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
+                            parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
+                            parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
+                            parameters.Add("@COM_ID", casepaper.COM_ID);
+                            parameters.Add("@PAYMENT_AMOUNT", casepaper.PAYMENT_AMOUNT);
+                            parameters.Add("@PAYMENT_METHOD", casepaper.PAYMENT_METHOD);
+                            parameters.Add("@COLLECTION_TYPE", casepaper.COLLECTION_TYPE);
+                            parameters.Add("@PAYMENT_STATUS", casepaper.PAYMENT_STATUS);
+
+                            await connection.ExecuteAsync(query, parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                            // Step 2: Prepare TestTableType DataTable
+                            if (casepaper.MatIs != null && casepaper.MatIs.Any())
+                            {
+                                var testTable = new DataTable();
+                                testTable.Columns.Add("TEST_CODE", typeof(Int64));
+                                testTable.Columns.Add("TRN_NO", typeof(Int64));
+                                testTable.Columns.Add("SR_NO", typeof(int));
+                                testTable.Columns.Add("PRICE", typeof(decimal));
+                                testTable.Columns.Add("LAB_PRICE", typeof(decimal));
+                                testTable.Columns.Add("COM_ID", typeof(int));
+
+                                int srNo = 1;
+                                foreach (var test in casepaper.MatIs)
+                                {
+                                    testTable.Rows.Add(
+                                        test.TEST_CODE,
+                                        newPatientId,
+                                        srNo++,
+                                        test.PRICE,
+                                        test.LAB_PRICE,
+                                        casepaper.COM_ID
+                                    );
+                                }
+
+                                var testParams = new DynamicParameters();
+                                testParams.Add("@Action", "InsertCasePaperTests");
+                                testParams.Add("@TestItems", testTable.AsTableValuedParameter("dbo.TestTableType"));
+
+                                await connection.ExecuteAsync(query, testParams, transaction, commandType: CommandType.StoredProcedure);
+                            }
+
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -97,6 +142,7 @@ namespace Lab_Mvc.Repositries
                 throw ex;
             }
         }
+
 
         public async Task EditCasePaper(DTOCasePaper casepaper, long trn_no)
         {

@@ -16,6 +16,7 @@ namespace Models
         public int DOCTOR_REF { get; set; }
         public string DATE { get; set; }
         public int STATUS_CODE { get; set; }
+        public IList<DTOTestTable> MatIs { get; set; }
         public decimal TOTAL_AMOUNT { get; set; }
         public decimal TOTAL_PROFIT { get; set; }
         public decimal DISCOUNT { get; set; }
