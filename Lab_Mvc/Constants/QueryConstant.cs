@@ -23,5 +23,11 @@
         public static string InsertCasePaper = "InsertCasePaper";
         public static string UpdateCasePaper = "UpdateCasePaper";
         public static string DeleteCasePaper = "DeleteCasePaper";
+
+        public static string GetEmployees = "select * from MST_EMPLOYEE";
+        public static string GetEmployeeById = "GetEmployeeById";
+        public static string InsertEmployee = "InsertEmployee";
+        public static string UpdateEmployee = "UpdateEmployee";
+        public static string DeleteEmployee = "DeleteEmployee";
     }
 }
