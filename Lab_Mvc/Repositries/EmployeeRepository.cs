@@ -67,7 +67,7 @@ namespace Lab_Mvc.Repositries
                 Int64 newEmployeeId = await GenerateEmployeeId(emp.COM_ID);
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.InsertDoctor);
+                parameters.Add("@Action", QueryConstant.InsertEmployee);
                 parameters.Add("@EMP_ID", newEmployeeId);
                 parameters.Add("@EMP_NAME", emp.EMP_NAME);
                 parameters.Add("@EMP_CONTACT", emp.EMP_CONTACT);

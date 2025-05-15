@@ -4,6 +4,9 @@ using Models;
 
 namespace Lab_Mvc.Controllers
 {
+    //[Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
 
