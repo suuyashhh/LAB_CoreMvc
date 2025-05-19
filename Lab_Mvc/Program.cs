@@ -20,6 +20,7 @@ builder.Services.AddScoped<ITest, TestRepository>();
 builder.Services.AddScoped<IDoctor, DoctorRepository>();
 builder.Services.AddScoped<ICasePaper, CasePaperRepository>();
 builder.Services.AddScoped<ILogin, LoginRepository>();
+builder.Services.AddScoped<IEmployee, EmployeeRepository>();
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myTestDB")));
