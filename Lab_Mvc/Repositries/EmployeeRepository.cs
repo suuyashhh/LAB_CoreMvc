@@ -96,7 +96,7 @@ namespace Lab_Mvc.Repositries
 
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.UpdateDoctor);
+                parameters.Add("@Action", QueryConstant.UpdateEmployee);
                 parameters.Add("@EMP_ID", emp_code);
                 parameters.Add("@EMP_NAME", emp.EMP_NAME);
                 parameters.Add("@EMP_CONTACT", emp.EMP_CONTACT);
@@ -124,7 +124,7 @@ namespace Lab_Mvc.Repositries
 
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.DeleteDoctor);
+                parameters.Add("@Action", QueryConstant.DeleteEmployee);
                 parameters.Add("@EMP_ID", emp_code);
 
 
