@@ -1,0 +1,172 @@
+﻿using Dapper;
+using Lab_Mvc.Constants;
+using Lab_Mvc.Contest;
+using Lab_Mvc.Interfaces;
+using Microsoft.Identity.Client;
+using Models;
+using System.Data;
+
+namespace Lab_Mvc.Repositries
+{
+    public class LabMaterialsRepository : ILabMaterials
+    {
+        private readonly DapperContext context; 
+
+        public LabMaterialsRepository(DapperContext context)
+        {
+            this.context = context;
+        }
+
+        public async Task<IEnumerable<DTOLabMaterials>> GetLabMaterials()
+        {
+            try
+            {
+                var query = QueryConstant.GetLabMaterials;               
+
+                using (var connection = context.CreateConnection())
+                {
+                    var LabMaterials = await connection.QueryAsync<DTOLabMaterials>(query);
+                    return LabMaterials.ToList();
+                }
+            }
+            catch (Exception ex) 
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<IEnumerable<DTOLabMaterials>> GetLabMaterialsById(long mat_id)
+        {
+            try
+            {
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetMaterialById);
+                parameters.Add("@MAT_ID", mat_id);
+
+                using (var connection = context.CreateConnection())
+                {
+                    var LabMaterials = await connection.QueryAsync<DTOLabMaterials>(query, parameters);
+                    return LabMaterials.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task SaveLabMaterials(DTOLabMaterials objMat)
+        {
+            try
+            {
+                var query = "sp_master";
+
+
+                Int64 newMatId = await GenerateLabMaterialsId(objMat.COM_ID);
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.InsertMaterials);
+                parameters.Add("@MAT_ID", newMatId);
+                parameters.Add("@MAT_NAME", objMat.MAT_NAME);
+                parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
+                parameters.Add("@DATE", objMat.DATE);
+                parameters.Add("@COM_ID", objMat.COM_ID);
+                parameters.Add("@CRT_BY", objMat.CRT_BY);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task EditLabMaterials(DTOLabMaterials objMat, long mat_id)
+        {
+            try
+            {
+                var query = "sp_master";
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.UpdateMaterials);
+                parameters.Add("@MAT_ID", mat_id);
+                parameters.Add("@MAT_NAME", objMat.MAT_NAME);
+                parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
+                parameters.Add("@DATE", objMat.DATE);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    //return await property;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task DeleteLabMaterials(long mat_id)
+        {
+            try
+            {
+                var query = "sp_master";
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.DeleteMaterials);
+                parameters.Add("@MAT_ID", mat_id);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    //return await property;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task<long> GenerateLabMaterialsId(string comId)
+        {
+            string fixedPart = "201";
+            string fixedPartSec = comId.ToString();
+            string likePattern = fixedPart + fixedPartSec + "%";
+
+            string query = "SELECT TOP 1 MAT_ID FROM MST_MATERIALS WHERE MAT_ID LIKE @likePattern ORDER BY MAT_ID DESC";
+
+            using (var connection = context.CreateConnection())
+            {
+                string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
+
+                int nextNumber = 1;
+                if (!string.IsNullOrEmpty(lastId) && lastId.StartsWith(fixedPart + fixedPartSec))
+                {
+                    int prefixLength = (fixedPart + fixedPartSec).Length;
+                    int lastNumber = int.Parse(lastId.Substring(prefixLength));
+                    nextNumber = lastNumber + 1;
+                }
+
+                long newMatId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newMatId;
+            }
+        }
+
+
+    }
+}

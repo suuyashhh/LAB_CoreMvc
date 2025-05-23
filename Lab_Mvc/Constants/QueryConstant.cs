@@ -29,5 +29,23 @@
         public static string InsertEmployee = "InsertEmployee";
         public static string UpdateEmployee = "UpdateEmployee";
         public static string DeleteEmployee = "DeleteEmployee";
+
+        public static string GetLabMaterials = "Select * from MST_MATERIALS ";
+        public static string GetMaterialById = "GetMaterialById";
+        public static string InsertMaterials = "InsertMaterials";
+        public static string UpdateMaterials = "UpdateMaterials";
+        public static string DeleteMaterials = "DeleteMaterials";
+
+        public static string GetBikeFule = "Select * from MST_BIKE_FULE ";
+        public static string GetBikeFuleById = "GetBikeFuleById";
+        public static string InsertBikeFule = "InsertBikeFule";
+        public static string UpdateBikeFule = "UpdateBikeFule";
+        public static string DeleteBikeFule = "DeleteBikeFule";
+
+        public static string GetEmployeeSalary = "Select * from MST_EMP_SALARY_SLIP ";
+        public static string GetEmployeeSalaryById = "GetEmployeeSalaryById";
+        public static string InsertEmployeeSalary = "InsertEmployeeSalary";
+        public static string UpdateEmployeeSalary = "UpdateEmployeeSalary";
+        public static string DeleteEmployeeSalary = "DeleteEmployeeSalary";
     }
 }

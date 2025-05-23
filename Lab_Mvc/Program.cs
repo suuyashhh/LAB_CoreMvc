@@ -21,6 +21,9 @@ builder.Services.AddScoped<IDoctor, DoctorRepository>();
 builder.Services.AddScoped<ICasePaper, CasePaperRepository>();
 builder.Services.AddScoped<ILogin, LoginRepository>();
 builder.Services.AddScoped<IEmployee, EmployeeRepository>();
+builder.Services.AddScoped<ILabMaterials, LabMaterialsRepository>();
+builder.Services.AddScoped<IBikeFule, BikeFuleRepository>();
+builder.Services.AddScoped<IEmployeeSalary, EmployeeSalaryRepository>();
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myTestDB")));
