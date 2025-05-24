@@ -47,5 +47,17 @@
         public static string InsertEmployeeSalary = "InsertEmployeeSalary";
         public static string UpdateEmployeeSalary = "UpdateEmployeeSalary";
         public static string DeleteEmployeeSalary = "DeleteEmployeeSalary";
+
+        public static string GetElectricityBill = "Select * from MST_ELECTRICITY_BILL ";
+        public static string GetElectricityBillById = "GetElectricityBillById";
+        public static string InsertElectricityBill = "InsertElectricityBill";
+        public static string UpdateElectricityBill = "UpdateElectricityBill";
+        public static string DeleteElectricityBill = "DeleteElectricityBill";
+
+        public static string GetOtherExpense = "Select * from MST_OTHER_EXPANCE ";
+        public static string GetOtherExpenseById = "GetOtherExpenseById";
+        public static string InsertOtherExpense = "InsertOtherExpense";
+        public static string UpdateOtherExpense = "UpdateOtherExpense";
+        public static string DeleteOtherExpense = "DeleteOtherExpense";
     }
 }
