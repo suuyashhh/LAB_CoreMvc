@@ -59,5 +59,11 @@
         public static string InsertOtherExpense = "InsertOtherExpense";
         public static string UpdateOtherExpense = "UpdateOtherExpense";
         public static string DeleteOtherExpense = "DeleteOtherExpense";
+
+        public static string GetDoctorCommission = "Select * from MST_DOCTOR_COMMISSION ";
+        public static string GetDoctorCommissionById = "GetDoctorCommissionById";
+        public static string InsertDoctorCommission = "InsertDoctorCommission";
+        public static string UpdateDoctorCommission = "UpdateDoctorCommission";
+        public static string DeleteDoctorCommission = "DeleteDoctorCommission";
     }
 }
