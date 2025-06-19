@@ -41,7 +41,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("Test/{{test_code}}")]
+        [HttpGet("Test/{test_code}")]
         public async Task<ActionResult> TestById(Int64 test_code)
         {
             var cacheKey = "MyKey";
@@ -77,7 +77,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{{test_code}}")]
+        [Route("EditTest/{test_code}")]
         public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
 
         {
@@ -97,7 +97,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{{test_code}}")]
+        [Route("DeleteTest/{test_code}")]
         public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
 
         {

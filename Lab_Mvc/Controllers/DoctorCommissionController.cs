@@ -29,7 +29,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("DoctorCommission/{{docCom_id}}")]
+        [HttpGet("DoctorCommission/{docCom_id}")]
         public async Task<ActionResult> GetDoctorCommissionById(long docCom_id)
         {
             var cacheKey = "MyKey";
@@ -63,7 +63,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditDoctorCommission/{{docCom_id}}")]
+        [Route("EditDoctorCommission/{docCom_id}")]
         public async Task<ActionResult<DTODoctorCommission>> EditDoctorCommission(DTODoctorCommission objDocCom, long docCom_id)
         {
             try
@@ -82,7 +82,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteDoctorCommission/{{docCom_id}}")]
+        [Route("DeleteDoctorCommission/{docCom_id}")]
         public async Task<ActionResult<DTODoctorCommission>> DeleteDoctorCommission(long docCom_id)
         {
             try

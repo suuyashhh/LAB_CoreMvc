@@ -36,7 +36,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("CasePaper/{{trn_no}}")]
+        [HttpGet("CasePaper/{trn_no}")]
         public async Task<ActionResult> CasePaperById(long trn_no)
         {
             var cacheKey = "MyKey";
@@ -72,7 +72,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditCasePaper/{{trn_no}}")]
+        [Route("EditCasePaper/{trn_no}")]
         public async Task<ActionResult<DTOCasePaper>> EditCasePaper(DTOCasePaper casepaper, long trn_no)
 
         {
@@ -92,7 +92,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteCasePaper/{{trn_no}}")]
+        [Route("DeleteCasePaper/{trn_no}")]
         public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no)
 
         {

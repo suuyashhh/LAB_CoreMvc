@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTOEmployeeSalary>> GetEmployeeSalaryById(long empSal_id)
+        public async Task<DTOEmployeeSalary> GetEmployeeSalaryById(long empSal_id)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters);
-                    return EmployeeSalary.ToList();
+                    var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters);
+                    return EmployeeSalary;
                 }
             }
             catch (Exception ex)

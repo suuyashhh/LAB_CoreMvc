@@ -7,7 +7,7 @@ namespace Lab_Mvc.Interfaces
     {
 
         Task<IEnumerable<DTOTest>> GetTests();
-        Task<IEnumerable<DTOTest>> GetTestById(Int64 test_code);
+        Task<DTOTest> GetTestById(Int64 test_code);
 
         Task SaveTest(DTOTest test);
         Task EditTest(DTOTest test,long test_code);

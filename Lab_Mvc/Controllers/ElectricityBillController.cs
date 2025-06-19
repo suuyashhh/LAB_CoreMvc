@@ -29,7 +29,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("ElectricityBill/{{elcBill_id}}")]
+        [HttpGet("ElectricityBill/{elcBill_id}")]
         public async Task<ActionResult> GetElectricityBillById(long elcBill_id)
         {
             var cacheKey = "MyKey";
@@ -63,7 +63,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditElectricityBill/{{elcBill_id}}")]
+        [Route("EditElectricityBill/{elcBill_id}")]
         public async Task<ActionResult<DTOElectricityBill>> EditElectricityBill(DTOElectricityBill objElcBill, long elcBill_id)
         {
             try
@@ -82,7 +82,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteElectricityBill/{{elcBill_id}}")]
+        [Route("DeleteElectricityBill/{elcBill_id}")]
         public async Task<ActionResult<DTOElectricityBill>> DeleteElectricityBill(long elcBill_id)
         {
             try
