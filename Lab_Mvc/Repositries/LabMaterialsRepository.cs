@@ -36,7 +36,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTOLabMaterials>> GetLabMaterialsById(long mat_id)
+        public async Task<DTOLabMaterials> GetLabMaterialsById(long mat_id)
         {
             try
             {
@@ -48,8 +48,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var LabMaterials = await connection.QueryAsync<DTOLabMaterials>(query, parameters);
-                    return LabMaterials.ToList();
+                    var LabMaterials = await connection.QuerySingleAsync<DTOLabMaterials>(query, parameters);
+                    return LabMaterials;
                 }
             }
             catch (Exception ex)

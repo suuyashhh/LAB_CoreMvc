@@ -38,25 +38,33 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<IEnumerable<DTOCasePaper>> GetCasePaperById(long trn_no)
+        public async Task<DTOCasePaper> GetCasePaperById(Int64 trn_no)
         {
             try
             {
                 var query = "sp_master";
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetCasePaperById);
-                parameters.Add("@TRN_NO", trn_no);
-
                 using (var connection = context.CreateConnection())
                 {
-                    var CasePapers = await connection.QueryAsync<DTOCasePaper>(query, parameters);
-                    return CasePapers.ToList();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetCasePaperById);
+                    parameters.Add("@TRN_NO", trn_no);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepaper = await multi.ReadFirstOrDefaultAsync<DTOCasePaper>();
+                        if (casepaper != null)
+                        {
+                            var testItems = (await multi.ReadAsync<DTOTestTable>()).ToList();
+                            casepaper.MatIs = testItems;
+                        }
+
+                        return casepaper;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -82,7 +90,7 @@ namespace Lab_Mvc.Repositries
                             parameters.Add("@GENDER", casepaper.GENDER);
                             parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
                             parameters.Add("@ADDRESS", casepaper.ADDRESS);
-                            parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_REF);
+                            parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_CODE);
                             parameters.Add("@DATE", casepaper.DATE);
                             parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
                             parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
@@ -158,7 +166,7 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@GENDER", casepaper.GENDER);
                 parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
                 parameters.Add("@ADDRESS", casepaper.ADDRESS);
-                parameters.Add("@DOCTOR_REF", casepaper.DOCTOR_REF);
+                parameters.Add("@DOCTOR_REF", casepaper.DOCTOR_CODE);
                 parameters.Add("@DATE", casepaper.DATE);
                 parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
                 parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);

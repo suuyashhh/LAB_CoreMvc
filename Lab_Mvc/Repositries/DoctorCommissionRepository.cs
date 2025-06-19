@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTODoctorCommission>> GetDoctorCommissionById(long docCom_id)
+        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters);
-                    return DoctorCommission.ToList();
+                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters);
+                    return DoctorCommission;
                 }
             }
             catch (Exception ex)

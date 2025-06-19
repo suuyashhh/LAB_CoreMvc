@@ -27,7 +27,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("OtherExpense/{{otherEx_id}}")]
+        [HttpGet("OtherExpense/{otherEx_id}")]
         public async Task<ActionResult> GetOtherExpenseById(long otherEx_id)
         {
             var cacheKey = "MyKey";
@@ -61,7 +61,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditOtherExpense/{{otherEx_id}}")]
+        [Route("EditOtherExpense/{otherEx_id}")]
         public async Task<ActionResult<DTOOtherExpense>> EditOtherExpense(DTOOtherExpense objOtherEx, long otherEx_id)
         {
             try
@@ -80,7 +80,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteOtherExpense/{{otherEx_id}}")]
+        [Route("DeleteOtherExpense/{otherEx_id}")]
         public async Task<ActionResult<DTOOtherExpense>> DeleteOtherExpense(long otherEx_id)
         {
             try

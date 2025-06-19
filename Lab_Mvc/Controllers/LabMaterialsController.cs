@@ -30,7 +30,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("LabMaterials/{{mat_id}}")]
+        [HttpGet("LabMaterials/{mat_id}")]
         public async Task<ActionResult> GetLabMaterialsById(long mat_id)
         {
             var cacheKey = "MyKey";
@@ -65,7 +65,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditLabMaterials/{{mat_id}}")]
+        [Route("EditLabMaterials/{mat_id}")]
         public async Task<ActionResult<DTOLabMaterials>> EditLabMaterials(DTOLabMaterials objMat, long mat_id)
 
         {
@@ -85,7 +85,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteLabMaterials/{{mat_id}}")]
+        [Route("DeleteLabMaterials/{mat_id}")]
         public async Task<ActionResult<DTOLabMaterials>> DeleteLabMaterials(long mat_id)
 
         {

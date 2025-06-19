@@ -18,7 +18,7 @@
         public static string DeleteDoctor = "DeleteDoctor";
 
 
-        public static string GetCasePapers = "select * from MST_PATIENT";
+        public static string GetCasePapers = "select * from MST_PATIENT order by trN_NO desc";
         public static string GetCasePaperById = "GetCasePaperById";
         public static string InsertCasePaper = "InsertCasePaper";
         public static string UpdateCasePaper = "UpdateCasePaper";

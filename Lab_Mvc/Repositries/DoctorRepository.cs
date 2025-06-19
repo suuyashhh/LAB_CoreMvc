@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<IEnumerable<DTODoctor>> GetDoctorById(long doctor_code)
+        public async Task<DTODoctor> GetDoctorById(long doctor_code)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QueryAsync<DTODoctor>(query, parameters);
-                    return Doctors.ToList();
+                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters);
+                    return Doctors;
                 }
             }
             catch (Exception ex)

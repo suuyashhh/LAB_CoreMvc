@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTOOtherExpense>> GetOtherExpenseById(long otherEx_id)
+        public async Task<DTOOtherExpense> GetOtherExpenseById(long otherEx_id)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query, parameters);
-                    return OtherExpense.ToList();
+                    var OtherExpense = await connection.QuerySingleAsync<DTOOtherExpense>(query, parameters);
+                    return OtherExpense;
                 }
             }
             catch (Exception ex)

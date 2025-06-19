@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTOElectricityBill>> GetElectricityBillById(long elcBill_id)
+        public async Task<DTOElectricityBill> GetElectricityBillById(long elcBill_id)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var ElectricityBill = await connection.QueryAsync<DTOElectricityBill>(query, parameters);
-                    return ElectricityBill.ToList();
+                    var ElectricityBill = await connection.QuerySingleAsync<DTOElectricityBill>(query, parameters);
+                    return ElectricityBill;
                 }
             }
             catch (Exception ex)

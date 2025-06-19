@@ -30,7 +30,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("BikeFule/{{bike_id}}")]
+        [HttpGet("BikeFule/{bike_id}")]
         public async Task<ActionResult> GetBikeFuleById(long bike_id)
         {
             var cacheKey = "MyKey";
@@ -64,7 +64,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditBikeFule/{{bike_id}}")]
+        [Route("EditBikeFule/{bike_id}")]
         public async Task<ActionResult<DTOBikeFule>> EditBikeFule(DTOBikeFule objBike, long bike_id)
         {
             try
@@ -83,7 +83,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteBikeFule/{{bike_id}}")]
+        [Route("DeleteBikeFule/{bike_id}")]
         public async Task<ActionResult<DTOBikeFule>> DeleteBikeFule(long bike_id)
         {
             try

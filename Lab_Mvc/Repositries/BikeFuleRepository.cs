@@ -35,7 +35,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<IEnumerable<DTOBikeFule>> GetBikeFuleById(long bike_id)
+        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id)
         {
             try
             {
@@ -47,8 +47,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters);
-                    return BikeFule.ToList();
+                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters);
+                    return BikeFule;
                 }
             }
             catch (Exception ex)

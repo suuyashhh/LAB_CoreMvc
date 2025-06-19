@@ -13,7 +13,7 @@ namespace Models
         public string GENDER { get; set; }
         public string CON_NUMBER { get; set; }
         public string ADDRESS { get; set; }
-        public int DOCTOR_REF { get; set; }
+        public int DOCTOR_CODE { get; set; }
         public string DATE { get; set; }
         public int STATUS_CODE { get; set; }
         public IList<DTOTestTable> MatIs { get; set; }

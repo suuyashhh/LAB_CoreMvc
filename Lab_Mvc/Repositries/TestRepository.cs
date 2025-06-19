@@ -36,7 +36,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<IEnumerable<DTOTest>> GetTestById(Int64 test_code)
+        public async Task<DTOTest> GetTestById(Int64 test_code)
         {
             try
             {
@@ -48,8 +48,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTOTest>(query, parameters);
-                    return tests.ToList();
+                    var tests = await connection.QuerySingleAsync<DTOTest>(query, parameters);
+                    return tests;
                 }
             }
             catch (Exception ex)

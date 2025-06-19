@@ -30,7 +30,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("EmployeeSalary/{{empSal_id}}")]
+        [HttpGet("EmployeeSalary/{empSal_id}")]
         public async Task<ActionResult> GetEmployeeSalaryById(long empSal_id)
         {
             var cacheKey = "MyKey";
@@ -64,7 +64,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditEmployeeSalary/{{empSal_id}}")]
+        [Route("EditEmployeeSalary/{empSal_id}")]
         public async Task<ActionResult<DTOEmployeeSalary>> EditEmployeeSalary(DTOEmployeeSalary objEmpSlry, long empSal_id)
         {
             try
@@ -83,7 +83,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteEmployeeSalary/{{empSal_id}}")]
+        [Route("DeleteEmployeeSalary/{empSal_id}")]
         public async Task<ActionResult<DTOEmployeeSalary>> DeleteEmployeeSalary(long empSal_id)
         {
             try
