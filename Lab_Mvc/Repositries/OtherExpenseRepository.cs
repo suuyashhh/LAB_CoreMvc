@@ -16,15 +16,19 @@ namespace Lab_Mvc.Repositries
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTOOtherExpense>> GetOtherExpense()
+        public async Task<IEnumerable<DTOOtherExpense>> GetOtherExpense(int comId)
         {
             try
             {
-                var query = QueryConstant.GetOtherExpense;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetOtherExpense);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query);
+                    var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query, parameters);
                     return OtherExpense.ToList();
                 }
             }

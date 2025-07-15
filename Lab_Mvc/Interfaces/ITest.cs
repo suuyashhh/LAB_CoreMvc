@@ -6,7 +6,7 @@ namespace Lab_Mvc.Interfaces
     public interface ITest
     {
 
-        Task<IEnumerable<DTOTest>> GetTests();
+        Task<IEnumerable<DTOTest>> GetTests(int comId);
         Task<DTOTest> GetTestById(Int64 test_code);
 
         Task SaveTest(DTOTest test);

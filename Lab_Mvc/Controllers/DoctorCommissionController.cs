@@ -15,13 +15,13 @@ namespace Lab_Mvc.Controllers
             this._docComRepository = docComrepository;
         }
 
-        [HttpGet("DoctorCommission")]
-        public async Task<ActionResult> DoctorCommission()
+        [HttpGet("DoctorCommissions/{comId}")]
+        public async Task<ActionResult> DoctorCommission( int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _docComRepository.GetDoctorCommission());
+                return Ok(await _docComRepository.GetDoctorCommission(comId));
             }
             catch (Exception)
             {

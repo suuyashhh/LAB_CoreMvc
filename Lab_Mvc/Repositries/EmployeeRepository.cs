@@ -17,15 +17,19 @@ namespace Lab_Mvc.Repositries
             //_dbContext = dBContext;
             this.context = context;
         }
-        public async Task<IEnumerable<DTOEmployee>> GetEmployees()
+        public async Task<IEnumerable<DTOEmployee>> GetEmployees(int comId)
         {
             try
             {
-                var query = QueryConstant.GetEmployees;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetEmployees);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Employees = await connection.QueryAsync<DTOEmployee>(query);
+                    var Employees = await connection.QueryAsync<DTOEmployee>(query, parameters);
                     return Employees.ToList();
                 }
             }

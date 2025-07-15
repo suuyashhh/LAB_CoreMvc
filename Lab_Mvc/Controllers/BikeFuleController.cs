@@ -16,13 +16,13 @@ namespace Lab_Mvc.Controllers
             this._bikeFuleRepository = bikefulerepository;
         }
 
-        [HttpGet("BikeFule")]
-        public async Task<ActionResult> BikeFule()
+        [HttpGet("BikeFules/{comId}")]
+        public async Task<ActionResult> BikeFule( int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _bikeFuleRepository.GetBikeFule());
+                return Ok(await _bikeFuleRepository.GetBikeFule(comId));
             }
             catch (Exception)
             {

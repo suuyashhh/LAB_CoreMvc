@@ -21,14 +21,12 @@ namespace Lab_Mvc.Controllers
             //this._memoryCache = memoryCache;
         }
 
-        [HttpGet("Employees")]
-        public async Task<ActionResult> Employees()
+        [HttpGet("Employees/{comId}")]
+        public async Task<ActionResult> Employees( int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await employeeRepository.GetEmployees());
+                return Ok(await employeeRepository.GetEmployees(comId));
             }
             catch (Exception)
             {

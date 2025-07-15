@@ -4,6 +4,8 @@ using Models;
 
 namespace Lab_Mvc.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class OtherExpenseController : Controller
     {
         private readonly IOtherExpense _otherExpaenseRepository;
@@ -13,13 +15,13 @@ namespace Lab_Mvc.Controllers
             this._otherExpaenseRepository = otherexpenserepository;
         }
 
-        [HttpGet("OtherExpense")]
-        public async Task<ActionResult> OtherExpense()
+        [HttpGet("OtherExpenses/{comId}")]
+        public async Task<ActionResult> OtherExpense(int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _otherExpaenseRepository.GetOtherExpense());
+                return Ok(await _otherExpaenseRepository.GetOtherExpense(comId));
             }
             catch (Exception)
             {

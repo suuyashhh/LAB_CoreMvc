@@ -15,13 +15,13 @@ namespace Lab_Mvc.Controllers
             this._electricityBillRepository = electricitybillrepository;
         }
 
-        [HttpGet("ElectricityBill")]
-        public async Task<ActionResult> ElectricityBill()
+        [HttpGet("ElectricityBills/{comId}")]
+        public async Task<ActionResult> ElectricityBill( int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _electricityBillRepository.GetElectricityBill());
+                return Ok(await _electricityBillRepository.GetElectricityBill(comId));
             }
             catch (Exception)
             {

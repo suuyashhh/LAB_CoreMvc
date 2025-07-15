@@ -16,15 +16,19 @@ namespace Lab_Mvc.Repositries
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTODoctorCommission>> GetDoctorCommission()
+        public async Task<IEnumerable<DTODoctorCommission>> GetDoctorCommission(int comId)
         {
             try
             {
-                var query = QueryConstant.GetDoctorCommission;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetDoctorCommission);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query);
+                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters);
                     return DoctorCommission.ToList();
                 }
             }

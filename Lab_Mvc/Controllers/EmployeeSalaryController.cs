@@ -16,13 +16,13 @@ namespace Lab_Mvc.Controllers
             this._empSalaryRepository = empsalaryrepository;
         }
 
-        [HttpGet("EmployeeSalary")]
-        public async Task<ActionResult> EmployeeSalary()
+        [HttpGet("EmployeeSalarys/{comId}")]
+        public async Task<ActionResult> EmployeeSalary( int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _empSalaryRepository.GetEmployeeSalary());
+                return Ok(await _empSalaryRepository.GetEmployeeSalary(comId));
             }
             catch (Exception)
             {

@@ -17,21 +17,26 @@ namespace Lab_Mvc.Repositries
             //_dbContext = dBContext;
             this.context = context;
         }
-        public async Task<IEnumerable<DTODoctor>> GetDoctors()
+
+        public async Task<IEnumerable<DTODoctor>> GetDoctors(int comId)
         {
             try
             {
-                var query = QueryConstant.GetDoctors;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetDoctors);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QueryAsync<DTODoctor>(query);
-                    return Doctors.ToList();
+                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters);
+                    return tests.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw; // good: don't use `throw ex`
             }
         }
 

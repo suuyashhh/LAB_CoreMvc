@@ -18,23 +18,28 @@ namespace Lab_Mvc.Repositries
             //_dbContext = dBContext;
             this.context = context;
         }
-        public async Task<IEnumerable<DTOTest>> GetTests()
+        public async Task<IEnumerable<DTOTest>> GetTests(int comId)
         {
             try
             {
-                var query = QueryConstant.GetTests;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetTests);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTOTest>(query);
+                    var tests = await connection.QueryAsync<DTOTest>(query, parameters);
                     return tests.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw; // good: don't use `throw ex`
             }
         }
+
 
         public async Task<DTOTest> GetTestById(Int64 test_code)
         {
@@ -151,7 +156,7 @@ namespace Lab_Mvc.Repositries
             string fixedPartSec = comId;
             string likePattern = fixedPart + fixedPartSec + "%";
 
-            string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
+            string query = "SELECT TOP 1 TEST_CODE FROM MST_TEST WHERE TEST_CODE LIKE @likePattern ORDER BY TEST_CODE DESC";
 
             using (var connection = context.CreateConnection())
             {
