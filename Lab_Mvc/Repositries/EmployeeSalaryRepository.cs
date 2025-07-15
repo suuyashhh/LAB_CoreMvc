@@ -16,15 +16,19 @@ namespace Lab_Mvc.Repositries
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTOEmployeeSalary>> GetEmployeeSalary()
+        public async Task<IEnumerable<DTOEmployeeSalary>> GetEmployeeSalary(int comId)
         {
             try
             {
-                var query = QueryConstant.GetEmployeeSalary;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetEmployeeSalary);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query);
+                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters);
                     return EmployeeSalary.ToList();
                 }
             }

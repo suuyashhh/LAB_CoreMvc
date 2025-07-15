@@ -21,14 +21,12 @@ namespace Lab_Mvc.Controllers
             //this._memoryCache = memoryCache;
         }
 
-        [HttpGet("CasePapers")]
-        public async Task<ActionResult> CasePapers()
+        [HttpGet("CasePapers/{comId}")]
+        public async Task<ActionResult> CasePapers( int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await casePaperRepository.GetCasePapers());
+                return Ok(await casePaperRepository.GetCasePapers(comId));
             }
             catch (Exception)
             {

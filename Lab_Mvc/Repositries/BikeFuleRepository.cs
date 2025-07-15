@@ -16,15 +16,19 @@ namespace Lab_Mvc.Repositries
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTOBikeFule>> GetBikeFule()
+        public async Task<IEnumerable<DTOBikeFule>> GetBikeFule(int comId)
         {
             try
             {
-                var query = QueryConstant.GetBikeFule;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetBikeFule);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query);
+                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters);
                     return BikeFule.ToList();
                 }
             }

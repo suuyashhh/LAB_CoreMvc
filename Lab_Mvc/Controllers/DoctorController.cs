@@ -23,20 +23,20 @@ namespace Lab_Mvc.Controllers
             //this._memoryCache = memoryCache;
         }
 
-        [HttpGet("Doctor")]
-        public async Task<ActionResult> Doctors()
+
+        [HttpGet("Doctors/{comId}")]
+        public async Task<ActionResult> GetDoctors( int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await doctorRepository.GetDoctors());
+                return Ok(await doctorRepository.GetDoctors(comId));
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
 
         [HttpGet("Doctor/{doctor_code}")]
         public async Task<ActionResult> DoctorById(long doctor_code)

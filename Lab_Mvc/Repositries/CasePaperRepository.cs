@@ -20,15 +20,19 @@ namespace Lab_Mvc.Repositries
             //_dbContext = dBContext;
             this.context = context;
         }
-        public async Task<IEnumerable<DTOCasePaper>> GetCasePapers()
+        public async Task<IEnumerable<DTOCasePaper>> GetCasePapers(int comId)
         {
             try
             {
-                var query = QueryConstant.GetCasePapers;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetCasePapers);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var CasePapers = await connection.QueryAsync<DTOCasePaper>(query);
+                    var CasePapers = await connection.QueryAsync<DTOCasePaper>(query, parameters);
                     return CasePapers.ToList();
                 }
             }

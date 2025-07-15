@@ -26,20 +26,19 @@ namespace Lab_Mvc.Controllers
 
 
 
-        [HttpGet("Test")]
-        public async Task<ActionResult> Tests()
+        [HttpGet("Tests/{comId}")]
+        public async Task<ActionResult> Tests(int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTests());
+                return Ok(await testRepository.GetTests(comId));
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
 
         [HttpGet("Test/{test_code}")]
         public async Task<ActionResult> TestById(Int64 test_code)

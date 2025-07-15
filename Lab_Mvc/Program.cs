@@ -1,10 +1,12 @@
-using Lab_Mvc.Contest;
+﻿using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
+using static Lab_Mvc.Controllers.LoginController;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,10 @@ builder.Services.AddScoped<IEmployeeSalary, EmployeeSalaryRepository>();
 builder.Services.AddScoped<IElectricityBill, ElectricityBillRepository>();
 builder.Services.AddScoped<IOtherExpense, OtherExpenseRepository>();
 builder.Services.AddScoped<IDoctorCommission, DoctorCommissionRepository>();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
+);
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myTestDB")));
@@ -65,7 +71,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();                        // ✅ Auth first
+app.UseMiddleware<TokenValidationMiddleware>(); // ✅ Then your Redis session middleware
 app.UseAuthorization();
+
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 

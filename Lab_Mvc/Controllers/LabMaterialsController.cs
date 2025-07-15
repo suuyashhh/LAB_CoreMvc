@@ -16,13 +16,13 @@ namespace Lab_Mvc.Controllers
             this.labMaterialsRepository = labmaterialsrepository;
         }
 
-        [HttpGet("LabMaterials")]
-        public async Task<ActionResult> LabMaterials()
+        [HttpGet("LabMaterials/{comId}")]
+        public async Task<ActionResult> LabMaterials( int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await labMaterialsRepository.GetLabMaterials());
+                return Ok(await labMaterialsRepository.GetLabMaterials(comId));
             }
             catch (Exception)
             {
@@ -30,7 +30,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("LabMaterials/{mat_id}")]
+        [HttpGet("LabMaterial/{mat_id}")]
         public async Task<ActionResult> GetLabMaterialsById(long mat_id)
         {
             var cacheKey = "MyKey";

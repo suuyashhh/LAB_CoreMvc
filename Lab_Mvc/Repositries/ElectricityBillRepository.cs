@@ -16,15 +16,19 @@ namespace Lab_Mvc.Repositries
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTOElectricityBill>> GetElectricityBill()
+        public async Task<IEnumerable<DTOElectricityBill>> GetElectricityBill(int comId)
         {
             try
             {
-                var query = QueryConstant.GetElectricityBill;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetElectricityBill);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var ElectricityBill = await connection.QueryAsync<DTOElectricityBill>(query);
+                    var ElectricityBill = await connection.QueryAsync<DTOElectricityBill>(query, parameters);
                     return ElectricityBill.ToList();
                 }
             }
