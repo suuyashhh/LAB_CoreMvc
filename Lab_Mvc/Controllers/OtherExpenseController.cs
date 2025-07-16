@@ -15,8 +15,8 @@ namespace Lab_Mvc.Controllers
             this._otherExpaenseRepository = otherexpenserepository;
         }
 
-        [HttpGet("OtherExpenses/{comId}")]
-        public async Task<ActionResult> OtherExpense(int comId)
+        [HttpGet("OtherExpenses")]
+        public async Task<ActionResult> OtherExpense([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try

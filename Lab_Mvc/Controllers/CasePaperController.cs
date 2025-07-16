@@ -21,8 +21,8 @@ namespace Lab_Mvc.Controllers
             //this._memoryCache = memoryCache;
         }
 
-        [HttpGet("CasePapers/{comId}")]
-        public async Task<ActionResult> CasePapers( int comId)
+        [HttpGet("CasePapers")]
+        public async Task<ActionResult> CasePapers([FromQuery] int comId)
         {
             try
             {

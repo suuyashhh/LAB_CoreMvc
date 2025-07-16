@@ -15,8 +15,8 @@ namespace Lab_Mvc.Controllers
             this._electricityBillRepository = electricitybillrepository;
         }
 
-        [HttpGet("ElectricityBills/{comId}")]
-        public async Task<ActionResult> ElectricityBill( int comId)
+        [HttpGet("ElectricityBills")]
+        public async Task<ActionResult> ElectricityBill([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try

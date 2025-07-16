@@ -15,8 +15,8 @@ namespace Lab_Mvc.Controllers
             this._docComRepository = docComrepository;
         }
 
-        [HttpGet("DoctorCommissions/{comId}")]
-        public async Task<ActionResult> DoctorCommission( int comId)
+        [HttpGet("DoctorCommissions")]
+        public async Task<ActionResult> DoctorCommission([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try

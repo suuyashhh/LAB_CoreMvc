@@ -16,8 +16,8 @@ namespace Lab_Mvc.Controllers
             this._empSalaryRepository = empsalaryrepository;
         }
 
-        [HttpGet("EmployeeSalarys/{comId}")]
-        public async Task<ActionResult> EmployeeSalary( int comId)
+        [HttpGet("EmployeeSalarys")]
+        public async Task<ActionResult> EmployeeSalary([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try

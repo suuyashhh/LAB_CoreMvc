@@ -16,8 +16,8 @@ namespace Lab_Mvc.Controllers
             this._bikeFuleRepository = bikefulerepository;
         }
 
-        [HttpGet("BikeFules/{comId}")]
-        public async Task<ActionResult> BikeFule( int comId)
+        [HttpGet("BikeFules")]
+        public async Task<ActionResult> BikeFule([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
