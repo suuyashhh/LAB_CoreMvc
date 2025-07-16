@@ -16,8 +16,8 @@ namespace Lab_Mvc.Controllers
             this.labMaterialsRepository = labmaterialsrepository;
         }
 
-        [HttpGet("LabMaterials/{comId}")]
-        public async Task<ActionResult> LabMaterials( int comId)
+        [HttpGet("LabMaterials")]
+        public async Task<ActionResult> LabMaterials([FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try

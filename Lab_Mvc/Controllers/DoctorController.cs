@@ -24,8 +24,8 @@ namespace Lab_Mvc.Controllers
         }
 
 
-        [HttpGet("Doctors/{comId}")]
-        public async Task<ActionResult> GetDoctors( int comId)
+        [HttpGet("Doctors")]
+        public async Task<ActionResult> GetDoctors([FromQuery] int comId)
         {
             try
             {
