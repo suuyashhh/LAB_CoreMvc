@@ -29,6 +29,8 @@ builder.Services.AddScoped<IEmployeeSalary, EmployeeSalaryRepository>();
 builder.Services.AddScoped<IElectricityBill, ElectricityBillRepository>();
 builder.Services.AddScoped<IOtherExpense, OtherExpenseRepository>();
 builder.Services.AddScoped<IDoctorCommission, DoctorCommissionRepository>();
+builder.Services.AddScoped<IHome, HomeRepository>();
+builder.Services.AddScoped<IFinance, FinanceRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
