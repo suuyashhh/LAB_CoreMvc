@@ -65,5 +65,11 @@
         public static string InsertDoctorCommission = "InsertDoctorCommission";
         public static string UpdateDoctorCommission = "UpdateDoctorCommission";
         public static string DeleteDoctorCommission = "DeleteDoctorCommission";
+
+
+        public static string GetHomeById = "Home";
+
+
+        public static string GetFinanceById = "GetFinanceIndex";
     }
 }
