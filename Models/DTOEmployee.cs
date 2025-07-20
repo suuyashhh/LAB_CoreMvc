@@ -12,7 +12,7 @@ namespace Models
         public string EMP_NAME { get; set; }
         public string EMP_CONTACT { get; set; }
         public string EMP_PASSWORD { get; set; }
-        public string DELETE_REASON { get; set; }
+        public string? DELETE_REASON { get; set; }
         public int COM_ID { get; set; }
     }
 }

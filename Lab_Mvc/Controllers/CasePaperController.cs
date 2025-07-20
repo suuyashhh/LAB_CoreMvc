@@ -61,7 +61,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = casePaperRepository.SaveCasePaper(casepaper);
-                return Ok(this);
+                var result = new
+                {
+                    data = casepaper,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -81,7 +86,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = casePaperRepository.EditCasePaper(casepaper, trn_no);
-                return Ok(casepaper);
+                var result = new
+                {
+                    data = casepaper,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

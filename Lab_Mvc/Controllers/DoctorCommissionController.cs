@@ -54,7 +54,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _docComRepository.SaveDoctorCommission(objDocCom);
-                return Ok(this);
+                var result = new
+                {
+                    data = objDocCom,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -73,7 +78,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _docComRepository.EditDoctorCommission(objDocCom, docCom_id);
-                return Ok(objDocCom);
+                var result = new
+                {
+                    data = objDocCom,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

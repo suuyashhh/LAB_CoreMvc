@@ -65,7 +65,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = doctorRepository.SaveDoctor(doctor);
-                return Ok(doctor);
+                var result = new
+                {
+                    data = doctor,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -85,7 +90,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = doctorRepository.EditDoctor(doctor, doctor_code);
-                return Ok(doctor);
+                var result = new
+                {
+                    data = doctor,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

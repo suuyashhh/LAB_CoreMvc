@@ -61,7 +61,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = employeeRepository.SaveEmployee(emp);
-                return Ok(emp);
+                var result = new
+                {
+                    data = emp,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -81,7 +86,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = employeeRepository.EditEmployee(emp, emp_code);
-                return Ok(emp);
+                var result = new
+                {
+                    data = emp,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

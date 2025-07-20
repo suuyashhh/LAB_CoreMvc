@@ -55,7 +55,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _empSalaryRepository.SaveEmployeeSalary(objEmpSlry);
-                return Ok(this);
+                var result = new
+                {
+                    data = objEmpSlry,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -74,7 +79,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _empSalaryRepository.EditEmployeeSalary(objEmpSlry, empSal_id);
-                return Ok(objEmpSlry);
+                var result = new
+                {
+                    data = objEmpSlry,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

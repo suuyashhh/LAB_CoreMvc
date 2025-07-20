@@ -54,7 +54,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _electricityBillRepository.SaveElectricityBill(objElcBill);
-                return Ok(this);
+                var result = new
+                {
+                    data = objElcBill,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -73,7 +78,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _electricityBillRepository.EditElectricityBill(objElcBill, elcBill_id);
-                return Ok(objElcBill);
+                var result = new
+                {
+                    data = objElcBill,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
