@@ -54,7 +54,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _otherExpaenseRepository.SaveOtherExpense(objOtherEx);
-                return Ok(this);
+                var result = new
+                {
+                    data = objOtherEx,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -73,7 +78,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _otherExpaenseRepository.EditOtherExpense(objOtherEx, otherEx_id);
-                return Ok(objOtherEx);
+                var result = new
+                {
+                    data = objOtherEx,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

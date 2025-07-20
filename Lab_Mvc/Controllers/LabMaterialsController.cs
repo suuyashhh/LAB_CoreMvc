@@ -56,7 +56,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = labMaterialsRepository.SaveLabMaterials(objMat);
-                return Ok(this);
+                var result = new
+                {
+                    data = objMat,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -76,7 +81,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = labMaterialsRepository.EditLabMaterials(objMat, mat_id);
-                return Ok(objMat);
+                var result = new
+                {
+                    data = objMat,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {

@@ -55,7 +55,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _bikeFuleRepository.SaveBikeFule(objBike);
-                return Ok(this);
+                var result = new
+                {
+                    data = objBike,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -74,7 +79,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = _bikeFuleRepository.EditBikeFule(objBike, bike_id);
-                return Ok(objBike);
+                var result = new
+                {
+                    data = objBike,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
