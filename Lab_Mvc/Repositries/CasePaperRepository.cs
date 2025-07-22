@@ -72,6 +72,35 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTOCasePaper>> GetDateWiseCasePaper(string from_date, string to_date)
+        {
+            try
+            {
+                const string query = "sp_master";
+
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseCasePaper);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTOCasePaper>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception here before re-throwing
+                throw;
+            }
+        }
+
+
+
         public async Task SaveCasePaper(DTOCasePaper casepaper)
         {
             try

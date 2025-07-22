@@ -1,4 +1,5 @@
 ﻿using Lab_Mvc.Interfaces;
+using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -37,6 +38,20 @@ namespace Lab_Mvc.Controllers
             try
             {
                 return Ok(await _empSalaryRepository.GetEmployeeSalaryById(empSal_id));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseEmpSalary/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseEmpSalary(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _empSalaryRepository.GetDateWiseEmpSalary(from_date, to_date));
             }
             catch (Exception)
             {

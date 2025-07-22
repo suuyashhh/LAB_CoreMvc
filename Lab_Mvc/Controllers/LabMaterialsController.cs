@@ -45,6 +45,20 @@ namespace Lab_Mvc.Controllers
             }
         }
 
+        [HttpGet("GetDateWiseLabMaterials/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseLabMaterials(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await labMaterialsRepository.GetDateWiseLabMaterials(from_date, to_date));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("SaveLabMaterials")]
         public async Task<ActionResult<DTOLabMaterials>> SaveLabMaterials(DTOLabMaterials objMat)
