@@ -6,7 +6,7 @@ using Models;
 
 namespace Lab_Mvc.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DoctorController : Controller
