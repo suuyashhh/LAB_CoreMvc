@@ -1,37 +1,29 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class ElectricityBillController : Controller
     {
+        private readonly IElectricityBill _electricityBillRepository;
 
-        private readonly ITest testRepository;
-
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public ElectricityBillController(IElectricityBill electricitybillrepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this._electricityBillRepository = electricitybillrepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("ElectricityBills")]
+        public async Task<ActionResult> ElectricityBill([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await _electricityBillRepository.GetElectricityBill(comId));
             }
             catch (Exception)
             {
@@ -39,15 +31,13 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("ElectricityBill/{elcBill_id}")]
+        public async Task<ActionResult> GetElectricityBillById(long elcBill_id)
         {
             var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await _electricityBillRepository.GetElectricityBillById(elcBill_id));
             }
             catch (Exception)
             {
@@ -56,20 +46,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveElectricityBill")]
+        public async Task<ActionResult<DTOElectricityBill>> SaveElectricityBill(DTOElectricityBill objElcBill)
         {
             try
             {
-                if (test == null)
+                if (objElcBill == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = _electricityBillRepository.SaveElectricityBill(objElcBill);
                 var result = new
                 {
-                    data = test,
+                    data = objElcBill,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +70,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
-
+        [Route("EditElectricityBill/{elcBill_id}")]
+        public async Task<ActionResult<DTOElectricityBill>> EditElectricityBill(DTOElectricityBill objElcBill, long elcBill_id)
         {
             try
             {
-                if (test == null)
+                if (objElcBill == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = _electricityBillRepository.EditElectricityBill(objElcBill, elcBill_id);
                 var result = new
                 {
-                    data = test,
+                    data = objElcBill,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,23 +94,25 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
-
+        [Route("DeleteElectricityBill/{elcBill_id}")]
+        public async Task<ActionResult<DTOElectricityBill>> DeleteElectricityBill(long elcBill_id)
         {
             try
             {
-                if (test_code == null)
+                if (elcBill_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = _electricityBillRepository.DeleteElectricityBill(elcBill_id);
+                return Ok(elcBill_id);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Saving Data");
             }
         }
+
+
+
     }
 }

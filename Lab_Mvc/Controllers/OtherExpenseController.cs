@@ -1,37 +1,29 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class OtherExpenseController : Controller
     {
+        private readonly IOtherExpense _otherExpaenseRepository;
 
-        private readonly ITest testRepository;
-
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public OtherExpenseController(IOtherExpense otherexpenserepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this._otherExpaenseRepository = otherexpenserepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("OtherExpenses")]
+        public async Task<ActionResult> OtherExpense([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await _otherExpaenseRepository.GetOtherExpense(comId));
             }
             catch (Exception)
             {
@@ -39,15 +31,13 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("OtherExpense/{otherEx_id}")]
+        public async Task<ActionResult> GetOtherExpenseById(long otherEx_id)
         {
             var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await _otherExpaenseRepository.GetOtherExpenseById(otherEx_id));
             }
             catch (Exception)
             {
@@ -56,20 +46,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveOtherExpense")]
+        public async Task<ActionResult<DTOOtherExpense>> SaveOtherExpense(DTOOtherExpense objOtherEx)
         {
             try
             {
-                if (test == null)
+                if (objOtherEx == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = _otherExpaenseRepository.SaveOtherExpense(objOtherEx);
                 var result = new
                 {
-                    data = test,
+                    data = objOtherEx,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +70,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
-
+        [Route("EditOtherExpense/{otherEx_id}")]
+        public async Task<ActionResult<DTOOtherExpense>> EditOtherExpense(DTOOtherExpense objOtherEx, long otherEx_id)
         {
             try
             {
-                if (test == null)
+                if (objOtherEx == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = _otherExpaenseRepository.EditOtherExpense(objOtherEx, otherEx_id);
                 var result = new
                 {
-                    data = test,
+                    data = objOtherEx,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,18 +94,17 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
-
+        [Route("DeleteOtherExpense/{otherEx_id}")]
+        public async Task<ActionResult<DTOOtherExpense>> DeleteOtherExpense(long otherEx_id)
         {
             try
             {
-                if (test_code == null)
+                if (otherEx_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = _otherExpaenseRepository.DeleteOtherExpense(otherEx_id);
+                return Ok(otherEx_id);
             }
             catch (Exception)
             {

@@ -1,59 +1,59 @@
 ﻿using Dapper;
 using Lab_Mvc.Constants;
+using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
+using Microsoft.Identity.Client;
 using Models;
 using System.Data;
-using System.Numerics;
-using Lab_Mvc.Contest;
 
 namespace Lab_Mvc.Repositries
 {
-    public class DoctorRepository : IDoctor
+    public class LabMaterialsRepository : ILabMaterials
     {
-        private readonly DapperContext context;
+        private readonly DapperContext context; 
 
-        public DoctorRepository(DapperContext context)
+        public LabMaterialsRepository(DapperContext context)
         {
-            //_dbContext = dBContext;
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTODoctor>> GetDoctors(int comId)
+        public async Task<IEnumerable<DTOLabMaterials>> GetLabMaterials(int comId)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctors);
+                parameters.Add("@Action", QueryConstant.GetLabMaterials);
                 parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters);
-                    return tests.ToList();
+                    var LabMaterials = await connection.QueryAsync<DTOLabMaterials>(query, parameters);
+                    return LabMaterials.ToList();
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
-                throw; // good: don't use `throw ex`
+                throw ex;
             }
+
         }
 
-        public async Task<DTODoctor> GetDoctorById(long doctor_code)
+        public async Task<DTOLabMaterials> GetLabMaterialsById(long mat_id)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctorById);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@Action", QueryConstant.GetMaterialById);
+                parameters.Add("@MAT_ID", mat_id);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters);
-                    return Doctors;
+                    var LabMaterials = await connection.QuerySingleAsync<DTOLabMaterials>(query, parameters);
+                    return LabMaterials;
                 }
             }
             catch (Exception ex)
@@ -62,23 +62,50 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task SaveDoctor(DTODoctor doctor)
+        public async Task SaveLabMaterials(DTOLabMaterials objMat)
         {
             try
             {
                 var query = "sp_master";
 
 
-                Int64 newDoctorId = await GenerateDoctorId(doctor.COM_ID);
+                Int64 newMatId = await GenerateLabMaterialsId(objMat.COM_ID);
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.InsertDoctor);
-                parameters.Add("@DOCTOR_CODE", newDoctorId);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
-                parameters.Add("@COM_ID", doctor.COM_ID); 
-                parameters.Add("@CRT_BY", doctor.CRT_BY); 
+                parameters.Add("@Action", QueryConstant.InsertMaterials);
+                parameters.Add("@MAT_ID", newMatId);
+                parameters.Add("@MAT_NAME", objMat.MAT_NAME);
+                parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
+                parameters.Add("@DATE", objMat.DATE);
+                parameters.Add("@COM_ID", objMat.COM_ID);
+                parameters.Add("@CRT_BY", objMat.CRT_BY);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task EditLabMaterials(DTOLabMaterials objMat, long mat_id)
+        {
+            try
+            {
+                var query = "sp_master";
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.UpdateMaterials);
+                parameters.Add("@MAT_ID", mat_id);
+                parameters.Add("@MAT_NAME", objMat.MAT_NAME);
+                parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
+                parameters.Add("@DATE", objMat.DATE);
 
 
 
@@ -94,7 +121,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task EditDoctor(DTODoctor doctor, long doctor_code)
+        public async Task DeleteLabMaterials(long mat_id)
         {
             try
             {
@@ -102,11 +129,8 @@ namespace Lab_Mvc.Repositries
 
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.UpdateDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
+                parameters.Add("@Action", QueryConstant.DeleteMaterials);
+                parameters.Add("@MAT_ID", mat_id);
 
 
 
@@ -122,38 +146,13 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctor(long doctor_code)
+        private async Task<long> GenerateLabMaterialsId(string comId)
         {
-            try
-            {
-                var query = "sp_master";
-
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.DeleteDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
-
-
-
-                using (var connection = context.CreateConnection())
-                {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private async Task<long> GenerateDoctorId(int comId)
-        {
-            string fixedPart = "3";
+            string fixedPart = "201";
             string fixedPartSec = comId.ToString();
             string likePattern = fixedPart + fixedPartSec + "%";
 
-            string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
+            string query = "SELECT TOP 1 MAT_ID FROM MST_MATERIALS WHERE MAT_ID LIKE @likePattern ORDER BY MAT_ID DESC";
 
             using (var connection = context.CreateConnection())
             {
@@ -167,12 +166,10 @@ namespace Lab_Mvc.Repositries
                     nextNumber = lastNumber + 1;
                 }
 
-                long newDoctorId = long.Parse(fixedPart + fixedPartSec + nextNumber);
-                return newDoctorId;
+                long newMatId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newMatId;
             }
         }
-
-
 
 
     }

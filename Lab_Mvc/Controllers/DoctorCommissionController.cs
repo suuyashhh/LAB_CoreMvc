@@ -1,37 +1,29 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class DoctorCommissionController : Controller
     {
+        private readonly IDoctorCommission _docComRepository;
 
-        private readonly ITest testRepository;
-
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public DoctorCommissionController(IDoctorCommission docComrepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this._docComRepository = docComrepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("DoctorCommissions")]
+        public async Task<ActionResult> DoctorCommission([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await _docComRepository.GetDoctorCommission(comId));
             }
             catch (Exception)
             {
@@ -39,15 +31,13 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("DoctorCommission/{docCom_id}")]
+        public async Task<ActionResult> GetDoctorCommissionById(long docCom_id)
         {
             var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await _docComRepository.GetDoctorCommissionById(docCom_id));
             }
             catch (Exception)
             {
@@ -56,20 +46,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveDoctorCommission")]
+        public async Task<ActionResult<DTODoctorCommission>> SaveDoctorCommission(DTODoctorCommission objDocCom)
         {
             try
             {
-                if (test == null)
+                if (objDocCom == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = _docComRepository.SaveDoctorCommission(objDocCom);
                 var result = new
                 {
-                    data = test,
+                    data = objDocCom,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +70,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
-
+        [Route("EditDoctorCommission/{docCom_id}")]
+        public async Task<ActionResult<DTODoctorCommission>> EditDoctorCommission(DTODoctorCommission objDocCom, long docCom_id)
         {
             try
             {
-                if (test == null)
+                if (objDocCom == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = _docComRepository.EditDoctorCommission(objDocCom, docCom_id);
                 var result = new
                 {
-                    data = test,
+                    data = objDocCom,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,18 +94,17 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
-
+        [Route("DeleteDoctorCommission/{docCom_id}")]
+        public async Task<ActionResult<DTODoctorCommission>> DeleteDoctorCommission(long docCom_id)
         {
             try
             {
-                if (test_code == null)
+                if (docCom_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = _docComRepository.DeleteDoctorCommission(docCom_id);
+                return Ok(docCom_id);
             }
             catch (Exception)
             {

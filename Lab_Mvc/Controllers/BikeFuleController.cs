@@ -1,37 +1,30 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class BikeFuleController : Controller
     {
 
-        private readonly ITest testRepository;
+        private readonly IBikeFule _bikeFuleRepository;
 
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public BikeFuleController(IBikeFule bikefulerepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this._bikeFuleRepository = bikefulerepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("BikeFules")]
+        public async Task<ActionResult> BikeFule([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await _bikeFuleRepository.GetBikeFule(comId));
             }
             catch (Exception)
             {
@@ -39,15 +32,13 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("BikeFule/{bike_id}")]
+        public async Task<ActionResult> GetBikeFuleById(long bike_id)
         {
             var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await _bikeFuleRepository.GetBikeFuleById(bike_id));
             }
             catch (Exception)
             {
@@ -56,20 +47,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveBikeFule")]
+        public async Task<ActionResult<DTOBikeFule>> SaveBikeFule(DTOBikeFule objBike)
         {
             try
             {
-                if (test == null)
+                if (objBike == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = _bikeFuleRepository.SaveBikeFule(objBike);
                 var result = new
                 {
-                    data = test,
+                    data = objBike,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +71,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
-
+        [Route("EditBikeFule/{bike_id}")]
+        public async Task<ActionResult<DTOBikeFule>> EditBikeFule(DTOBikeFule objBike, long bike_id)
         {
             try
             {
-                if (test == null)
+                if (objBike == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = _bikeFuleRepository.EditBikeFule(objBike, bike_id);
                 var result = new
                 {
-                    data = test,
+                    data = objBike,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,23 +95,24 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
-
+        [Route("DeleteBikeFule/{bike_id}")]
+        public async Task<ActionResult<DTOBikeFule>> DeleteBikeFule(long bike_id)
         {
             try
             {
-                if (test_code == null)
+                if (bike_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = _bikeFuleRepository.DeleteBikeFule(bike_id);
+                return Ok(bike_id);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Saving Data");
             }
         }
+
+
     }
 }

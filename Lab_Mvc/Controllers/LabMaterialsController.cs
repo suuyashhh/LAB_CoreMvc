@@ -3,35 +3,28 @@ using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class TestController : Controller
+    [Route("api/[controller]")]    
+    public class LabMaterialsController : Controller
     {
+        private readonly ILabMaterials labMaterialsRepository;
 
-        private readonly ITest testRepository;
-
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public LabMaterialsController(ILabMaterials labmaterialsrepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this.labMaterialsRepository = labmaterialsrepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("LabMaterials")]
+        public async Task<ActionResult> LabMaterials([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await labMaterialsRepository.GetLabMaterials(comId));
             }
             catch (Exception)
             {
@@ -39,15 +32,14 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("LabMaterial/{mat_id}")]
+        public async Task<ActionResult> GetLabMaterialsById(long mat_id)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await labMaterialsRepository.GetLabMaterialsById(mat_id));
             }
             catch (Exception)
             {
@@ -56,20 +48,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveLabMaterials")]
+        public async Task<ActionResult<DTOLabMaterials>> SaveLabMaterials(DTOLabMaterials objMat)
         {
             try
             {
-                if (test == null)
+                if (objMat == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = labMaterialsRepository.SaveLabMaterials(objMat);
                 var result = new
                 {
-                    data = test,
+                    data = objMat,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +72,20 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
+        [Route("EditLabMaterials/{mat_id}")]
+        public async Task<ActionResult<DTOLabMaterials>> EditLabMaterials(DTOLabMaterials objMat, long mat_id)
 
         {
             try
             {
-                if (test == null)
+                if (objMat == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = labMaterialsRepository.EditLabMaterials(objMat, mat_id);
                 var result = new
                 {
-                    data = test,
+                    data = objMat,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,18 +97,18 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
+        [Route("DeleteLabMaterials/{mat_id}")]
+        public async Task<ActionResult<DTOLabMaterials>> DeleteLabMaterials(long mat_id)
 
         {
             try
             {
-                if (test_code == null)
+                if (mat_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = labMaterialsRepository.DeleteLabMaterials(mat_id);
+                return Ok(mat_id);
             }
             catch (Exception)
             {

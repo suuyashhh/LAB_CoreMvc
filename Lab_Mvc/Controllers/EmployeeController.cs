@@ -1,37 +1,33 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class EmployeeController : Controller
     {
 
-        private readonly ITest testRepository;
+        private readonly IEmployee employeeRepository;
+
 
         //private readonly IMemoryCache _memoryCache;
 
-        public TestController(ITest testrepository)
+        public EmployeeController(IEmployee employeerepository)
         {
-            this.testRepository = testrepository;
+            this.employeeRepository = employeerepository;
             //this._memoryCache = memoryCache;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("Employees")]
+        public async Task<ActionResult> Employees([FromQuery] int comId)
         {
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await employeeRepository.GetEmployees(comId));
             }
             catch (Exception)
             {
@@ -39,15 +35,14 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("Employee/{emp_code}")]
+        public async Task<ActionResult> GetEmployeeById(long emp_code)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await employeeRepository.GetEmployeeById(emp_code));
             }
             catch (Exception)
             {
@@ -56,20 +51,20 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
+        [Route("SaveEmployee")]
+        public async Task<ActionResult<DTOEmployee>> SaveEmployee(DTOEmployee emp)
 
         {
             try
             {
-                if (test == null)
+                if (emp == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = employeeRepository.SaveEmployee(emp);
                 var result = new
                 {
-                    data = test,
+                    data = emp,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +76,20 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
+        [Route("EditEmployee/{emp_code}")]
+        public async Task<ActionResult<DTOEmployee>> EditEmployee(DTOEmployee emp, long emp_code)
 
         {
             try
             {
-                if (test == null)
+                if (emp == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = employeeRepository.EditEmployee(emp, emp_code);
                 var result = new
                 {
-                    data = test,
+                    data = emp,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,18 +101,18 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
+        [Route("DeleteEmployee/{emp_code}")]
+        public async Task<ActionResult<DTOEmployee>> DeleteEmployee(long emp_code)
 
         {
             try
             {
-                if (test_code == null)
+                if (emp_code == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = employeeRepository.DeleteEmployee(emp_code);
+                return Ok(emp_code);
             }
             catch (Exception)
             {

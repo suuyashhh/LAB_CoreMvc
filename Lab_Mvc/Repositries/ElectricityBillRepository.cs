@@ -1,59 +1,58 @@
 ﻿using Dapper;
 using Lab_Mvc.Constants;
+using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
-using System.Numerics;
-using Lab_Mvc.Contest;
 
 namespace Lab_Mvc.Repositries
 {
-    public class DoctorRepository : IDoctor
+    public class ElectricityBillRepository : IElectricityBill
     {
         private readonly DapperContext context;
 
-        public DoctorRepository(DapperContext context)
+        public ElectricityBillRepository(DapperContext context)
         {
-            //_dbContext = dBContext;
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTODoctor>> GetDoctors(int comId)
+        public async Task<IEnumerable<DTOElectricityBill>> GetElectricityBill(int comId)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctors);
+                parameters.Add("@Action", QueryConstant.GetElectricityBill);
                 parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters);
-                    return tests.ToList();
+                    var ElectricityBill = await connection.QueryAsync<DTOElectricityBill>(query, parameters);
+                    return ElectricityBill.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw; // good: don't use `throw ex`
+                throw ex;
             }
+
         }
 
-        public async Task<DTODoctor> GetDoctorById(long doctor_code)
+        public async Task<DTOElectricityBill> GetElectricityBillById(long elcBill_id)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctorById);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@Action", QueryConstant.GetElectricityBillById);
+                parameters.Add("@ELC_TRN_ID", elcBill_id);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters);
-                    return Doctors;
+                    var ElectricityBill = await connection.QuerySingleAsync<DTOElectricityBill>(query, parameters);
+                    return ElectricityBill;
                 }
             }
             catch (Exception ex)
@@ -62,58 +61,28 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task SaveDoctor(DTODoctor doctor)
+        public async Task SaveElectricityBill(DTOElectricityBill objElcBill)
         {
             try
             {
                 var query = "sp_master";
 
 
-                Int64 newDoctorId = await GenerateDoctorId(doctor.COM_ID);
+                Int64 newBikeFuleId = await GenerateElectricityBillId(objElcBill.COM_ID);
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.InsertDoctor);
-                parameters.Add("@DOCTOR_CODE", newDoctorId);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
-                parameters.Add("@COM_ID", doctor.COM_ID); 
-                parameters.Add("@CRT_BY", doctor.CRT_BY); 
-
-
-
-                using (var connection = context.CreateConnection())
-                {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task EditDoctor(DTODoctor doctor, long doctor_code)
-        {
-            try
-            {
-                var query = "sp_master";
-
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.UpdateDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
+                parameters.Add("@Action", QueryConstant.InsertElectricityBill);
+                parameters.Add("@ELC_TRN_ID", newBikeFuleId);
+                parameters.Add("@ELC_PRICE", objElcBill.ELC_PRICE);
+                parameters.Add("@DATE", objElcBill.DATE);
+                parameters.Add("@COM_ID", objElcBill.COM_ID);
+                parameters.Add("@CRT_BY", objElcBill.CRT_BY);
 
 
 
                 using (var connection = context.CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
                 }
             }
             catch (Exception ex)
@@ -122,7 +91,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctor(long doctor_code)
+        public async Task EditElectricityBill(DTOElectricityBill objElcBill, long elcBill_id)
         {
             try
             {
@@ -130,15 +99,16 @@ namespace Lab_Mvc.Repositries
 
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.DeleteDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@Action", QueryConstant.UpdateElectricityBill);
+                parameters.Add("@ELC_TRN_ID", elcBill_id);
+                parameters.Add("@ELC_PRICE", objElcBill.ELC_PRICE);
+                parameters.Add("@DATE", objElcBill.DATE);
 
 
 
                 using (var connection = context.CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
                 }
             }
             catch (Exception ex)
@@ -147,13 +117,37 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        private async Task<long> GenerateDoctorId(int comId)
+        public async Task DeleteElectricityBill(long elcBill_id)
         {
-            string fixedPart = "3";
+            try
+            {
+                var query = "sp_master";
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.DeleteElectricityBill);
+                parameters.Add("@ELC_TRN_ID", elcBill_id);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task<long> GenerateElectricityBillId(string comId)
+        {
+            string fixedPart = "204";
             string fixedPartSec = comId.ToString();
             string likePattern = fixedPart + fixedPartSec + "%";
 
-            string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
+            string query = "SELECT TOP 1 ELC_TRN_ID FROM MST_ELECTRICITY_BILL WHERE ELC_TRN_ID LIKE @likePattern ORDER BY ELC_TRN_ID DESC";
 
             using (var connection = context.CreateConnection())
             {
@@ -167,13 +161,9 @@ namespace Lab_Mvc.Repositries
                     nextNumber = lastNumber + 1;
                 }
 
-                long newDoctorId = long.Parse(fixedPart + fixedPartSec + nextNumber);
-                return newDoctorId;
+                long newElectricityBillId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newElectricityBillId;
             }
         }
-
-
-
-
     }
 }

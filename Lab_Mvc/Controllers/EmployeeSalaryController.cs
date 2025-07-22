@@ -1,37 +1,30 @@
 ﻿using Lab_Mvc.Interfaces;
-using Lab_Mvc.Repositries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController : Controller
+    public class EmployeeSalaryController : Controller
     {
 
-        private readonly ITest testRepository;
+        private readonly IEmployeeSalary _empSalaryRepository;
 
-        //private readonly IMemoryCache _memoryCache;
-
-        public TestController(ITest testrepository)
+        public EmployeeSalaryController(IEmployeeSalary empsalaryrepository)
         {
-            this.testRepository = testrepository;
-            //this._memoryCache = memoryCache;
+            this._empSalaryRepository = empsalaryrepository;
         }
 
-
-
-        [HttpGet("Tests")]
-        public async Task<ActionResult> Tests([FromQuery]  int comId)
+        [HttpGet("EmployeeSalarys")]
+        public async Task<ActionResult> EmployeeSalary([FromQuery] int comId)
         {
+            var cacheKey = "MyKey";
             try
             {
-                return Ok(await testRepository.GetTests(comId));
+                return Ok(await _empSalaryRepository.GetEmployeeSalary(comId));
             }
             catch (Exception)
             {
@@ -39,15 +32,13 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-
-        [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        [HttpGet("EmployeeSalary/{empSal_id}")]
+        public async Task<ActionResult> GetEmployeeSalaryById(long empSal_id)
         {
             var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await _empSalaryRepository.GetEmployeeSalaryById(empSal_id));
             }
             catch (Exception)
             {
@@ -56,20 +47,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("SaveTest")]
-        public async Task<ActionResult<DTOTest>> SaveTest(DTOTest test)
-
+        [Route("SaveEmployeeSalary")]
+        public async Task<ActionResult<DTOEmployeeSalary>> SaveEmployeeSalary(DTOEmployeeSalary objEmpSlry)
         {
             try
             {
-                if (test == null)
+                if (objEmpSlry == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.SaveTest(test);
+                var createdProperty = _empSalaryRepository.SaveEmployeeSalary(objEmpSlry);
                 var result = new
                 {
-                    data = test,
+                    data = objEmpSlry,
                     Message = "success"
                 };
                 return Ok(result);
@@ -81,20 +71,19 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> EditTest(DTOTest test, long test_code)
-
+        [Route("EditEmployeeSalary/{empSal_id}")]
+        public async Task<ActionResult<DTOEmployeeSalary>> EditEmployeeSalary(DTOEmployeeSalary objEmpSlry, long empSal_id)
         {
             try
             {
-                if (test == null)
+                if (objEmpSlry == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.EditTest(test, test_code);
+                var createdProperty = _empSalaryRepository.EditEmployeeSalary(objEmpSlry, empSal_id);
                 var result = new
                 {
-                    data = test,
+                    data = objEmpSlry,
                     Message = "success"
                 };
                 return Ok(result);
@@ -106,23 +95,26 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
-
+        [Route("DeleteEmployeeSalary/{empSal_id}")]
+        public async Task<ActionResult<DTOEmployeeSalary>> DeleteEmployeeSalary(long empSal_id)
         {
             try
             {
-                if (test_code == null)
+                if (empSal_id == null)
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
-                return Ok(test_code);
+                var createdProperty = _empSalaryRepository.DeleteEmployeeSalary(empSal_id);
+                return Ok(empSal_id);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Saving Data");
             }
         }
+
+
+
+
     }
 }

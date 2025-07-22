@@ -5,6 +5,7 @@ using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
 using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab_Mvc.Repositries
 {
@@ -17,25 +18,30 @@ namespace Lab_Mvc.Repositries
             //_dbContext = dBContext;
             this.context = context;
         }
-        public async Task<IEnumerable<DTOTest>> GetTests()
+        public async Task<IEnumerable<DTOTest>> GetTests(int comId)
         {
             try
             {
-                var query = QueryConstant.GetTests;
+                var query = "sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetTests);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTOTest>(query);
+                    var tests = await connection.QueryAsync<DTOTest>(query, parameters);
                     return tests.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw; // good: don't use `throw ex`
             }
         }
 
-        public async Task<IEnumerable<DTOTest>> GetTestById(Int64 test_code)
+
+        public async Task<DTOTest> GetTestById(Int64 test_code)
         {
             try
             {
@@ -47,8 +53,8 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTOTest>(query, parameters);
-                    return tests.ToList();
+                    var tests = await connection.QuerySingleAsync<DTOTest>(query, parameters);
+                    return tests;
                 }
             }
             catch (Exception ex)
@@ -64,12 +70,18 @@ namespace Lab_Mvc.Repositries
                 var query = "sp_master";
 
 
+                Int64 newTestId = await GenerateTestId(test.COM_ID);
+
+
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.InsertTest);
-                parameters.Add("@TEST_CODE", test.TEST_CODE);
+                parameters.Add("@TEST_CODE", newTestId);
                 parameters.Add("@TEST_NAME", test.TEST_NAME);
                 parameters.Add("@PRICE", test.PRICE);
                 parameters.Add("@LAB_PRICE", test.LAB_PRICE);
+                parameters.Add("@COM_ID", test.COM_ID);
+                parameters.Add("@CRT_BY", test.CRT_BY);
+                parameters.Add("@STATUS_CODE", test.STATUS_CODE);
 
 
 
@@ -137,5 +149,32 @@ namespace Lab_Mvc.Repositries
                 throw ex;
             }
         }
+
+        private async Task<long> GenerateTestId(string comId)
+        {
+            string fixedPart = "2";
+            string fixedPartSec = comId;
+            string likePattern = fixedPart + fixedPartSec + "%";
+
+            string query = "SELECT TOP 1 TEST_CODE FROM MST_TEST WHERE TEST_CODE LIKE @likePattern ORDER BY TEST_CODE DESC";
+
+            using (var connection = context.CreateConnection())
+            {
+                string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
+
+                int nextNumber = 1;
+                if (!string.IsNullOrEmpty(lastId) && lastId.StartsWith(fixedPart + fixedPartSec))
+                {
+                    int prefixLength = (fixedPart + fixedPartSec).Length;
+                    int lastNumber = int.Parse(lastId.Substring(prefixLength));
+                    nextNumber = lastNumber + 1;
+                }
+
+                long newDoctorId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newDoctorId;
+            }
+        }
+
+
     }
 }

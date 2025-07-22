@@ -23,14 +23,13 @@ namespace Lab_Mvc.Controllers
             //this._memoryCache = memoryCache;
         }
 
-        [HttpGet("Doctor")]
-        public async Task<ActionResult> Doctors()
+
+        [HttpGet("Doctors")]
+        public async Task<ActionResult> GetDoctors([FromQuery] int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await doctorRepository.GetDoctors());
+                return Ok(await doctorRepository.GetDoctors(comId));
             }
             catch (Exception)
             {
@@ -38,7 +37,8 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("Doctor/{{doctor_code}}")]
+
+        [HttpGet("Doctor/{doctor_code}")]
         public async Task<ActionResult> DoctorById(long doctor_code)
         {
             var cacheKey = "MyKey";
@@ -65,7 +65,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = doctorRepository.SaveDoctor(doctor);
-                return Ok(doctor);
+                var result = new
+                {
+                    data = doctor,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -74,7 +79,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditDoctor/{{doctor_code}}")]
+        [Route("EditDoctor/{doctor_code}")]
         public async Task<ActionResult<DTODoctor>> EditDoctor(DTODoctor doctor, long doctor_code)
 
         {
@@ -85,7 +90,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = doctorRepository.EditDoctor(doctor, doctor_code);
-                return Ok(doctor);
+                var result = new
+                {
+                    data = doctor,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -94,7 +104,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteDoctor/{{doctor_code}}")]
+        [Route("DeleteDoctor/{doctor_code}")]
         public async Task<ActionResult<DTODoctor>> DeleteDoctor(long doctor_code)
 
         {

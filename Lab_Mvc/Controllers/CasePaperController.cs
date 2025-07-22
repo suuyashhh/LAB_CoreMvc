@@ -22,13 +22,11 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("CasePapers")]
-        public async Task<ActionResult> CasePapers()
+        public async Task<ActionResult> CasePapers([FromQuery] int comId)
         {
-            var cacheKey = "MyKey";
             try
             {
-                /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await casePaperRepository.GetCasePapers());
+                return Ok(await casePaperRepository.GetCasePapers(comId));
             }
             catch (Exception)
             {
@@ -36,7 +34,7 @@ namespace Lab_Mvc.Controllers
             }
         }
 
-        [HttpGet("CasePaper/{{trn_no}}")]
+        [HttpGet("CasePaper/{trn_no}")]
         public async Task<ActionResult> CasePaperById(long trn_no)
         {
             var cacheKey = "MyKey";
@@ -63,7 +61,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = casePaperRepository.SaveCasePaper(casepaper);
-                return Ok(casepaper);
+                var result = new
+                {
+                    data = casepaper,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -72,7 +75,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpPost]
-        [Route("EditCasePaper/{{trn_no}}")]
+        [Route("EditCasePaper/{trn_no}")]
         public async Task<ActionResult<DTOCasePaper>> EditCasePaper(DTOCasePaper casepaper, long trn_no)
 
         {
@@ -83,7 +86,12 @@ namespace Lab_Mvc.Controllers
                     return BadRequest();
                 }
                 var createdProperty = casePaperRepository.EditCasePaper(casepaper, trn_no);
-                return Ok(casepaper);
+                var result = new
+                {
+                    data = casepaper,
+                    Message = "success"
+                };
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -92,7 +100,7 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteCasePaper/{{trn_no}}")]
+        [Route("DeleteCasePaper/{trn_no}")]
         public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no)
 
         {

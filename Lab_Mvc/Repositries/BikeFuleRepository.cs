@@ -1,59 +1,58 @@
 ﻿using Dapper;
 using Lab_Mvc.Constants;
+using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
-using System.Numerics;
-using Lab_Mvc.Contest;
 
 namespace Lab_Mvc.Repositries
 {
-    public class DoctorRepository : IDoctor
+    public class BikeFuleRepository : IBikeFule
     {
         private readonly DapperContext context;
 
-        public DoctorRepository(DapperContext context)
+        public BikeFuleRepository(DapperContext context)
         {
-            //_dbContext = dBContext;
             this.context = context;
         }
 
-        public async Task<IEnumerable<DTODoctor>> GetDoctors(int comId)
+        public async Task<IEnumerable<DTOBikeFule>> GetBikeFule(int comId)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctors);
+                parameters.Add("@Action", QueryConstant.GetBikeFule);
                 parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters);
-                    return tests.ToList();
+                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters);
+                    return BikeFule.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw; // good: don't use `throw ex`
+                throw ex;
             }
+
         }
 
-        public async Task<DTODoctor> GetDoctorById(long doctor_code)
+        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id)
         {
             try
             {
                 var query = "sp_master";
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.GetDoctorById);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@Action", QueryConstant.GetBikeFuleById);
+                parameters.Add("@BIKE_ID", bike_id);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters);
-                    return Doctors;
+                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters);
+                    return BikeFule;
                 }
             }
             catch (Exception ex)
@@ -62,58 +61,29 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task SaveDoctor(DTODoctor doctor)
+        public async Task SaveBikeFule(DTOBikeFule objBike)
         {
             try
             {
                 var query = "sp_master";
 
 
-                Int64 newDoctorId = await GenerateDoctorId(doctor.COM_ID);
+                Int64 newBikeFuleId = await GenerateBikeFuleId(objBike.COM_ID);
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.InsertDoctor);
-                parameters.Add("@DOCTOR_CODE", newDoctorId);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
-                parameters.Add("@COM_ID", doctor.COM_ID); 
-                parameters.Add("@CRT_BY", doctor.CRT_BY); 
-
-
-
-                using (var connection = context.CreateConnection())
-                {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task EditDoctor(DTODoctor doctor, long doctor_code)
-        {
-            try
-            {
-                var query = "sp_master";
-
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.UpdateDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
-                parameters.Add("@DOCTOR_NAME", doctor.DOCTOR_NAME);
-                parameters.Add("@DOCTOR_ADDRESS", doctor.DOCTOR_ADDRESS);
-                parameters.Add("@DOCTOR_NUMBER", doctor.DOCTOR_NUMBER);
+                parameters.Add("@Action", QueryConstant.InsertBikeFule);
+                parameters.Add("@BIKE_ID", newBikeFuleId);
+                parameters.Add("@BIKE_NAME", objBike.BIKE_NAME);
+                parameters.Add("@BIKE_PRICE", objBike.BIKE_PRICE);
+                parameters.Add("@DATE", objBike.DATE);
+                parameters.Add("@COM_ID", objBike.COM_ID);
+                parameters.Add("@CRT_BY", objBike.CRT_BY);
 
 
 
                 using (var connection = context.CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
                 }
             }
             catch (Exception ex)
@@ -122,7 +92,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctor(long doctor_code)
+        public async Task EditBikeFule(DTOBikeFule objBike, long bike_id)
         {
             try
             {
@@ -130,15 +100,17 @@ namespace Lab_Mvc.Repositries
 
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.DeleteDoctor);
-                parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@Action", QueryConstant.UpdateBikeFule);
+                parameters.Add("@BIKE_ID", bike_id);
+                parameters.Add("@BIKE_NAME", objBike.BIKE_NAME);
+                parameters.Add("@BIKE_PRICE", objBike.BIKE_PRICE);
+                parameters.Add("@DATE", objBike.DATE);
 
 
 
                 using (var connection = context.CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
                 }
             }
             catch (Exception ex)
@@ -147,13 +119,37 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        private async Task<long> GenerateDoctorId(int comId)
+        public async Task DeleteBikeFule(long bike_id)
         {
-            string fixedPart = "3";
+            try
+            {
+                var query = "sp_master";
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.DeleteBikeFule);
+                parameters.Add("@BIKE_ID", bike_id);
+
+
+
+                using (var connection = context.CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task<long> GenerateBikeFuleId(string comId)
+        {
+            string fixedPart = "202";
             string fixedPartSec = comId.ToString();
             string likePattern = fixedPart + fixedPartSec + "%";
 
-            string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
+            string query = "SELECT TOP 1 BIKE_ID FROM MST_BIKE_FULE WHERE BIKE_ID LIKE @likePattern ORDER BY BIKE_ID DESC";
 
             using (var connection = context.CreateConnection())
             {
@@ -167,12 +163,10 @@ namespace Lab_Mvc.Repositries
                     nextNumber = lastNumber + 1;
                 }
 
-                long newDoctorId = long.Parse(fixedPart + fixedPartSec + nextNumber);
-                return newDoctorId;
+                long newBikeFuleId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newBikeFuleId;
             }
         }
-
-
 
 
     }
