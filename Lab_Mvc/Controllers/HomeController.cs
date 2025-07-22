@@ -1,10 +1,11 @@
 ﻿using Lab_Mvc.Interfaces;
 using Lab_Mvc.Repositries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lab_Mvc.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class HomeController : Controller

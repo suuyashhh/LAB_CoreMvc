@@ -1,9 +1,11 @@
 ﻿using Lab_Mvc.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
 namespace Lab_Mvc.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OtherExpenseController : Controller
