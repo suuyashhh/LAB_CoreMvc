@@ -6,6 +6,7 @@ namespace Lab_Mvc.Interfaces
     {
         Task<IEnumerable<DTODoctorCommission>> GetDoctorCommission(int comId);
         Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id);
+        Task<List<DTODoctorCommission>> GetDateWiseDocCommission(string from_date, string to_date);
         Task SaveDoctorCommission(DTODoctorCommission objDocCom);
         Task EditDoctorCommission(DTODoctorCommission objDocCom, long docCom_id);
         Task DeleteDoctorCommission(long docCom_id);

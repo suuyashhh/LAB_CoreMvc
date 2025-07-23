@@ -45,6 +45,20 @@ namespace Lab_Mvc.Controllers
             }
         }
 
+        [HttpGet("GetDateWiseOthMaterials/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseOthMaterials(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _otherExpaenseRepository.GetDateWiseOthMaterials(from_date, to_date));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("SaveOtherExpense")]
         public async Task<ActionResult<DTOOtherExpense>> SaveOtherExpense(DTOOtherExpense objOtherEx)
