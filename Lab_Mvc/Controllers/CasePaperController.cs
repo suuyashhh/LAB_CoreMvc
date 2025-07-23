@@ -49,6 +49,20 @@ namespace Lab_Mvc.Controllers
             }
         }
 
+        [HttpGet("GetDateWiseCasePaper/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseCasePaper(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await casePaperRepository.GetDateWiseCasePaper(from_date, to_date));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("SaveCasePaper")]
         public async Task<ActionResult<DTOCasePaper>> SaveCasePaper(DTOCasePaper casepaper)

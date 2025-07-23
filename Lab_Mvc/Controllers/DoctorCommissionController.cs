@@ -45,6 +45,20 @@ namespace Lab_Mvc.Controllers
             }
         }
 
+        [HttpGet("GetDateWiseDocCommission/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseDocCommission(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _docComRepository.GetDateWiseDocCommission(from_date, to_date));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("SaveDoctorCommission")]
         public async Task<ActionResult<DTODoctorCommission>> SaveDoctorCommission(DTODoctorCommission objDocCom)

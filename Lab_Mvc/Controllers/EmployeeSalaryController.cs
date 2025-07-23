@@ -46,6 +46,20 @@ namespace Lab_Mvc.Controllers
             }
         }
 
+        [HttpGet("GetDateWiseEmpSalary/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseEmpSalary(string from_date, string to_date)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _empSalaryRepository.GetDateWiseEmpSalary(from_date, to_date));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("SaveEmployeeSalary")]
         public async Task<ActionResult<DTOEmployeeSalary>> SaveEmployeeSalary(DTOEmployeeSalary objEmpSlry)

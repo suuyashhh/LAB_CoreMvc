@@ -61,6 +61,31 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTOEmployeeSalary>> GetDateWiseEmpSalary(string from_date, string to_date)
+        {
+            try
+            {
+                const string query = "sp_master";
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseEmpSalary);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTOEmployeeSalary>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
+
         public async Task SaveEmployeeSalary(DTOEmployeeSalary objEmpSlry)
         {
             try
