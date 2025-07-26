@@ -18,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+builder.Services.AddScoped<IAdmin, AdminRepository>();
 builder.Services.AddScoped<ITest, TestRepository>();
 builder.Services.AddScoped<IDoctor, DoctorRepository>();
 builder.Services.AddScoped<ICasePaper, CasePaperRepository>();

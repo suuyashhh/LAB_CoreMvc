@@ -4,6 +4,9 @@
     {
         public static string Login = "Login";
 
+        public static string GetCompanies = "Companies";
+
+
         public static string GetTests = "Tests";
         public static string GetTestById = "GetTestById"; 
         public static string InsertTest = "InsertTest";

@@ -132,6 +132,7 @@ namespace Lab_Mvc.Repositries
                             parameters.Add("@PAYMENT_METHOD", casepaper.PAYMENT_METHOD);
                             parameters.Add("@COLLECTION_TYPE", casepaper.COLLECTION_TYPE);
                             parameters.Add("@PAYMENT_STATUS", casepaper.PAYMENT_STATUS);
+                            parameters.Add("@CRT_BY", casepaper.CRT_BY);
 
                             await connection.ExecuteAsync(query, parameters, transaction, commandType: CommandType.StoredProcedure);
 
@@ -183,33 +184,74 @@ namespace Lab_Mvc.Repositries
         }
 
 
-        public async Task EditCasePaper(DTOCasePaper casepaper, long trn_no)
+        public async Task EditCasePaper(DTOCasePaper casepaper, Int64 trn_no)
         {
             try
             {
                 var query = "sp_master";
-
-
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", QueryConstant.UpdateCasePaper);
-                parameters.Add("@TRN_NO", trn_no);
-                parameters.Add("@PATIENT_NAME", casepaper.PATIENT_NAME);
-                parameters.Add("@GENDER", casepaper.GENDER);
-                parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
-                parameters.Add("@ADDRESS", casepaper.ADDRESS);
-                parameters.Add("@DOCTOR_REF", casepaper.DOCTOR_CODE);
-                parameters.Add("@DATE", casepaper.DATE);
-                parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
-                parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
-                parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
-                parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
-
-
-
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Step 1: Update CasePaper & Delete Old Test Entries
+                            var parameters = new DynamicParameters();
+                            parameters.Add("@Action", QueryConstant.UpdateCasePaper);
+                            parameters.Add("@TRN_NO", trn_no);
+                            parameters.Add("@PATIENT_NAME", casepaper.PATIENT_NAME);
+                            parameters.Add("@GENDER", casepaper.GENDER);
+                            parameters.Add("@CON_NUMBER", casepaper.CON_NUMBER);
+                            parameters.Add("@ADDRESS", casepaper.ADDRESS);
+                            parameters.Add("@DOCTOR_CODE", casepaper.DOCTOR_CODE);
+                            parameters.Add("@DATE", casepaper.DATE);
+                            parameters.Add("@STATUS_CODE", casepaper.STATUS_CODE);
+                            parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
+                            parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
+                            parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
+
+                            await connection.ExecuteAsync(query, parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                            // Step 2: Re-insert Updated Test Items
+                            if (casepaper.MatIs != null && casepaper.MatIs.Any())
+                            {
+                                var testTable = new DataTable();
+                                testTable.Columns.Add("TEST_CODE", typeof(Int64));
+                                testTable.Columns.Add("TRN_NO", typeof(Int64));
+                                testTable.Columns.Add("SR_NO", typeof(int));
+                                testTable.Columns.Add("PRICE", typeof(decimal));
+                                testTable.Columns.Add("LAB_PRICE", typeof(decimal));
+                                testTable.Columns.Add("COM_ID", typeof(int));
+
+                                int srNo = 1;
+                                foreach (var test in casepaper.MatIs)
+                                {
+                                    testTable.Rows.Add(
+                                        test.TEST_CODE,
+                                        trn_no,
+                                        srNo++,
+                                        test.PRICE,
+                                        test.LAB_PRICE,
+                                        casepaper.COM_ID
+                                    );
+                                }
+
+                                var testParams = new DynamicParameters();
+                                testParams.Add("@Action", "InsertCasePaperTests");
+                                testParams.Add("@TestItems", testTable.AsTableValuedParameter("dbo.TestTableType"));
+
+                                await connection.ExecuteAsync(query, testParams, transaction, commandType: CommandType.StoredProcedure);
+                            }
+
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -218,7 +260,8 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteCasePaper(long trn_no)
+
+        public async Task DeleteCasePaper(Int64 trn_no)
         {
             try
             {
@@ -244,7 +287,7 @@ namespace Lab_Mvc.Repositries
         }
 
 
-        private async Task<long> GenerateNewPatientId(string comId)
+        private async Task<Int64> GenerateNewPatientId(string comId)
         {
             // Format: yyMMdd (e.g., 250507 for May 7, 2025)
             string datePart = DateTime.UtcNow.AddHours(5.5).ToString("yyMMdd", CultureInfo.InvariantCulture);
