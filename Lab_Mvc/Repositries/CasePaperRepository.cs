@@ -210,6 +210,10 @@ namespace Lab_Mvc.Repositries
                             parameters.Add("@TOTAL_AMOUNT", casepaper.TOTAL_AMOUNT);
                             parameters.Add("@TOTAL_PROFIT", casepaper.TOTAL_PROFIT);
                             parameters.Add("@DISCOUNT", casepaper.DISCOUNT);
+                            parameters.Add("@PAYMENT_AMOUNT", casepaper.PAYMENT_AMOUNT);
+                            parameters.Add("@PAYMENT_METHOD", casepaper.PAYMENT_METHOD);
+                            parameters.Add("@COLLECTION_TYPE", casepaper.COLLECTION_TYPE);
+                            parameters.Add("@PAYMENT_STATUS", casepaper.PAYMENT_STATUS);
 
                             await connection.ExecuteAsync(query, parameters, transaction, commandType: CommandType.StoredProcedure);
 
