@@ -90,7 +90,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpPost]
         [Route("EditCasePaper/{trn_no}")]
-        public async Task<ActionResult<DTOCasePaper>> EditCasePaper(DTOCasePaper casepaper, long trn_no)
+        public async Task<ActionResult<DTOCasePaper>> EditCasePaper([FromBody] DTOCasePaper casepaper, [FromRoute] Int64 trn_no)
 
         {
             try

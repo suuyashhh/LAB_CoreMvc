@@ -8,7 +8,7 @@ namespace Models
 {
     public class DTOCasePaper
     {
-        public Int64 TRN_NO { get; set; }
+        public Int64? TRN_NO { get; set; }
         public string PATIENT_NAME { get; set; }
         public string GENDER { get; set; }
         public string CON_NUMBER { get; set; }
