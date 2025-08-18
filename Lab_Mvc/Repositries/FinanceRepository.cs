@@ -14,7 +14,7 @@ namespace Lab_Mvc.Repositries
         {
             this.context = context;
         }
-        public async Task<DTOFinance> GetFinanceById(string from_date, string to_date)
+        public async Task<DTOFinance> GetFinanceById(string from_date, string to_date, int comId)
         {
             try
             {
@@ -25,6 +25,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@Action", QueryConstant.GetFinanceById);
                     parameters.Add("@From_Date",from_date);
                     parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
 
                     var FinanceIndexCount = await connection.QuerySingleAsync<DTOFinance>(query, parameters);
                     return FinanceIndexCount;

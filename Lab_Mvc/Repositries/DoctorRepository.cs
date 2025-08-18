@@ -40,7 +40,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<DTODoctor> GetDoctorById(long doctor_code)
+        public async Task<DTODoctor> GetDoctorById(long doctor_code, int comId)
         {
             try
             {
@@ -49,6 +49,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorById);
                 parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -122,7 +123,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctor(long doctor_code)
+        public async Task DeleteDoctor(long doctor_code, int comId)
         {
             try
             {
@@ -132,7 +133,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteDoctor);
                 parameters.Add("@DOCTOR_CODE", doctor_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

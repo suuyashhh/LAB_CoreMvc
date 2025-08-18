@@ -36,13 +36,13 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("Employee/{emp_code}")]
-        public async Task<ActionResult> GetEmployeeById(long emp_code)
+        public async Task<ActionResult> GetEmployeeById(long emp_code, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await employeeRepository.GetEmployeeById(emp_code));
+                return Ok(await employeeRepository.GetEmployeeById(emp_code, comId));
             }
             catch (Exception)
             {
@@ -102,7 +102,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteEmployee/{emp_code}")]
-        public async Task<ActionResult<DTOEmployee>> DeleteEmployee(long emp_code)
+        public async Task<ActionResult<DTOEmployee>> DeleteEmployee(long emp_code, [FromQuery] int comId)
 
         {
             try
@@ -111,7 +111,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = employeeRepository.DeleteEmployee(emp_code);
+                var createdProperty = employeeRepository.DeleteEmployee(emp_code, comId);
                 return Ok(emp_code);
             }
             catch (Exception)

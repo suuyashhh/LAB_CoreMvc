@@ -7,11 +7,11 @@ namespace Lab_Mvc.Interfaces
     {
 
         Task<IEnumerable<DTOTest>> GetTests(int comId);
-        Task<DTOTest> GetTestById(Int64 test_code);
+        Task<DTOTest> GetTestById(Int64 test_code, int comId);
 
         Task SaveTest(DTOTest test);
         Task EditTest(DTOTest test,long test_code);
-        Task DeleteTest(long test_code);
+        Task DeleteTest(long test_code, int comId);
 
     }
 }

@@ -17,12 +17,12 @@ namespace Lab_Mvc.Controllers
 
 
         [HttpGet("Finance/{from_date},{to_date}")]
-        public async Task<ActionResult> GetFinanceById(string from_date, string to_date)
+        public async Task<ActionResult> GetFinanceById(string from_date, string to_date, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await financeRepository.GetFinanceById(from_date, to_date));
+                return Ok(await financeRepository.GetFinanceById(from_date, to_date, comId));
             }
             catch (Exception)
             {

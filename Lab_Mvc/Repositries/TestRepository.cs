@@ -41,7 +41,7 @@ namespace Lab_Mvc.Repositries
         }
 
 
-        public async Task<DTOTest> GetTestById(Int64 test_code)
+        public async Task<DTOTest> GetTestById(Int64 test_code, int comId)
         {
             try
             {
@@ -50,6 +50,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetTestById);
                 parameters.Add("@TEST_CODE", test_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -125,7 +126,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteTest(long test_code)
+        public async Task DeleteTest(long test_code, int comId)
         {
             try
             {
@@ -135,7 +136,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteTest);
                 parameters.Add("@TEST_CODE", test_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

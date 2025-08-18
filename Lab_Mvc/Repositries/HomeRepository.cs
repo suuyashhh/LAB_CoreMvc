@@ -15,7 +15,7 @@ namespace Lab_Mvc.Repositries
         {
             this.context = context;
         }
-        public async Task<DTOHome> GetHomeById(string from_date, string to_date)
+        public async Task<DTOHome> GetHomeById(string from_date, string to_date, int comId)
         {
             try
             {
@@ -26,7 +26,8 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@Action", QueryConstant.GetHomeById);
                     parameters.Add("@From_Date", from_date);
                     parameters.Add("@To_Date", to_date);
-                                       
+                    parameters.Add("@COM_ID", comId);
+
                     var HomeIndexCount = await connection.QuerySingleAsync<DTOHome>(query, parameters);
                     return HomeIndexCount;                   
 

@@ -5,9 +5,9 @@ namespace Lab_Mvc.Interfaces
     public interface IEmployee
     {
         Task<IEnumerable<DTOEmployee>> GetEmployees(int comId);
-        Task<DTOEmployee> GetEmployeeById(long emp_code);
+        Task<DTOEmployee> GetEmployeeById(long emp_code, int comId);
         Task SaveEmployee(DTOEmployee emp);
         Task EditEmployee(DTOEmployee emp, long emp_code);
-        Task DeleteEmployee(long emp_code);
+        Task DeleteEmployee(long emp_code, int comId);
     }
 }

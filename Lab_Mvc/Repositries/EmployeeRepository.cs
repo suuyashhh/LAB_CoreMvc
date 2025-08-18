@@ -39,7 +39,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<DTOEmployee> GetEmployeeById(long emp_code)
+        public async Task<DTOEmployee> GetEmployeeById(long emp_code, int comId)
         {
             try
             {
@@ -48,6 +48,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeById);
                 parameters.Add("@EMP_ID", emp_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -120,7 +121,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteEmployee(long emp_code)
+        public async Task DeleteEmployee(long emp_code, int comId)
         {
             try
             {
@@ -130,7 +131,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteEmployee);
                 parameters.Add("@EMP_ID", emp_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

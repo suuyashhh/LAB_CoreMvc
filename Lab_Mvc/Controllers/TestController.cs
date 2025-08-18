@@ -41,13 +41,13 @@ namespace Lab_Mvc.Controllers
 
 
         [HttpGet("Test/{test_code}")]
-        public async Task<ActionResult> TestById(Int64 test_code)
+        public async Task<ActionResult> TestById(Int64 test_code, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await testRepository.GetTestById(test_code));
+                return Ok(await testRepository.GetTestById(test_code, comId));
             }
             catch (Exception)
             {
@@ -107,7 +107,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteTest/{test_code}")]
-        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code)
+        public async Task<ActionResult<DTOTest>> DeleteTest(long test_code, [FromQuery] int comId)
 
         {
             try
@@ -116,7 +116,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = testRepository.DeleteTest(test_code);
+                var createdProperty = testRepository.DeleteTest(test_code, comId);
                 return Ok(test_code);
             }
             catch (Exception)

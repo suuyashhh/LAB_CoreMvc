@@ -39,7 +39,7 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id)
+        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id, int comId)
         {
             try
             {
@@ -48,6 +48,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorCommissionById);
                 parameters.Add("@DOC_COM_ID", docCom_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -61,7 +62,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<List<DTODoctorCommission>> GetDateWiseDocCommission(string from_date, string to_date)
+        public async Task<List<DTODoctorCommission>> GetDateWiseDocCommission(string from_date, string to_date, int comId)
         {
             try
             {
@@ -72,6 +73,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@Action", QueryConstant.GetDateWiseDocCommission);
                     parameters.Add("@From_Date", from_date);
                     parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
 
                     using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
                     {
@@ -143,7 +145,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctorCommission(long docCom_id)
+        public async Task DeleteDoctorCommission(long docCom_id, int comId)
         {
             try
             {
@@ -153,7 +155,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteDoctorCommission);
                 parameters.Add("@DOC_COM_ID", docCom_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())
