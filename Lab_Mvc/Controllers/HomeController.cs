@@ -18,12 +18,12 @@ namespace Lab_Mvc.Controllers
 
 
         [HttpGet("Home/{from_date},{to_date}")]
-        public async Task<ActionResult> GetHomeById(string from_date, string to_date)
+        public async Task<ActionResult> GetHomeById(string from_date, string to_date, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await homeRepository.GetHomeById(from_date, to_date));
+                return Ok(await homeRepository.GetHomeById(from_date, to_date, comId));
             }
             catch (Exception)
             {

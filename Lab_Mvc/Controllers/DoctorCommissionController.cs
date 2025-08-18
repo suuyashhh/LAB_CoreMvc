@@ -32,12 +32,12 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("DoctorCommission/{docCom_id}")]
-        public async Task<ActionResult> GetDoctorCommissionById(long docCom_id)
+        public async Task<ActionResult> GetDoctorCommissionById(long docCom_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _docComRepository.GetDoctorCommissionById(docCom_id));
+                return Ok(await _docComRepository.GetDoctorCommissionById(docCom_id, comId));
             }
             catch (Exception)
             {
@@ -46,12 +46,12 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("GetDateWiseDocCommission/{from_date},{to_date}")]
-        public async Task<ActionResult> GetDateWiseDocCommission(string from_date, string to_date)
+        public async Task<ActionResult> GetDateWiseDocCommission(string from_date, string to_date, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _docComRepository.GetDateWiseDocCommission(from_date, to_date));
+                return Ok(await _docComRepository.GetDateWiseDocCommission(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -109,7 +109,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteDoctorCommission/{docCom_id}")]
-        public async Task<ActionResult<DTODoctorCommission>> DeleteDoctorCommission(long docCom_id)
+        public async Task<ActionResult<DTODoctorCommission>> DeleteDoctorCommission(long docCom_id, [FromQuery] int comId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = _docComRepository.DeleteDoctorCommission(docCom_id);
+                var createdProperty = _docComRepository.DeleteDoctorCommission(docCom_id, comId);
                 return Ok(docCom_id);
             }
             catch (Exception)

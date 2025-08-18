@@ -5,9 +5,9 @@ namespace Lab_Mvc.Interfaces
     public interface IDoctor
     {
         Task<IEnumerable<DTODoctor>> GetDoctors(int comId);
-        Task<DTODoctor> GetDoctorById(long doctor_code);
+        Task<DTODoctor> GetDoctorById(long doctor_code, int comId);
         Task SaveDoctor(DTODoctor doctor);
         Task EditDoctor(DTODoctor doctor, long doctor_code);
-        Task DeleteDoctor(long doctor_code);
+        Task DeleteDoctor(long doctor_code, int comId);
     }
 }

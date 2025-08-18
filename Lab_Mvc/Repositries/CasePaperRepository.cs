@@ -42,7 +42,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<DTOCasePaper> GetCasePaperById(Int64 trn_no)
+        public async Task<DTOCasePaper> GetCasePaperById(Int64 trn_no, int comId)
         {
             try
             {
@@ -52,6 +52,7 @@ namespace Lab_Mvc.Repositries
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetCasePaperById);
                     parameters.Add("@TRN_NO", trn_no);
+                    parameters.Add("@COM_ID", comId);
 
                     using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
                     {
@@ -72,7 +73,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<List<DTOCasePaper>> GetDateWiseCasePaper(string from_date, string to_date)
+        public async Task<List<DTOCasePaper>> GetDateWiseCasePaper(string from_date, string to_date, int comId)
         {
             try
             {
@@ -84,6 +85,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@Action", QueryConstant.GetDateWiseCasePaper);
                     parameters.Add("@From_Date", from_date);
                     parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
 
                     using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
                     {
@@ -265,7 +267,7 @@ namespace Lab_Mvc.Repositries
         }
 
 
-        public async Task DeleteCasePaper(Int64 trn_no)
+        public async Task DeleteCasePaper(Int64 trn_no, int comId)
         {
             try
             {
@@ -275,7 +277,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteCasePaper);
                 parameters.Add("@TRN_NO", trn_no);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

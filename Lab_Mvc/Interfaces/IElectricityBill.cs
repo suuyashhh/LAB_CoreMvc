@@ -5,10 +5,10 @@ namespace Lab_Mvc.Interfaces
     public interface IElectricityBill
     {
         Task<IEnumerable<DTOElectricityBill>> GetElectricityBill(int comId);
-        Task<DTOElectricityBill> GetElectricityBillById(long elcBill_id);
-        Task<List<DTOElectricityBill>> GetDateWiseElcBill(string from_date, string to_date);
+        Task<DTOElectricityBill> GetElectricityBillById(long elcBill_id, int comId);
+        Task<List<DTOElectricityBill>> GetDateWiseElcBill(string from_date, string to_date, int comId);
         Task SaveElectricityBill(DTOElectricityBill objElcBill);
         Task EditElectricityBill(DTOElectricityBill objElcBill, long elcBill_id);
-        Task DeleteElectricityBill(long elcBill_id);
+        Task DeleteElectricityBill(long elcBill_id, int comId);
     }
 }

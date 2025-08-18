@@ -39,15 +39,16 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id)
+        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetBikeFuleById);
                 parameters.Add("@BIKE_ID", bike_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
@@ -61,7 +62,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<List<DTOBikeFule>> GetDateWiseBikeFule(string from_date, string to_date)
+        public async Task<List<DTOBikeFule>> GetDateWiseBikeFule(string from_date, string to_date, int comId)
         {
             try
             {
@@ -72,6 +73,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@Action", QueryConstant.GetDateWiseBikeFule);
                     parameters.Add("@From_Date", from_date);
                     parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
 
                     using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
                     {
@@ -143,7 +145,7 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteBikeFule(long bike_id)
+        public async Task DeleteBikeFule(long bike_id, int comId)
         {
             try
             {
@@ -153,7 +155,7 @@ namespace Lab_Mvc.Repositries
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteBikeFule);
                 parameters.Add("@BIKE_ID", bike_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

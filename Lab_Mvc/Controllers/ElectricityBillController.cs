@@ -32,12 +32,12 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("ElectricityBill/{elcBill_id}")]
-        public async Task<ActionResult> GetElectricityBillById(long elcBill_id)
+        public async Task<ActionResult> GetElectricityBillById(long elcBill_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _electricityBillRepository.GetElectricityBillById(elcBill_id));
+                return Ok(await _electricityBillRepository.GetElectricityBillById(elcBill_id, comId));
             }
             catch (Exception)
             {
@@ -46,12 +46,12 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("GetDateWiseElcBill/{from_date},{to_date}")]
-        public async Task<ActionResult> GetDateWiseElcBill(string from_date, string to_date)
+        public async Task<ActionResult> GetDateWiseElcBill(string from_date, string to_date, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _electricityBillRepository.GetDateWiseElcBill(from_date, to_date));
+                return Ok(await _electricityBillRepository.GetDateWiseElcBill(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -109,7 +109,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteElectricityBill/{elcBill_id}")]
-        public async Task<ActionResult<DTOElectricityBill>> DeleteElectricityBill(long elcBill_id)
+        public async Task<ActionResult<DTOElectricityBill>> DeleteElectricityBill(long elcBill_id, [FromQuery] int comId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = _electricityBillRepository.DeleteElectricityBill(elcBill_id);
+                var createdProperty = _electricityBillRepository.DeleteElectricityBill(elcBill_id, comId);
                 return Ok(elcBill_id);
             }
             catch (Exception)

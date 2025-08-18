@@ -35,13 +35,13 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("CasePaper/{trn_no}")]
-        public async Task<ActionResult> CasePaperById(long trn_no)
+        public async Task<ActionResult> CasePaperById(long trn_no, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await casePaperRepository.GetCasePaperById(trn_no));
+                return Ok(await casePaperRepository.GetCasePaperById(trn_no, comId));
             }
             catch (Exception)
             {
@@ -50,12 +50,12 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("GetDateWiseCasePaper/{from_date},{to_date}")]
-        public async Task<ActionResult> GetDateWiseCasePaper(string from_date, string to_date)
+        public async Task<ActionResult> GetDateWiseCasePaper(string from_date, string to_date, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await casePaperRepository.GetDateWiseCasePaper(from_date, to_date));
+                return Ok(await casePaperRepository.GetDateWiseCasePaper(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -115,7 +115,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteCasePaper/{trn_no}")]
-        public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no)
+        public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no, [FromQuery] int comId)
 
         {
             try
@@ -124,7 +124,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = casePaperRepository.DeleteCasePaper(trn_no);
+                var createdProperty = casePaperRepository.DeleteCasePaper(trn_no, comId);
                 return Ok(trn_no);
             }
             catch (Exception)
