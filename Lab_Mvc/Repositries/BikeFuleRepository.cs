@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetBikeFule);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters);
+                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule.ToList();
                 }
             }
@@ -52,7 +52,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters);
+                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule;
                 }
             }
@@ -66,7 +66,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -91,7 +91,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newBikeFuleId = await GenerateBikeFuleId(objBike.COM_ID);
@@ -122,7 +122,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -149,7 +149,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();

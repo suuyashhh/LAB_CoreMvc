@@ -19,7 +19,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@To_Date", to_date);
                     parameters.Add("@COM_ID", comId);
 
-                    var HomeIndexCount = await connection.QuerySingleAsync<DTOHome>(query, parameters);
+                    var HomeIndexCount = await connection.QuerySingleAsync<DTOHome>(query, parameters, commandType: CommandType.StoredProcedure);
                     return HomeIndexCount;                   
 
                 }

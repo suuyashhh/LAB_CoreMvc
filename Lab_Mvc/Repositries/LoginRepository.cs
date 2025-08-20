@@ -22,7 +22,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();

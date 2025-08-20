@@ -2,6 +2,9 @@
 {
     public class QueryConstant
     {
+        public static string sp = "sp_master";
+
+
         public static string Login = "Login";
 
         public static string GetCompanies = "Companies";

@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeSalary);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters);
+                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary.ToList();
                 }
             }
@@ -43,7 +43,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeSalaryById);
@@ -52,7 +52,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters);
+                    var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary;
                 }
             }
@@ -66,7 +66,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -92,7 +92,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newEmployeeSalaryId = await GenerateEmployeeSalaryId(objEmpSlry.COM_ID);
@@ -123,7 +123,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -150,7 +150,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();

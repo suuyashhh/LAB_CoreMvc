@@ -21,7 +21,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetLabMaterials);
                 parameters.Add("@COM_ID", comId);
@@ -47,7 +47,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "dbo.sp_master";
+                var query = "dbo.sp_master";
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetMaterialById);
                 parameters.Add("@MAT_ID", mat_id);
@@ -74,7 +74,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDateWiseLabMaterials);
                 parameters.Add("@From_Date", from_date);
@@ -101,7 +101,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
 
                 long newMatId = await GenerateLabMaterialsId(objMat.COM_ID);
 
@@ -133,7 +133,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.UpdateMaterials);
@@ -161,7 +161,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteMaterials);
