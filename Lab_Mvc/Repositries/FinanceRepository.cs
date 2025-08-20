@@ -3,6 +3,7 @@ using Lab_Mvc.Constants;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
+using System.Data;
 
 namespace Lab_Mvc.Repositries
 {
@@ -18,7 +19,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -27,7 +28,7 @@ namespace Lab_Mvc.Repositries
                     parameters.Add("@To_Date", to_date);
                     parameters.Add("@COM_ID", comId);
 
-                    var FinanceIndexCount = await connection.QuerySingleAsync<DTOFinance>(query, parameters);
+                    var FinanceIndexCount = await connection.QuerySingleAsync<DTOFinance>(query, parameters, commandType: CommandType.StoredProcedure);
                     return FinanceIndexCount;
 
                 }

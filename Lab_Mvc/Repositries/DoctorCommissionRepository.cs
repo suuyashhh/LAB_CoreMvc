@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorCommission);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters);
+                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission.ToList();
                 }
             }
@@ -43,7 +43,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorCommissionById);
@@ -52,7 +52,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters);
+                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission;
                 }
             }
@@ -66,7 +66,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -91,7 +91,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newDoctorCommissionId = await GenerateDoctorCommissionId(objDocCom.COM_ID);
@@ -122,7 +122,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -149,7 +149,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();

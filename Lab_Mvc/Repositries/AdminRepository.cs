@@ -3,6 +3,7 @@ using Lab_Mvc.Constants;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
+using System.Data;
 
 namespace Lab_Mvc.Repositries
 {
@@ -19,14 +20,14 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetCompanies);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var admins = await connection.QueryAsync<DTOAdmin>(query, parameters);
+                    var admins = await connection.QueryAsync<DTOAdmin>(query, parameters, commandType: CommandType.StoredProcedure);
                     return admins.ToList();
                 }
             }

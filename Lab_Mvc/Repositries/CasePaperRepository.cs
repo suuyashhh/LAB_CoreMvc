@@ -24,7 +24,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetCasePapers);
@@ -32,7 +32,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var CasePapers = await connection.QueryAsync<DTOCasePaper>(query, parameters);
+                    var CasePapers = await connection.QueryAsync<DTOCasePaper>(query, parameters, commandType: CommandType.StoredProcedure);
                     return CasePapers.ToList();
                 }
             }
@@ -46,7 +46,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
@@ -77,7 +77,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
 
                 using (var connection = context.CreateConnection())
                 {
@@ -105,7 +105,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     connection.Open();
@@ -190,7 +190,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     connection.Open();
@@ -271,7 +271,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
