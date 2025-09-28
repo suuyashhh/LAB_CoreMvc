@@ -84,5 +84,7 @@
 
 
         public static string GetFinanceById = "GetFinanceIndex";
+
+        public static string ApproveCasePapers = "ApproveCasePapers";
     }
 }

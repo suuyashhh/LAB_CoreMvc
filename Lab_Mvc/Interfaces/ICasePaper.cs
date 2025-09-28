@@ -11,5 +11,6 @@ namespace Lab_Mvc.Interfaces
         Task EditCasePaper(DTOCasePaper casepaper, Int64 trn_no);
         Task DeleteCasePaper(long trn_no, int comId);
         //Task<long> GenerateNewPatientId(Int64 comId);
+        Task<bool> ApproveCasePapers(List<long> trnNumbers);
     }
 }

@@ -318,6 +318,47 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<bool> ApproveCasePapers(List<long> trnNumbers)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+                using (var connection = context.CreateConnection())
+                {
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            foreach (var trnNo in trnNumbers)
+                            {
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@Action", QueryConstant.ApproveCasePapers);
+                                parameters.Add("@TRN_NO", trnNo);
+                                parameters.Add("@STATUS_CODE", 101); 
+
+                                await connection.ExecuteAsync(query, parameters, transaction, commandType: CommandType.StoredProcedure);
+                            }
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
 
     }

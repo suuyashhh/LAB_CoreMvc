@@ -132,5 +132,24 @@ namespace Lab_Mvc.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Saving Data");
             }
         }
+
+
+        [HttpPost("ApproveCasePapers")]
+        public async Task<IActionResult> ApproveCasePapers([FromBody] ApproveRequest request)
+        {
+            if (request.TrnNumbers == null || !request.TrnNumbers.Any())
+                return BadRequest("No transaction numbers provided.");
+
+            await casePaperRepository.ApproveCasePapers(request.TrnNumbers);
+            return Ok(new { message = "Case papers approved successfully" });
+        }
+
+        public class ApproveRequest
+        {
+            public List<long> TrnNumbers { get; set; }
+        }
+
+
+
     }
 }
