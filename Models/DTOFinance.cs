@@ -17,5 +17,7 @@ namespace Models
         public int DOCTOR_COMMISSION { get; set; }
         public int TOTAL_EXPENSE { get; set; }
         public int NET_AMOUNT { get; set; }
+        public int CASEPAPER_EXPENSE { get; set; }
+        public int PENDING_TOTAL { get; set; }
     }
 }
