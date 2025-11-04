@@ -12,5 +12,6 @@ namespace Models
         public int HOME_COLLECTION { get; set; }
         public int PENDING_STATUS { get; set; }
         public int TOTAL_BILL { get; set; }
+        public int PENDING_TOTAL { get; set; }
     }
 }

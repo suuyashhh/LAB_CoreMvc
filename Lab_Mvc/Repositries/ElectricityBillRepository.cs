@@ -101,6 +101,7 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@Action", QueryConstant.InsertElectricityBill);
                 parameters.Add("@ELC_TRN_ID", newBikeFuleId);
                 parameters.Add("@ELC_PRICE", objElcBill.ELC_PRICE);
+                parameters.Add("@ELC_NOTE", objElcBill.ELC_NOTE);
                 parameters.Add("@DATE", objElcBill.DATE);
                 parameters.Add("@COM_ID", objElcBill.COM_ID);
                 parameters.Add("@CRT_BY", objElcBill.CRT_BY);
@@ -129,6 +130,7 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@Action", QueryConstant.UpdateElectricityBill);
                 parameters.Add("@ELC_TRN_ID", elcBill_id);
                 parameters.Add("@ELC_PRICE", objElcBill.ELC_PRICE);
+                parameters.Add("@ELC_NOTE", objElcBill.ELC_NOTE);
                 parameters.Add("@DATE", objElcBill.DATE);
 
 

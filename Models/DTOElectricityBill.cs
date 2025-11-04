@@ -10,6 +10,7 @@ namespace Models
     {
         public Int64 ELC_TRN_ID { get; set; }
         public Decimal ELC_PRICE { get; set; }
+        public string ELC_NOTE { get; set; }
         public string DATE { get; set; }
         public string COM_ID { get; set; }
         public string CRT_BY { get; set; }
