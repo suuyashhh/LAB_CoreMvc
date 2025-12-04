@@ -1,6 +1,8 @@
 ﻿using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
+using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Repositries;
+using Lab_Mvc.Repositries.DairyFarm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +34,12 @@ builder.Services.AddScoped<IOtherExpense, OtherExpenseRepository>();
 builder.Services.AddScoped<IDoctorCommission, DoctorCommissionRepository>();
 builder.Services.AddScoped<IHome, HomeRepository>();
 builder.Services.AddScoped<IFinance, FinanceRepository>();
+
+
+//DairyFARM Project
+builder.Services.AddScoped<ILoginDairyFarm, LoginDairyFarmRepository>();
+builder.Services.AddScoped<IDairyMasters, DairyMastersRepository>();
+builder.Services.AddScoped<IFeeds, FeedsRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
