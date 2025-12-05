@@ -22,7 +22,9 @@ namespace Lab_Mvc.Repositries.DairyFarm
         {
 
             var query = @"
-                          select * from Expense where expense_name='Feeds' AND user_id=@UserId order by date desc
+select e.*,f.feed_image AS FeedImage from Expense AS e JOIN Feeds AS f ON f.user_id = e.user_id and f.feed_name = e.feed_name where e.expense_name='Feeds' AND e.user_id=@UserId order by date desc
+
+
                           ";
             try
             {

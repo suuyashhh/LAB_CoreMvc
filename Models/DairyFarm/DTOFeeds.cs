@@ -15,5 +15,6 @@ namespace Models.DairyFarm
         public int? price { get; set; }    
         public int? quantity { get; set; }
         public DateTime? date {  get; set; }
+        public string? FeedImage { get; set; } // base64 image string
     }
 }
