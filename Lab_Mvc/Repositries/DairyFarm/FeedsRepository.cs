@@ -22,7 +22,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
         {
 
             var query = @"
-select e.*,f.feed_image AS FeedImage from Expense AS e JOIN Feeds AS f ON f.user_id = e.user_id and f.feed_name = e.feed_name where e.expense_name='Feeds' AND e.user_id=@UserId order by date desc
+select * from Expense where expense_name='Feeds' AND user_id=@UserId order by date desc
 
 
                           ";
@@ -41,26 +41,31 @@ select e.*,f.feed_image AS FeedImage from Expense AS e JOIN Feeds AS f ON f.user
             }
         }
 
-        public async Task<DTOFeeds> GetFeedHistoryById(long exp_id)
+        public async Task<object> GetFeedImageById(long exp_id)
         {
             var query = @"
-                          select * from Expense where expense_id=@Exp_Id
-                          ";
-            try
-            {
-                using (var connection = context.CreateConnection())
-                {
-                    var Feed = await connection.QuerySingleAsync<DTOFeeds>(query, new { Exp_Id = exp_id }
-                    );
+        select f.feed_image AS FeedImage 
+        from Expense AS e 
+        JOIN Feeds AS f 
+            ON f.user_id = e.user_id 
+            AND f.feed_name = e.feed_name 
+        where e.expense_id = @Exp_Id
+    ";
 
-                    return Feed;
-                }
-            }
-            catch
+            using (var connection = context.CreateConnection())
             {
-                throw;
+                var feed = await connection.QuerySingleOrDefaultAsync<DTOFeeds>(query, new { Exp_Id = exp_id });
+
+                if (feed == null)
+                    return null;
+
+                return new
+                {
+                    feed.FeedImage
+                };
             }
         }
+
 
         public async Task Save(DTOFeeds objFeed)
         {
