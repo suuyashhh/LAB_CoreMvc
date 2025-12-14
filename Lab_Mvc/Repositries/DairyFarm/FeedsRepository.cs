@@ -70,8 +70,8 @@ select * from Expense where expense_name='Feeds' AND user_id=@UserId order by da
         public async Task Save(DTOFeeds objFeed)
         {
             var query = @"
-        INSERT INTO Expense (user_id, expense_name, feed_name, price, quantity, date) 
-        VALUES (@UserId, @ExpName, @FeedName, @Price, @Qty, @Dt)";
+        INSERT INTO Expense (user_id, expense_name, feed_name, price, quantity, date,feed_id) 
+        VALUES (@UserId, @ExpName, @FeedName, @Price, @Qty, @Dt, @FeedId)";
 
             try
             {
@@ -84,7 +84,8 @@ select * from Expense where expense_name='Feeds' AND user_id=@UserId order by da
                         FeedName = objFeed.feed_name,
                         Price = objFeed.price,
                         Qty = objFeed.quantity,
-                        Dt = objFeed.date
+                        Dt = objFeed.date,
+                        FeedId = objFeed.feed_id,
                     });
                 }
             }
@@ -104,7 +105,8 @@ select * from Expense where expense_name='Feeds' AND user_id=@UserId order by da
                                 feed_name = @FeedName,
                                 price = @Price,
                                 quantity = @Qty,
-                                date = @Dt
+                                date = @Dt,
+                                feed_id=@FeedId
                             WHERE expense_id = @Id AND user_id = @UserId";
 
             try
@@ -119,7 +121,8 @@ select * from Expense where expense_name='Feeds' AND user_id=@UserId order by da
                         FeedName = objFeed.feed_name,
                         Price = objFeed.price,
                         Qty = objFeed.quantity,
-                        Dt = objFeed.date
+                        Dt = objFeed.date,
+                        FeedId = objFeed.feed_id,
                     });
                 }
             }

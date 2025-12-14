@@ -40,6 +40,7 @@ builder.Services.AddScoped<IFinance, FinanceRepository>();
 builder.Services.AddScoped<ILoginDairyFarm, LoginDairyFarmRepository>();
 builder.Services.AddScoped<IDairyMasters, DairyMastersRepository>();
 builder.Services.AddScoped<IFeeds, FeedsRepository>();
+builder.Services.AddScoped<IDoctorDairy, DoctorDairyRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")

@@ -10,6 +10,7 @@ namespace Models.DairyFarm
     {
         public int? expense_id { get; set; }
         public int? user_id { get; set; }
+        public int? feed_id { get; set; }
         public string? expense_name { get; set; }
         public string? feed_name { get; set; }
         public int? price { get; set; }    
