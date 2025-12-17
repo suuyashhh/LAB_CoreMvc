@@ -16,6 +16,44 @@ namespace Lab_Mvc.Controllers.DairyFarm
             _DoctorDairy = DoctorDairy;
         }
 
+        [HttpGet("GetAllMedicienHistory/{userId}")]
+        public async Task<IActionResult> GetAllMedicienHistory(int userId)
+        {
+            try
+            {
+                if (userId <= 0)
+                {
+                    return BadRequest(new { message = "Invalid user ID" });
+                }
+
+                var feedHistory = await _DoctorDairy.GetAllMedicienHistory(userId);
+
+                return Ok(feedHistory);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                    new { message = "An error occurred while retrieving feed history", error = ex.Message });
+            }
+        }
+
+        [HttpGet("GetMedicienImageById/{exp_id}")]
+        public async Task<IActionResult> GetMedicienImageById(long exp_id)
+        {
+            if (exp_id <= 0)
+                return BadRequest(new { message = "Invalid expense ID" });
+
+            var result = await _DoctorDairy.GetMedicienImageById(exp_id);
+
+            if (result == null)
+                return NotFound(new { message = "Feed image not found" });
+
+            return Ok(result);
+        }
+
+
+
         [HttpGet("History/{userId}")]
         public async Task<IActionResult> GetAllDoctorHistory(int userId)
         {
