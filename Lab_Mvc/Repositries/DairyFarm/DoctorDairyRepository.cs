@@ -14,6 +14,49 @@ namespace Lab_Mvc.Repositries.DairyFarm
             this.context = context;
         }
 
+        public async Task<IEnumerable<DTODoctorDairy>> GetAllMedicienHistory(int userId)
+        {
+
+            var query = @"
+                            select * from Expense where expense_name='Medicine' AND user_id=@UserId order by date desc
+                          ";
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+                    var MedicienHistorys = await connection.QueryAsync<DTODoctorDairy>(query, new { UserId = userId });
+
+                    return MedicienHistorys.ToList();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<object> GetMedicienImageById(long exp_id)
+        {
+            var query = @"    select img AS AnimalImage 
+                              from Expense
+                               where expense_id = @Exp_Id
+                        ";
+
+            using (var connection = context.CreateConnection())
+            {
+                var Medicien = await connection.QuerySingleOrDefaultAsync<DTODoctorDairy>(query, new { Exp_Id = exp_id });
+
+                if (Medicien == null)
+                {
+                    return null;
+                }
+                return new
+                {
+                    Medicien.AnimalImage
+                };
+            }
+        }
+
         public async Task<IEnumerable<DTODoctorDairy>> GetAllDoctorHistory(int userId)
         {
 
@@ -66,8 +109,8 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
         public async Task Save(DTODoctorDairy objDDoc)
         {
             var query = @"
-        INSERT INTO Expense (user_id, expense_name, reason, animal_name, price, date, Animal_id, Switch) 
-        VALUES (@UserId, @ExpName, @Reasion,@AnimalName, @Price, @Dt, @AnimalId, @Switch)";
+        INSERT INTO Expense (user_id, expense_name, reason, animal_name, price, date, Animal_id, Switch,img) 
+        VALUES (@UserId, @ExpName, @Reasion,@AnimalName, @Price, @Dt, @AnimalId, @Switch,@img)";
 
             try
             {
@@ -83,6 +126,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
                         Dt = objDDoc.date,
                         AnimalId = objDDoc.Animal_id,
                         Switch = objDDoc.Switch,
+                        img = objDDoc.AnimalImage,
                     });
                 }
             }
@@ -103,7 +147,8 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
                                 price = @Price,
                                 date = @Dt,
                                 Animal_id=@AnimalId,
-                                Switch=@Switch
+                                Switch=@Switch,
+                                img=@img
                             WHERE expense_id = @Id AND user_id = @UserId";
 
             try
@@ -119,7 +164,8 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
                         Price = objDDoc.price,
                         Dt = objDDoc.date,
                         AnimalId = objDDoc.Animal_id,
-                        Switch = objDDoc.Switch
+                        Switch = objDDoc.Switch,
+                        img = objDDoc.AnimalImage
                     });
                 }
             }

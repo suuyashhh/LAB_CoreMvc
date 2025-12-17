@@ -4,6 +4,8 @@ namespace Lab_Mvc.Interfaces.DairyFarm
 {
     public interface IDoctorDairy
     {
+        Task<IEnumerable<DTODoctorDairy>> GetAllMedicienHistory(int userId);
+        Task<object> GetMedicienImageById(long exp_id);
         Task<IEnumerable<DTODoctorDairy>> GetAllDoctorHistory(int userId);
         Task<object> GetDocImageById(long exp_id);
         Task Save(DTODoctorDairy objDDoc);
