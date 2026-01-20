@@ -44,6 +44,7 @@ builder.Services.AddScoped<IDoctorDairy, DoctorDairyRepository>();
 builder.Services.AddScoped<IOtherFeeds, OtherFeedsRepository>();
 builder.Services.AddScoped < IBillDairy, BillDairyRepository>();
 builder.Services.AddScoped < IHistoryDairy, HistoryDairyRepository>();
+builder.Services.AddScoped <IAnimalHealthHistory, AnimalHealthHistoryRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
