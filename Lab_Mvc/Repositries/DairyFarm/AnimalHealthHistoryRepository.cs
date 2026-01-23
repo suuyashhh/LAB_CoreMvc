@@ -71,5 +71,33 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 return history.ToList();
             }
         }
+
+        public async Task<IEnumerable<AnimalHealthSummaryDTO>> GetAllAnimalsWithImage(int userId)
+        {
+            var query = @"
+  SELECT 
+    an.animal_id AS AnimalId,
+    an.animal_name AS AnimalName,
+    COUNT(e.expense_id) AS TotalHealthRecords,
+    ISNULL(SUM(e.price), 0) AS TotalExpenses,
+    an.animal_image AS AnimalImage
+FROM AnimalsName an
+LEFT JOIN Expense e 
+    ON e.user_id = an.user_id 
+   AND e.Animal_id = an.animal_id 
+   AND e.expense_name IN ('Medicine', 'Doctor')
+WHERE an.user_id = @UserId
+GROUP BY 
+    an.animal_id, 
+    an.animal_name,
+    an.animal_image
+ORDER BY an.animal_name";
+
+            using (var connection = context.CreateConnection())
+            {
+                var animals = await connection.QueryAsync<AnimalHealthSummaryDTO>(query, new { UserId = userId });
+                return animals.ToList();
+            }
+        }
     }
 }
