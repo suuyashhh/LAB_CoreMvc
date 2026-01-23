@@ -8,5 +8,6 @@ namespace Lab_Mvc.Interfaces.DairyFarm
     {
         Task<IEnumerable<AnimalHealthSummaryDTO>> GetAllAnimalsWithHealthSummary(int userId);
         Task<IEnumerable<AnimalHealthRecordDTO>> GetAnimalHealthHistory(int userId, int animalId);
+        Task<IEnumerable<AnimalHealthSummaryDTO>> GetAllAnimalsWithImage(int userId);
     }
 }

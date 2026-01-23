@@ -57,5 +57,26 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     new { message = "An error occurred while retrieving history", error = ex.Message });
             }
         }
+
+        [HttpGet("GetAllAnimalsWithImage/{userId}")]
+        public async Task<IActionResult> GetAllAnimalsWithImage(int userId)
+        {
+            try
+            {
+                if (userId <= 0)
+                {
+                    return BadRequest(new { message = "Invalid user ID" });
+                }
+
+                var animals = await _animalHealthHistory.GetAllAnimalsWithImage(userId);
+                return Ok(animals);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                    new { message = "An error occurred while retrieving animals", error = ex.Message });
+            }
+        }
+
     }
 }

@@ -7,6 +7,7 @@ namespace Models.DairyFarm
         public string AnimalName { get; set; } = string.Empty;
         public int TotalHealthRecords { get; set; }
         public decimal TotalExpenses { get; set; }
+        public string? AnimalImage { get; set; } 
     }
 }
 

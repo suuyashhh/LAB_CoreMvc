@@ -9,6 +9,7 @@ namespace Models.DairyFarm
         public DateTime? LastBreedingDate { get; set; }
         public string LastBreedingReason { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public string? AnimalImage { get; set; }
     }
 }
 

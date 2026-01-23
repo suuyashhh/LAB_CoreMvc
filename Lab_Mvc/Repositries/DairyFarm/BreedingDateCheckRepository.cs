@@ -22,10 +22,11 @@ namespace Lab_Mvc.Repositries.DairyFarm
         // Get all animals with breeding record summary
         public async Task<IEnumerable<BreedingAnimalSummaryDTO>> GetAllAnimalsWithBreedingSummary(int userId)
         {
-            var query = @"
+            var query = @"               
                 SELECT 
     an.animal_id AS AnimalId,
     an.animal_name AS AnimalName,
+	an.animal_image AS AnimalImage,
     COUNT(e.expense_id) AS TotalBreedingRecords,
     MAX(e.date) AS LastBreedingDate,
     (
@@ -41,10 +42,11 @@ LEFT JOIN Expense e
        ON e.user_id = an.user_id 
       AND e.Animal_id = an.animal_id 
       AND e.Switch = 22
-WHERE an.user_id = 1
+WHERE an.user_id = @UserId
 GROUP BY 
     an.user_id,          -- ✅ ADD THIS
     an.animal_id, 
+    an.animal_image,
     an.animal_name
 ORDER BY an.animal_name;";
 
