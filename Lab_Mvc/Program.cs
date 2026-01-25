@@ -48,6 +48,8 @@ builder.Services.AddScoped <IAnimalHealthHistory, AnimalHealthHistoryRepository>
 builder.Services.AddScoped <IBreedingDateCheck, BreedingDateCheckRepository>();
 builder.Services.AddScoped <IMonthlyPERepository, MonthlyPERepository>();
 builder.Services.AddScoped <IDatePERepository, DatePERepository>();
+builder.Services.AddScoped<INotification, NotificationRepository>();
+
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
