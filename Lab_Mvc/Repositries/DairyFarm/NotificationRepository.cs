@@ -14,6 +14,23 @@ public class NotificationRepository : INotification
         _logger = logger;
     }
 
+    public async Task<List<int>> GetAllUserIds()
+    {
+        using var conn = _dapperContext.CreateConnection();
+
+        var query = "SELECT user_id FROM users";
+
+        var list = await conn.QueryAsync<int>(query);
+
+        return list.ToList();
+    }
+
+    public async Task RunBreedingUpdateOnly(int userId)
+    {
+        await UpdateBreedingNotifications(userId);
+    }
+
+
     public async Task<List<DTONotification>> GetBreedingNotifications(int userId)
     {
         using var conn = _dapperContext.CreateConnection();

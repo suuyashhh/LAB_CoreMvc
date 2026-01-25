@@ -7,6 +7,9 @@ namespace Lab_Mvc.Interfaces.DairyFarm
         Task<List<DTONotification>> GetBreedingNotifications(int userId);
         Task<int> GetNotificationCount(int userId);
         Task MarkAsChecked(int id);
+        Task<List<int>> GetAllUserIds();
+        Task RunBreedingUpdateOnly(int userId);
+
     }
 
 

@@ -50,6 +50,7 @@ builder.Services.AddScoped <IMonthlyPERepository, MonthlyPERepository>();
 builder.Services.AddScoped <IDatePERepository, DatePERepository>();
 builder.Services.AddScoped<INotification, NotificationRepository>();
 
+builder.Services.AddHostedService<DailyBreedingNotificationService>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
