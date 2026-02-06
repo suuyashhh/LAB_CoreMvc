@@ -1,8 +1,10 @@
 ﻿using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
+using Lab_Mvc.Interfaces.Farm;
 using Lab_Mvc.Repositries;
 using Lab_Mvc.Repositries.DairyFarm;
+using Lab_Mvc.Repositries.Farm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -51,6 +53,12 @@ builder.Services.AddScoped <IDatePERepository, DatePERepository>();
 builder.Services.AddScoped<INotification, NotificationRepository>();
 
 builder.Services.AddHostedService<DailyBreedingNotificationService>();
+
+
+
+//FARM Project
+builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
+
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
