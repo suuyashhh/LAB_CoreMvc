@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeSalary);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters);
+                    var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary.ToList();
                 }
             }
@@ -39,19 +39,20 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTOEmployeeSalary> GetEmployeeSalaryById(long empSal_id)
+        public async Task<DTOEmployeeSalary> GetEmployeeSalaryById(long empSal_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeSalaryById);
                 parameters.Add("@EMP_TRN_ID", empSal_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters);
+                    var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary;
                 }
             }
@@ -61,11 +62,37 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTOEmployeeSalary>> GetDateWiseEmpSalary(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseEmpSalary);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTOEmployeeSalary>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
+
         public async Task SaveEmployeeSalary(DTOEmployeeSalary objEmpSlry)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newEmployeeSalaryId = await GenerateEmployeeSalaryId(objEmpSlry.COM_ID);
@@ -96,7 +123,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -119,17 +146,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteEmployeeSalary(long empSal_id)
+        public async Task DeleteEmployeeSalary(long empSal_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteEmployeeSalary);
                 parameters.Add("@EMP_TRN_ID", empSal_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

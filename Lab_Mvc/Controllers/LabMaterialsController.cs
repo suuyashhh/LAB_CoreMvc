@@ -33,13 +33,27 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("LabMaterial/{mat_id}")]
-        public async Task<ActionResult> GetLabMaterialsById(long mat_id)
+        public async Task<ActionResult> GetLabMaterialsById(long mat_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await labMaterialsRepository.GetLabMaterialsById(mat_id));
+                return Ok(await labMaterialsRepository.GetLabMaterialsById(mat_id, comId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseLabMaterials/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseLabMaterials(string from_date, string to_date, [FromQuery] int comId)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await labMaterialsRepository.GetDateWiseLabMaterials(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -98,7 +112,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteLabMaterials/{mat_id}")]
-        public async Task<ActionResult<DTOLabMaterials>> DeleteLabMaterials(long mat_id)
+        public async Task<ActionResult<DTOLabMaterials>> DeleteLabMaterials(long mat_id, [FromQuery] int comId)
 
         {
             try
@@ -107,7 +121,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = labMaterialsRepository.DeleteLabMaterials(mat_id);
+                var createdProperty = labMaterialsRepository.DeleteLabMaterials(mat_id, comId);
                 return Ok(mat_id);
             }
             catch (Exception)

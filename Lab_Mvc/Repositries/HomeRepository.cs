@@ -15,19 +15,20 @@ namespace Lab_Mvc.Repositries
         {
             this.context = context;
         }
-        public async Task<DTOHome> GetHomeById(string from_date, string to_date)
+        public async Task<DTOHome> GetHomeById(string from_date, string to_date, int comId)
         {
             try
             {
-                const string query = "sp_master";
+                var query = QueryConstant.sp;
                 using (var connection = context.CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetHomeById);
                     parameters.Add("@From_Date", from_date);
                     parameters.Add("@To_Date", to_date);
-                                       
-                    var HomeIndexCount = await connection.QuerySingleAsync<DTOHome>(query, parameters);
+                    parameters.Add("@COM_ID", comId);
+
+                    var HomeIndexCount = await connection.QuerySingleAsync<DTOHome>(query, parameters, commandType: CommandType.StoredProcedure);
                     return HomeIndexCount;                   
 
                 }

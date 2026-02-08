@@ -22,7 +22,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctors);
@@ -30,7 +30,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters);
+                    var tests = await connection.QueryAsync<DTODoctor>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests.ToList();
                 }
             }
@@ -40,19 +40,20 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<DTODoctor> GetDoctorById(long doctor_code)
+        public async Task<DTODoctor> GetDoctorById(long doctor_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorById);
                 parameters.Add("@DOCTOR_CODE", doctor_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters);
+                    var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Doctors;
                 }
             }
@@ -66,7 +67,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newDoctorId = await GenerateDoctorId(doctor.COM_ID);
@@ -98,7 +99,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -122,17 +123,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctor(long doctor_code)
+        public async Task DeleteDoctor(long doctor_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteDoctor);
                 parameters.Add("@DOCTOR_CODE", doctor_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

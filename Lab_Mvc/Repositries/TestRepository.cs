@@ -22,7 +22,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetTests);
@@ -30,7 +30,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QueryAsync<DTOTest>(query, parameters);
+                    var tests = await connection.QueryAsync<DTOTest>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests.ToList();
                 }
             }
@@ -41,19 +41,20 @@ namespace Lab_Mvc.Repositries
         }
 
 
-        public async Task<DTOTest> GetTestById(Int64 test_code)
+        public async Task<DTOTest> GetTestById(Int64 test_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetTestById);
                 parameters.Add("@TEST_CODE", test_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var tests = await connection.QuerySingleAsync<DTOTest>(query, parameters);
+                    var tests = await connection.QuerySingleAsync<DTOTest>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests;
                 }
             }
@@ -67,7 +68,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newTestId = await GenerateTestId(test.COM_ID);
@@ -101,7 +102,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -125,17 +126,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteTest(long test_code)
+        public async Task DeleteTest(long test_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteTest);
                 parameters.Add("@TEST_CODE", test_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

@@ -32,12 +32,26 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("OtherExpense/{otherEx_id}")]
-        public async Task<ActionResult> GetOtherExpenseById(long otherEx_id)
+        public async Task<ActionResult> GetOtherExpenseById(long otherEx_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _otherExpaenseRepository.GetOtherExpenseById(otherEx_id));
+                return Ok(await _otherExpaenseRepository.GetOtherExpenseById(otherEx_id, comId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseOthMaterials/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseOthMaterials(string from_date, string to_date, [FromQuery] int comId)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _otherExpaenseRepository.GetDateWiseOthMaterials(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -95,7 +109,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteOtherExpense/{otherEx_id}")]
-        public async Task<ActionResult<DTOOtherExpense>> DeleteOtherExpense(long otherEx_id)
+        public async Task<ActionResult<DTOOtherExpense>> DeleteOtherExpense(long otherEx_id, [FromQuery] int comId)
         {
             try
             {
@@ -103,7 +117,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = _otherExpaenseRepository.DeleteOtherExpense(otherEx_id);
+                var createdProperty = _otherExpaenseRepository.DeleteOtherExpense(otherEx_id, comId);
                 return Ok(otherEx_id);
             }
             catch (Exception)

@@ -33,12 +33,26 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("EmployeeSalary/{empSal_id}")]
-        public async Task<ActionResult> GetEmployeeSalaryById(long empSal_id)
+        public async Task<ActionResult> GetEmployeeSalaryById(long empSal_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _empSalaryRepository.GetEmployeeSalaryById(empSal_id));
+                return Ok(await _empSalaryRepository.GetEmployeeSalaryById(empSal_id, comId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseEmpSalary/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseEmpSalary(string from_date, string to_date, [FromQuery] int comId)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _empSalaryRepository.GetDateWiseEmpSalary(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -96,7 +110,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteEmployeeSalary/{empSal_id}")]
-        public async Task<ActionResult<DTOEmployeeSalary>> DeleteEmployeeSalary(long empSal_id)
+        public async Task<ActionResult<DTOEmployeeSalary>> DeleteEmployeeSalary(long empSal_id, [FromQuery] int comId)
         {
             try
             {
@@ -104,7 +118,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = _empSalaryRepository.DeleteEmployeeSalary(empSal_id);
+                var createdProperty = _empSalaryRepository.DeleteEmployeeSalary(empSal_id, comId);
                 return Ok(empSal_id);
             }
             catch (Exception)

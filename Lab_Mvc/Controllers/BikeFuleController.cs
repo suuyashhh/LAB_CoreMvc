@@ -33,12 +33,26 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("BikeFule/{bike_id}")]
-        public async Task<ActionResult> GetBikeFuleById(long bike_id)
+        public async Task<ActionResult> GetBikeFuleById(long bike_id, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
-                return Ok(await _bikeFuleRepository.GetBikeFuleById(bike_id));
+                return Ok(await _bikeFuleRepository.GetBikeFuleById(bike_id, comId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseBikeFule/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseBikeFule(string from_date, string to_date, [FromQuery] int comId)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await _bikeFuleRepository.GetDateWiseBikeFule(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -96,7 +110,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteBikeFule/{bike_id}")]
-        public async Task<ActionResult<DTOBikeFule>> DeleteBikeFule(long bike_id)
+        public async Task<ActionResult<DTOBikeFule>> DeleteBikeFule(long bike_id, [FromQuery] int comId)
         {
             try
             {
@@ -104,7 +118,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = _bikeFuleRepository.DeleteBikeFule(bike_id);
+                var createdProperty = _bikeFuleRepository.DeleteBikeFule(bike_id, comId);
                 return Ok(bike_id);
             }
             catch (Exception)

@@ -35,13 +35,27 @@ namespace Lab_Mvc.Controllers
         }
 
         [HttpGet("CasePaper/{trn_no}")]
-        public async Task<ActionResult> CasePaperById(long trn_no)
+        public async Task<ActionResult> CasePaperById(long trn_no, [FromQuery] int comId)
         {
             var cacheKey = "MyKey";
             try
             {
                 /*  var employeeList = await loginRepository.Getlogindetails();*/
-                return Ok(await casePaperRepository.GetCasePaperById(trn_no));
+                return Ok(await casePaperRepository.GetCasePaperById(trn_no, comId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetDateWiseCasePaper/{from_date},{to_date}")]
+        public async Task<ActionResult> GetDateWiseCasePaper(string from_date, string to_date, [FromQuery] int comId)
+        {
+            var cacheKey = "MyKey";
+            try
+            {
+                return Ok(await casePaperRepository.GetDateWiseCasePaper(from_date, to_date, comId));
             }
             catch (Exception)
             {
@@ -76,7 +90,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpPost]
         [Route("EditCasePaper/{trn_no}")]
-        public async Task<ActionResult<DTOCasePaper>> EditCasePaper(DTOCasePaper casepaper, long trn_no)
+        public async Task<ActionResult<DTOCasePaper>> EditCasePaper([FromBody] DTOCasePaper casepaper, [FromRoute] Int64 trn_no)
 
         {
             try
@@ -101,7 +115,7 @@ namespace Lab_Mvc.Controllers
 
         [HttpDelete]
         [Route("DeleteCasePaper/{trn_no}")]
-        public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no)
+        public async Task<ActionResult<DTOCasePaper>> DeleteCasePaper(long trn_no, [FromQuery] int comId)
 
         {
             try
@@ -110,7 +124,7 @@ namespace Lab_Mvc.Controllers
                 {
                     return BadRequest();
                 }
-                var createdProperty = casePaperRepository.DeleteCasePaper(trn_no);
+                var createdProperty = casePaperRepository.DeleteCasePaper(trn_no, comId);
                 return Ok(trn_no);
             }
             catch (Exception)
@@ -118,5 +132,24 @@ namespace Lab_Mvc.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error Saving Data");
             }
         }
+
+
+        [HttpPost("ApproveCasePapers")]
+        public async Task<IActionResult> ApproveCasePapers([FromBody] ApproveRequest request)
+        {
+            if (request.TrnNumbers == null || !request.TrnNumbers.Any())
+                return BadRequest("No transaction numbers provided.");
+
+            await casePaperRepository.ApproveCasePapers(request.TrnNumbers);
+            return Ok(new { message = "Case papers approved successfully" });
+        }
+
+        public class ApproveRequest
+        {
+            public List<long> TrnNumbers { get; set; }
+        }
+
+
+
     }
 }

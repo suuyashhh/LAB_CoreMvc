@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorCommission);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters);
+                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission.ToList();
                 }
             }
@@ -39,19 +39,20 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id)
+        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetDoctorCommissionById);
                 parameters.Add("@DOC_COM_ID", docCom_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters);
+                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission;
                 }
             }
@@ -61,11 +62,36 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTODoctorCommission>> GetDateWiseDocCommission(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseDocCommission);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTODoctorCommission>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
         public async Task SaveDoctorCommission(DTODoctorCommission objDocCom)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newDoctorCommissionId = await GenerateDoctorCommissionId(objDocCom.COM_ID);
@@ -96,7 +122,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -119,17 +145,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteDoctorCommission(long docCom_id)
+        public async Task DeleteDoctorCommission(long docCom_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteDoctorCommission);
                 parameters.Add("@DOC_COM_ID", docCom_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

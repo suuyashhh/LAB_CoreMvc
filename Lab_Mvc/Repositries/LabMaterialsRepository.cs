@@ -21,44 +21,79 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
-
+                var query = QueryConstant.sp;
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetLabMaterials);
                 parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var LabMaterials = await connection.QueryAsync<DTOLabMaterials>(query, parameters);
-                    return LabMaterials.ToList();
+                    var labMaterials = await connection.QueryAsync<DTOLabMaterials>(
+                        query,
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    return labMaterials.ToList();
                 }
             }
-            catch (Exception ex) 
+            catch
             {
-                throw ex;
+                throw;
             }
-
         }
 
-        public async Task<DTOLabMaterials> GetLabMaterialsById(long mat_id)
+        public async Task<DTOLabMaterials> GetLabMaterialsById(long mat_id, int comId)
         {
             try
             {
-                var query = "sp_master";
-
+                var query = "dbo.sp_master";
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetMaterialById);
                 parameters.Add("@MAT_ID", mat_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var LabMaterials = await connection.QuerySingleAsync<DTOLabMaterials>(query, parameters);
-                    return LabMaterials;
+                    var labMaterial = await connection.QuerySingleAsync<DTOLabMaterials>(
+                        query,
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    return labMaterial;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<DTOLabMaterials>> GetDateWiseLabMaterials(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetDateWiseLabMaterials);
+                parameters.Add("@From_Date", from_date);
+                parameters.Add("@To_Date", to_date);
+                parameters.Add("@COM_ID", comId);
+
+                using (var connection = context.CreateConnection())
+                using (var multi = await connection.QueryMultipleAsync(
+                    query,
+                    parameters,
+                    commandType: CommandType.StoredProcedure))
+                {
+                    var labMaterials = (await multi.ReadAsync<DTOLabMaterials>()).ToList();
+                    return labMaterials;
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new ApplicationException("Error fetching lab materials by date range.", ex);
             }
         }
 
@@ -66,10 +101,9 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
-
-                Int64 newMatId = await GenerateLabMaterialsId(objMat.COM_ID);
+                long newMatId = await GenerateLabMaterialsId(objMat.COM_ID);
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.InsertMaterials);
@@ -80,16 +114,18 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@COM_ID", objMat.COM_ID);
                 parameters.Add("@CRT_BY", objMat.CRT_BY);
 
-
-
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    await connection.ExecuteAsync(
+                        query,
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -97,8 +133,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
-
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.UpdateMaterials);
@@ -107,42 +142,44 @@ namespace Lab_Mvc.Repositries
                 parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
                 parameters.Add("@DATE", objMat.DATE);
 
-
-
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
+                    await connection.ExecuteAsync(
+                        query,
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
-        public async Task DeleteLabMaterials(long mat_id)
+        public async Task DeleteLabMaterials(long mat_id, int comId)
         {
             try
             {
-                var query = "sp_master";
-
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteMaterials);
                 parameters.Add("@MAT_ID", mat_id);
-
-
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
-                    //return await property;
+                    await connection.ExecuteAsync(
+                        query,
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 

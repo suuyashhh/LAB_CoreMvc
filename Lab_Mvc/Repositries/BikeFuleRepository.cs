@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetBikeFule);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters);
+                    var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule.ToList();
                 }
             }
@@ -39,19 +39,20 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id)
+        public async Task<DTOBikeFule> GetBikeFuleById(long bike_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetBikeFuleById);
                 parameters.Add("@BIKE_ID", bike_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters);
+                    var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule;
                 }
             }
@@ -61,11 +62,36 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTOBikeFule>> GetDateWiseBikeFule(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseBikeFule);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTOBikeFule>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
         public async Task SaveBikeFule(DTOBikeFule objBike)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newBikeFuleId = await GenerateBikeFuleId(objBike.COM_ID);
@@ -96,7 +122,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -119,17 +145,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteBikeFule(long bike_id)
+        public async Task DeleteBikeFule(long bike_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteBikeFule);
                 parameters.Add("@BIKE_ID", bike_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

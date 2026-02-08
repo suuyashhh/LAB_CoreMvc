@@ -21,7 +21,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployees);
@@ -29,7 +29,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Employees = await connection.QueryAsync<DTOEmployee>(query, parameters);
+                    var Employees = await connection.QueryAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Employees.ToList();
                 }
             }
@@ -39,19 +39,20 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task<DTOEmployee> GetEmployeeById(long emp_code)
+        public async Task<DTOEmployee> GetEmployeeById(long emp_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetEmployeeById);
                 parameters.Add("@EMP_ID", emp_code);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var Employees = await connection.QuerySingleAsync<DTOEmployee>(query, parameters);
+                    var Employees = await connection.QuerySingleAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Employees;
                 }
             }
@@ -65,7 +66,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newEmployeeId = await GenerateEmployeeId(emp.COM_ID);
@@ -96,7 +97,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -120,17 +121,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteEmployee(long emp_code)
+        public async Task DeleteEmployee(long emp_code, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteEmployee);
                 parameters.Add("@EMP_ID", emp_code);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())

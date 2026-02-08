@@ -20,7 +20,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetOtherExpense);
@@ -28,7 +28,7 @@ namespace Lab_Mvc.Repositries
 
                 using (var connection = context.CreateConnection())
                 {
-                    var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query, parameters);
+                    var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query, parameters, commandType: CommandType.StoredProcedure);
                     return OtherExpense.ToList();
                 }
             }
@@ -39,19 +39,20 @@ namespace Lab_Mvc.Repositries
 
         }
 
-        public async Task<DTOOtherExpense> GetOtherExpenseById(long otherEx_id)
+        public async Task<DTOOtherExpense> GetOtherExpenseById(long otherEx_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = "dbo.sp_master";
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetOtherExpenseById);
                 parameters.Add("@OTHER_ID", otherEx_id);
+                parameters.Add("@COM_ID", comId);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var OtherExpense = await connection.QuerySingleAsync<DTOOtherExpense>(query, parameters);
+                    var OtherExpense = await connection.QuerySingleAsync<DTOOtherExpense>(query, parameters, commandType: CommandType.StoredProcedure);
                     return OtherExpense;
                 }
             }
@@ -61,11 +62,36 @@ namespace Lab_Mvc.Repositries
             }
         }
 
+        public async Task<List<DTOOtherExpense>> GetDateWiseOthMaterials(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                using (var connection = context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseOthMaterials);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTOOtherExpense>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
         public async Task SaveOtherExpense(DTOOtherExpense objOtherEx)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 Int64 newOtherExpenseId = await GenerateOtherExpenseId(objOtherEx.COM_ID);
@@ -96,7 +122,7 @@ namespace Lab_Mvc.Repositries
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
@@ -119,17 +145,17 @@ namespace Lab_Mvc.Repositries
             }
         }
 
-        public async Task DeleteOtherExpense(long otherEx_id)
+        public async Task DeleteOtherExpense(long otherEx_id, int comId)
         {
             try
             {
-                var query = "sp_master";
+                var query = QueryConstant.sp;
 
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.DeleteOtherExpense);
                 parameters.Add("@OTHER_ID", otherEx_id);
-
+                parameters.Add("@COM_ID", comId);
 
 
                 using (var connection = context.CreateConnection())
