@@ -58,6 +58,7 @@ builder.Services.AddHostedService<DailyBreedingNotificationService>();
 
 //FARM Project
 builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
+builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
