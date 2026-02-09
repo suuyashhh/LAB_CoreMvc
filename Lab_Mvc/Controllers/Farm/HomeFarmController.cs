@@ -18,29 +18,92 @@ namespace Lab_Mvc.Controllers.Farm
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(string userId)
         {
-            var data = await _iHomeFarm.GetAll(userId);
-            return Ok(data);
+            try
+            {
+                var data = await _iHomeFarm.GetAll(userId);
+
+                // Convert relative paths to full URLs
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                foreach (var farm in data)
+                {
+                    if (!string.IsNullOrEmpty(farm.IMAGE) &&
+                        !farm.IMAGE.StartsWith("http") &&
+                        !farm.IMAGE.StartsWith("data:"))
+                    {
+                        farm.IMAGE = $"{baseUrl}{farm.IMAGE}";
+                    }
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] DTOHomeFarm model)
         {
-            var result = await _iHomeFarm.Insert(model);
-            return Ok(result);
+            try
+            {
+                var result = await _iHomeFarm.Insert(model);
+                return Ok(new { success = true, farmId = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] DTOHomeFarm model)
         {
-            var result = await _iHomeFarm.Update(model);
-            return Ok(result);
+            try
+            {
+                var result = await _iHomeFarm.Update(model);
+                return Ok(new { success = result > 0, affectedRows = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(int farmId, string userId)
         {
-            var result = await _iHomeFarm.Delete(farmId,userId);
-            return Ok(result);
+            try
+            {
+                // First, get the farm to find its image path
+                var farms = await _iHomeFarm.GetAll(userId);
+                var farmToDelete = farms.FirstOrDefault(f => f.FARM_ID == farmId);
+
+                if (farmToDelete != null && !string.IsNullOrEmpty(farmToDelete.IMAGE))
+                {
+                    // Extract filename from image path
+                    var fileName = Path.GetFileName(farmToDelete.IMAGE);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        // Delete the image file
+                        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "FarmImgs");
+                        var filePath = Path.Combine(uploadPath, fileName);
+
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
+                }
+
+                // Delete from database
+                var result = await _iHomeFarm.Delete(farmId, userId);
+                return Ok(new { success = result > 0, affectedRows = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
     }
 }

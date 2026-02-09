@@ -7,6 +7,7 @@ using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
@@ -59,6 +60,7 @@ builder.Services.AddHostedService<DailyBreedingNotificationService>();
 //FARM Project
 builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
+builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
@@ -104,6 +106,20 @@ app.UseHttpsRedirection();
 app.UseAuthentication();                        // ✅ Auth first
 app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>(); // ✅ Then your Redis session middleware
 app.UseAuthorization();
+
+app.UseStaticFiles();
+// Add custom static file serving for FarmImgs folder at root
+var farmImgsPath = Path.Combine(app.Environment.ContentRootPath, "FarmImgs");
+if (!Directory.Exists(farmImgsPath))
+{
+    Directory.CreateDirectory(farmImgsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(farmImgsPath),
+    RequestPath = "/FarmImgs"
+});
 
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
