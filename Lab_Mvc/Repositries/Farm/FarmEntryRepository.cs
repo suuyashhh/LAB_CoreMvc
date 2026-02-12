@@ -15,6 +15,36 @@ namespace Lab_Mvc.Repositries.Farm
             _dapperContext = dapperContext;
         }
 
+        public async Task<IEnumerable<DTOFarmEntry>> GetAllTypesEntrys(long farmId, long userId)
+        {
+            var query = @"
+                SELECT 
+                    [FARM_ENTRY_ID],
+                    [ENTRY_TYPE],
+                    [REASON],
+                    [PRICE],
+                    [FARM_ID],
+                    [USER_ID],
+                    [IMAGE1],
+                    [IMAGE2],
+                    [IMAGE3],
+                    [IMAGE4],
+                    [DATE]
+                FROM [dbo].[FARM_ENTRY]
+                WHERE [FARM_ID] = @FarmId 
+                AND [USER_ID] = @UserId 
+                ORDER BY [DATE] DESC, [FARM_ENTRY_ID] DESC";
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                var result = await connection.QueryAsync<DTOFarmEntry>(
+                    query,
+                    new { FarmId = farmId, UserId = userId}
+                );
+                return result;
+            }
+        }
+
         public async Task<IEnumerable<DTOFarmEntry>> GetAll(long farmId, long userId,string entryTypeName)
         {
             var query = @"
