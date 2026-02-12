@@ -40,6 +40,31 @@ namespace Lab_Mvc.Controllers.Farm
             }
         }
 
+        [HttpGet("GetAllTypesEntrys")]
+        public async Task<IActionResult> GetAllTypesEntrys(long farmId, long userId)
+        {
+            try
+            {
+                var data = await _IFarmEntry.GetAllTypesEntrys(farmId, userId);
+
+                // Convert relative paths to full URLs for all 4 images
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                foreach (var entry in data)
+                {
+                    entry.IMAGE1 = ConvertToFullUrl(entry.IMAGE1, baseUrl);
+                    entry.IMAGE2 = ConvertToFullUrl(entry.IMAGE2, baseUrl);
+                    entry.IMAGE3 = ConvertToFullUrl(entry.IMAGE3, baseUrl);
+                    entry.IMAGE4 = ConvertToFullUrl(entry.IMAGE4, baseUrl);
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error: {ex.Message}" });
+            }
+        }
+
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(long farmEntryId, long farmId, long userId)
         {
