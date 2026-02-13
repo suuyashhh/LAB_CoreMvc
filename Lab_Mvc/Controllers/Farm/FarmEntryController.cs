@@ -65,6 +65,21 @@ namespace Lab_Mvc.Controllers.Farm
             }
         }
 
+        [HttpGet("GetReportCalculation")]
+        public async Task<IActionResult> GetReportCalculation(long farmId, long userId)
+        {
+            try
+            {
+                var data = await _IFarmEntry.GetReportCalculation(farmId, userId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error: {ex.Message}" });
+            }
+        }
+
+
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(long farmEntryId, long farmId, long userId)
         {

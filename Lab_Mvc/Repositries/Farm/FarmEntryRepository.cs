@@ -15,6 +15,28 @@ namespace Lab_Mvc.Repositries.Farm
             _dapperContext = dapperContext;
         }
 
+        public async Task<DTOReportCalculation> GetReportCalculation(long farmId, long userId)
+        {
+            var query = @"
+               SELECT
+                    SUM(CASE WHEN ENTRY_TYPE = 'Self Work' THEN PRICE ELSE 0 END) AS SelfWork_Total,
+                    SUM(CASE WHEN ENTRY_TYPE = 'Farm Profit' THEN PRICE ELSE 0 END) AS FarmProfit_Total,
+                    SUM(CASE WHEN ENTRY_TYPE = 'Chemical Fertilizer' THEN PRICE ELSE 0 END) AS ChemicalFertilizer_Total,
+                    SUM(CASE WHEN ENTRY_TYPE = 'Worker' THEN PRICE ELSE 0 END) AS Worker_Total
+                FROM farm_entry
+                WHERE farm_id = @FarmId
+                  AND user_id = @UserId;";
+
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<DTOReportCalculation>(
+                    query,
+                    new { FarmId = farmId, UserId = userId}
+                );
+                return result;
+            }
+        }
+
         public async Task<IEnumerable<DTOFarmEntry>> GetAllTypesEntrys(long farmId, long userId)
         {
             var query = @"

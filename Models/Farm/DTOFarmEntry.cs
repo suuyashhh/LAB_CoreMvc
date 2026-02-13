@@ -20,4 +20,12 @@ namespace Models.Farm
         public string IMAGE4 { get; set; }
         public DateTime DATE { get; set; }
     }
+
+    public class DTOReportCalculation
+    {
+        public long SelfWork_Total { get; set; }
+        public long FarmProfit_Total { get; set; }
+        public long ChemicalFertilizer_Total { get; set; }
+        public long Worker_Total { get; set; }
+    }
 }
