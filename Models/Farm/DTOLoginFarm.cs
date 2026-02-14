@@ -12,6 +12,7 @@ namespace Models.Farm
         public string? USER_NAME { get; set; }
         public string? CONTACT { get; set; }
         public string? PASSWORD { get; set; }
-        public DateTime? DATE { get; set; }
+        public DateTime? FROM_DATE { get; set; }
+        public DateTime? TO_DATE { get; set; }
     }
 }
