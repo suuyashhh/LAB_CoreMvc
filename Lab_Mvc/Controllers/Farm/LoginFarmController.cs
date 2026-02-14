@@ -38,5 +38,48 @@ namespace Lab_Mvc.Controllers.Farm
                 return StatusCode(500, "Something went wrong");
             }
         }
+
+        [HttpPost("GetUserDetails/{user_id}")]
+        public async Task<IActionResult> GetUserDetails(string user_id)
+        {
+            try
+            {
+                var result = await _iLoginFarm.GetUserDetails(user_id);
+
+                if (result == null)
+                    return Unauthorized("Invalid credentials");
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Something went wrong");
+            }
+        }
+
+        [HttpPost("UpdatetUserDetails")]
+        public async Task<IActionResult> UpdatetUserDetails([FromBody] DTOLoginFarm USERDETAILS)
+        {
+            try
+            {
+                var result = await _iLoginFarm.UpdatetUserDetails(USERDETAILS);
+
+                if (result == null)
+                    return NotFound("User not found or update failed");
+
+                return Ok(new
+                {
+                    result.USER_ID,
+                    result.USER_NAME,
+                    result.CONTACT,
+                    result.FROM_DATE,
+                    result.TO_DATE
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong: " + ex.Message);
+            }
+        }
     }
 }

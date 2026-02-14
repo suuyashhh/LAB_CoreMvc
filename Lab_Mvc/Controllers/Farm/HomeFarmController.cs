@@ -75,28 +75,6 @@ namespace Lab_Mvc.Controllers.Farm
         {
             try
             {
-                // First, get the farm to find its image path
-                var farms = await _iHomeFarm.GetAll(userId);
-                var farmToDelete = farms.FirstOrDefault(f => f.FARM_ID == farmId);
-
-                if (farmToDelete != null && !string.IsNullOrEmpty(farmToDelete.IMAGE))
-                {
-                    // Extract filename from image path
-                    var fileName = Path.GetFileName(farmToDelete.IMAGE);
-                    if (!string.IsNullOrEmpty(fileName))
-                    {
-                        // Delete the image file
-                        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "FarmImgs");
-                        var filePath = Path.Combine(uploadPath, fileName);
-
-                        if (System.IO.File.Exists(filePath))
-                        {
-                            System.IO.File.Delete(filePath);
-                        }
-                    }
-                }
-
-                // Delete from database
                 var result = await _iHomeFarm.Delete(farmId, userId);
                 return Ok(new { success = result > 0, affectedRows = result });
             }
