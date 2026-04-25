@@ -19,7 +19,7 @@ namespace Lab_Mvc.Repositries.Farm
         {
             var query = @"SELECT FARM_ID, FARM_NAME, USER_ID, IMAGE 
                           FROM FARM_NAMES
-                          WHERE USER_ID = @USER_ID";
+                          WHERE USER_ID = @USER_ID AND STATUS_CODE = 0";
 
             using var connection = _dapperContext.CreateConnection();
             return await connection.QueryAsync<DTOHomeFarm>(query, new { USER_ID = userId });
@@ -36,8 +36,8 @@ namespace Lab_Mvc.Repositries.Farm
             FROM FARM_NAMES 
             WHERE USER_ID = @USER_ID;
             
-            INSERT INTO FARM_NAMES (FARM_ID, FARM_NAME, USER_ID, IMAGE)
-            VALUES (@NewFarmId, @FARM_NAME, @USER_ID, @IMAGE);
+            INSERT INTO FARM_NAMES (FARM_ID, FARM_NAME, USER_ID, IMAGE, STATUS_CODE)
+            VALUES (@NewFarmId, @FARM_NAME, @USER_ID, @IMAGE, 0);
             
             SELECT @NewFarmId;";
 
@@ -71,7 +71,8 @@ namespace Lab_Mvc.Repositries.Farm
 
         public async Task<int> Delete(int farmId, string userId)
         {
-            var query = @"DELETE FROM FARM_NAMES 
+            var query = @"UPDATE FARM_NAMES 
+                          SET STATUS_CODE = 1
                           WHERE FARM_ID = @FARM_ID 
                             AND USER_ID = @USER_ID";
 
