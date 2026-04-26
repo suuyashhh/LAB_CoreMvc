@@ -1,4 +1,4 @@
-﻿using Lab_Mvc.Contest;
+using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Interfaces.Farm;
@@ -12,6 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
 using static Lab_Mvc.Controllers.LoginController;
+using SmartParking.Interfaces;
+using SmartParking.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,13 +65,20 @@ builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 
+// SMART PARKING Project
+builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
+builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
+
+
+
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
 );
 
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("myTestDB")));
+builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("connString")));
+
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -120,6 +130,20 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(farmImgsPath),
     RequestPath = "/FarmImgs"
 });
+
+// Add custom static file serving for ParkingImages folder at root
+var parkingImgsPath = Path.Combine(app.Environment.ContentRootPath, "ParkingImages");
+if (!Directory.Exists(parkingImgsPath))
+{
+    Directory.CreateDirectory(parkingImgsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(parkingImgsPath),
+    RequestPath = "/ParkingImages"
+});
+
 
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
