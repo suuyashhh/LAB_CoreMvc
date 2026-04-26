@@ -130,10 +130,11 @@ namespace SmartParking.Controllers
         }
 
         [HttpPost("SaveParkingLocation")]
-        public async Task<IActionResult> SaveParkingLocation([FromForm] Models.DTOParkingProvider providerDTO, [FromForm] List<IFormFile> images)
+        public async Task<IActionResult> SaveParkingLocation([FromForm] Models.DTOParkingProvider providerDTO)
         {
             try
             {
+                var images = Request.Form.Files.GetFiles("images");
                 if (images != null && images.Count > 0)
                 {
                     string uploadFolder = Path.Combine(_environment.ContentRootPath, "ParkingImages");
@@ -167,7 +168,14 @@ namespace SmartParking.Controllers
                 var result = await _iParkingProvider.SaveParkingLocation(providerDTO);
                 if (result.Contains("successfully"))
                 {
-                    return Ok(new { success = true, message = result });
+                    // Convert relative paths to full URLs for response
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                    providerDTO.img1 = ConvertToFullUrl(providerDTO.img1, baseUrl);
+                    providerDTO.img2 = ConvertToFullUrl(providerDTO.img2, baseUrl);
+                    providerDTO.img3 = ConvertToFullUrl(providerDTO.img3, baseUrl);
+                    providerDTO.img4 = ConvertToFullUrl(providerDTO.img4, baseUrl);
+
+                    return Ok(new { success = true, message = result, data = providerDTO });
                 }
                 return BadRequest(new { success = false, message = result });
             }
@@ -183,12 +191,34 @@ namespace SmartParking.Controllers
             try
             {
                 var result = await _iParkingProvider.GetParkingLocationsByUser(userId);
+                
+                // Convert relative paths to full URLs
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                foreach (var spot in result)
+                {
+                    spot.img1 = ConvertToFullUrl(spot.img1, baseUrl);
+                    spot.img2 = ConvertToFullUrl(spot.img2, baseUrl);
+                    spot.img3 = ConvertToFullUrl(spot.img3, baseUrl);
+                    spot.img4 = ConvertToFullUrl(spot.img4, baseUrl);
+                }
+                
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { success = false, message = $"Internal server error: {ex.Message}" });
             }
+        }
+
+        private string ConvertToFullUrl(string? imagePath, string baseUrl)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+                return imagePath ?? "";
+
+            if (imagePath.StartsWith("http") || imagePath.StartsWith("data:"))
+                return imagePath;
+
+            return $"{baseUrl}{(imagePath.StartsWith("/") ? "" : "/")}{imagePath}";
         }
     }
 }
