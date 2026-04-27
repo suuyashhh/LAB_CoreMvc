@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using SmartParking.Interfaces;
 
@@ -139,42 +139,49 @@ namespace SmartParking.Controllers
                 {
                     string uploadFolder = Path.Combine(_environment.ContentRootPath, "ParkingImages");
                     if (!Directory.Exists(uploadFolder))
-                    {
                         Directory.CreateDirectory(uploadFolder);
-                    }
 
-                    for (int i = 0; i < images.Count; i++)
+                    // ✅ Find the next available image slot (img1..img4)
+                    // existing images already bound to providerDTO.img1..img4 via [FromForm]
+                    var imgSlots = new string?[] { providerDTO.img1, providerDTO.img2, providerDTO.img3, providerDTO.img4 };
+                    int slotIndex = Array.FindIndex(imgSlots, s => string.IsNullOrEmpty(s)); // first empty slot
+
+                    foreach (var image in images)
                     {
-                        if (images[i] == null || images[i].Length == 0) continue;
+                        if (slotIndex >= 4) break; // max 4 images
+                        if (image == null || image.Length == 0) continue;
 
-                        string extension = Path.GetExtension(images[i].FileName).ToLowerInvariant();
+                        string extension = Path.GetExtension(image.FileName).ToLowerInvariant();
                         string fileName = $"{Guid.NewGuid():N}{extension}";
                         string filePath = Path.Combine(uploadFolder, fileName);
-                        
+
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
-                            await images[i].CopyToAsync(stream);
+                            await image.CopyToAsync(stream);
                         }
 
-                        // Save the relative path in the DTO using forward slashes for URLs
                         string relativePath = $"/ParkingImages/{fileName}";
-                        if (i == 0) providerDTO.img1 = relativePath;
-                        else if (i == 1) providerDTO.img2 = relativePath;
-                        else if (i == 2) providerDTO.img3 = relativePath;
-                        else if (i == 3) providerDTO.img4 = relativePath;
+
+                        // ✅ Fill next empty slot
+                        if (slotIndex == 0) providerDTO.img1 = relativePath;
+                        else if (slotIndex == 1) providerDTO.img2 = relativePath;
+                        else if (slotIndex == 2) providerDTO.img3 = relativePath;
+                        else if (slotIndex == 3) providerDTO.img4 = relativePath;
+
+                        // Find next empty slot
+                        slotIndex++;
+                        while (slotIndex < 4 && !string.IsNullOrEmpty(imgSlots[slotIndex])) slotIndex++;
                     }
                 }
 
                 var result = await _iParkingProvider.SaveParkingLocation(providerDTO);
                 if (result.Contains("successfully"))
                 {
-                    // Convert relative paths to full URLs for response
                     var baseUrl = $"{Request.Scheme}://{Request.Host}";
                     providerDTO.img1 = ConvertToFullUrl(providerDTO.img1, baseUrl);
                     providerDTO.img2 = ConvertToFullUrl(providerDTO.img2, baseUrl);
                     providerDTO.img3 = ConvertToFullUrl(providerDTO.img3, baseUrl);
                     providerDTO.img4 = ConvertToFullUrl(providerDTO.img4, baseUrl);
-
                     return Ok(new { success = true, message = result, data = providerDTO });
                 }
                 return BadRequest(new { success = false, message = result });
