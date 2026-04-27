@@ -8,7 +8,7 @@ namespace Models
 {
     public class DTOParkingProvider
     {
-        public int? SpotId { get; set; }
+        public int? Unique_Id { get; set; }
         public int? UserId { get; set; }
 
         public string? VehicalType { get; set; }

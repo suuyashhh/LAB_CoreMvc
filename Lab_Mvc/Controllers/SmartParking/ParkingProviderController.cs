@@ -210,6 +210,48 @@ namespace SmartParking.Controllers
             }
         }
 
+        [HttpGet("GetAllParkingLocations")]
+        public async Task<IActionResult> GetAllParkingLocations()
+        {
+            try
+            {
+                var result = await _iParkingProvider.GetAllParkingLocations();
+                
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                foreach (var spot in result)
+                {
+                    spot.img1 = ConvertToFullUrl(spot.img1, baseUrl);
+                    spot.img2 = ConvertToFullUrl(spot.img2, baseUrl);
+                    spot.img3 = ConvertToFullUrl(spot.img3, baseUrl);
+                    spot.img4 = ConvertToFullUrl(spot.img4, baseUrl);
+                }
+                
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
+        [HttpDelete("DeleteParkingLocation")]
+        public async Task<IActionResult> DeleteParkingLocation(int uniqueId)
+        {
+            try
+            {
+                var result = await _iParkingProvider.DeleteParkingLocation(uniqueId);
+                if (result.Contains("successfully"))
+                {
+                    return Ok(new { success = true, message = result });
+                }
+                return BadRequest(new { success = false, message = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Internal server error: {ex.Message}" });
+            }
+        }
+
         private string ConvertToFullUrl(string? imagePath, string baseUrl)
         {
             if (string.IsNullOrEmpty(imagePath))

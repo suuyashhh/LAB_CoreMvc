@@ -6,6 +6,8 @@ namespace SmartParking.Interfaces
     {
         Task<string> SaveParkingLocation(DTOParkingProvider DTOParkingProvider);
         Task<List<DTOParkingProvider>> GetParkingLocationsByUser(int userId);
+        Task<List<DTOParkingProvider>> GetAllParkingLocations();
+        Task<string> DeleteParkingLocation(int uniqueId);
     }
 
 }

@@ -16,7 +16,7 @@ namespace SmartParking.Repositories
             try
             {
                 string query;
-                if (req.SpotId > 0)
+                if (req.Unique_Id > 0)
                 {
                     query = @"
                         UPDATE SMARTPARKING_parking_spot 
@@ -29,7 +29,7 @@ namespace SmartParking.Repositories
                             img2 = ISNULL(@img2, img2), 
                             img3 = ISNULL(@img3, img3), 
                             img4 = ISNULL(@img4, img4) 
-                        WHERE SpotId = @SpotId";
+                        WHERE Unique_Id = @Unique_Id";
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace SmartParking.Repositories
                 using (var con = CreateConnection())
                 {
                     await con.ExecuteAsync(query, req);
-                    return req.SpotId > 0 ? "Parking location updated successfully." : "Parking location saved successfully.";
+                    return req.Unique_Id > 0 ? "Parking location updated successfully." : "Parking location saved successfully.";
                 }
             }
 
@@ -67,6 +67,40 @@ namespace SmartParking.Repositories
             catch (Exception)
             {
                 return new List<DTOParkingProvider>();
+            }
+        }
+
+        public async Task<List<DTOParkingProvider>> GetAllParkingLocations()
+        {
+            try
+            {
+                var query = "SELECT * FROM SMARTPARKING_parking_spot";
+                using (var con = CreateConnection())
+                {
+                    var result = await con.QueryAsync<DTOParkingProvider>(query);
+                    return result.ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<DTOParkingProvider>();
+            }
+        }
+
+        public async Task<string> DeleteParkingLocation(int uniqueId)
+        {
+            try
+            {
+                var query = "DELETE FROM SMARTPARKING_parking_spot WHERE Unique_Id = @UniqueId";
+                using (var con = CreateConnection())
+                {
+                    await con.ExecuteAsync(query, new { UniqueId = uniqueId });
+                    return "Parking location deleted successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"An error occurred: {ex.Message}";
             }
         }
     }
