@@ -15,10 +15,7 @@ using static Lab_Mvc.Controllers.LoginController;
 using SmartParking.Interfaces;
 using SmartParking.Repositories;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -68,6 +65,7 @@ builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 // SMART PARKING Project
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
+builder.Services.AddScoped<IParkingRegistration, ParkingRegistrationRepository>();
 
 
 
