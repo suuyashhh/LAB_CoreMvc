@@ -11,10 +11,11 @@ namespace SmartParking.Repositories
         {
         }
 
-        public async Task<string> SaveParkingLocation(DTOParkingProvider req)
+        public async Task<string> SaveParkingLocation(DTOParkingProvider req, int userId)
         {
             try
             {
+                req.UserId = userId;
                 string query;
                 if (req.Unique_Id > 0)
                 {
@@ -29,7 +30,7 @@ namespace SmartParking.Repositories
                             img2 = ISNULL(@img2, img2), 
                             img3 = ISNULL(@img3, img3), 
                             img4 = ISNULL(@img4, img4) 
-                        WHERE Unique_Id = @Unique_Id";
+                        WHERE Unique_Id = @Unique_Id AND UserId = @UserId";
                 }
                 else
                 {
@@ -42,7 +43,12 @@ namespace SmartParking.Repositories
 
                 using (var con = CreateConnection())
                 {
-                    await con.ExecuteAsync(query, req);
+                    var rowsAffected = await con.ExecuteAsync(query, req);
+                    if (rowsAffected == 0)
+                    {
+                        return "Parking location not found or access denied.";
+                    }
+
                     return req.Unique_Id > 0 ? "Parking location updated successfully." : "Parking location saved successfully.";
                 }
             }
@@ -87,14 +93,19 @@ namespace SmartParking.Repositories
             }
         }
 
-        public async Task<string> DeleteParkingLocation(int uniqueId)
+        public async Task<string> DeleteParkingLocation(int uniqueId, int userId)
         {
             try
             {
-                var query = "DELETE FROM SMARTPARKING_parking_spot WHERE Unique_Id = @UniqueId";
+                var query = "DELETE FROM SMARTPARKING_parking_spot WHERE Unique_Id = @UniqueId AND UserId = @UserId";
                 using (var con = CreateConnection())
                 {
-                    await con.ExecuteAsync(query, new { UniqueId = uniqueId });
+                    var rowsAffected = await con.ExecuteAsync(query, new { UniqueId = uniqueId, UserId = userId });
+                    if (rowsAffected == 0)
+                    {
+                        return "Parking location not found or access denied.";
+                    }
+
                     return "Parking location deleted successfully.";
                 }
             }

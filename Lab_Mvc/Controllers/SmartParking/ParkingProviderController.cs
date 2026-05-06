@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using SmartParking.Interfaces;
+using System.Security.Claims;
 
 namespace SmartParking.Controllers
 {
@@ -17,6 +19,7 @@ namespace SmartParking.Controllers
             _environment = environment;
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("Upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
@@ -25,43 +28,34 @@ namespace SmartParking.Controllers
                 if (file == null || file.Length == 0)
                     return BadRequest(new { success = false, message = "No file uploaded" });
 
-                // Validate file size (5MB limit)
                 if (file.Length > 5 * 1024 * 1024)
                     return BadRequest(new { success = false, message = "File size exceeds 5MB limit" });
 
-                // Validate file type
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
                 if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
                     return BadRequest(new { success = false, message = "Invalid file type. Allowed: JPG, PNG, GIF, WebP" });
 
-                // Create unique file name
                 var fileName = $"{Guid.NewGuid():N}{extension}";
-
-                // Define upload path - ParkingImages folder at root level
                 var uploadPath = Path.Combine(_environment.ContentRootPath, "ParkingImages");
 
-                // Create directory if it doesn't exist
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
 
-                // Full file path
                 var filePath = Path.Combine(uploadPath, fileName);
 
-                // Save the file
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
 
-                // Return relative path for storage in database
                 var relativePath = $"/ParkingImages/{fileName}";
 
                 return Ok(new
                 {
                     success = true,
                     message = "File uploaded successfully",
-                    fileName = fileName,
+                    fileName,
                     filePath = relativePath,
                     fullUrl = $"{Request.Scheme}://{Request.Host}{relativePath}"
                 });
@@ -72,6 +66,7 @@ namespace SmartParking.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete("Delete")]
         public IActionResult Delete(string fileName)
         {
@@ -80,7 +75,6 @@ namespace SmartParking.Controllers
                 if (string.IsNullOrEmpty(fileName))
                     return BadRequest(new { success = false, message = "File name is required" });
 
-                // Define upload path - ParkingImages folder at root level
                 var uploadPath = Path.Combine(_environment.ContentRootPath, "ParkingImages");
                 var filePath = Path.Combine(uploadPath, fileName);
 
@@ -113,7 +107,6 @@ namespace SmartParking.Controllers
                     return NotFound("Image not found");
                 }
 
-                // Determine content type
                 var provider = new FileExtensionContentTypeProvider();
                 if (!provider.TryGetContentType(filePath, out var contentType))
                 {
@@ -129,52 +122,57 @@ namespace SmartParking.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("SaveParkingLocation")]
         public async Task<IActionResult> SaveParkingLocation([FromForm] Models.DTOParkingProvider providerDTO)
         {
             try
             {
+                var parkingUserId = GetAuthenticatedParkingUserId();
+                if (parkingUserId == null)
+                {
+                    return Unauthorized(new { success = false, message = "SmartParking login required." });
+                }
+
+                providerDTO.UserId = parkingUserId.Value;
+
                 var images = Request.Form.Files.GetFiles("images");
                 if (images != null && images.Count > 0)
                 {
-                    string uploadFolder = Path.Combine(_environment.ContentRootPath, "ParkingImages");
+                    var uploadFolder = Path.Combine(_environment.ContentRootPath, "ParkingImages");
                     if (!Directory.Exists(uploadFolder))
                         Directory.CreateDirectory(uploadFolder);
 
-                    // ✅ Find the next available image slot (img1..img4)
-                    // existing images already bound to providerDTO.img1..img4 via [FromForm]
                     var imgSlots = new string?[] { providerDTO.img1, providerDTO.img2, providerDTO.img3, providerDTO.img4 };
-                    int slotIndex = Array.FindIndex(imgSlots, s => string.IsNullOrEmpty(s)); // first empty slot
+                    var slotIndex = Array.FindIndex(imgSlots, string.IsNullOrEmpty);
 
                     foreach (var image in images)
                     {
-                        if (slotIndex >= 4) break; // max 4 images
+                        if (slotIndex >= 4) break;
                         if (image == null || image.Length == 0) continue;
 
-                        string extension = Path.GetExtension(image.FileName).ToLowerInvariant();
-                        string fileName = $"{Guid.NewGuid():N}{extension}";
-                        string filePath = Path.Combine(uploadFolder, fileName);
+                        var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+                        var fileName = $"{Guid.NewGuid():N}{extension}";
+                        var filePath = Path.Combine(uploadFolder, fileName);
 
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
 
-                        string relativePath = $"/ParkingImages/{fileName}";
+                        var relativePath = $"/ParkingImages/{fileName}";
 
-                        // ✅ Fill next empty slot
                         if (slotIndex == 0) providerDTO.img1 = relativePath;
                         else if (slotIndex == 1) providerDTO.img2 = relativePath;
                         else if (slotIndex == 2) providerDTO.img3 = relativePath;
                         else if (slotIndex == 3) providerDTO.img4 = relativePath;
 
-                        // Find next empty slot
                         slotIndex++;
                         while (slotIndex < 4 && !string.IsNullOrEmpty(imgSlots[slotIndex])) slotIndex++;
                     }
                 }
 
-                var result = await _iParkingProvider.SaveParkingLocation(providerDTO);
+                var result = await _iParkingProvider.SaveParkingLocation(providerDTO, parkingUserId.Value);
                 if (result.Contains("successfully"))
                 {
                     var baseUrl = $"{Request.Scheme}://{Request.Host}";
@@ -184,6 +182,7 @@ namespace SmartParking.Controllers
                     providerDTO.img4 = ConvertToFullUrl(providerDTO.img4, baseUrl);
                     return Ok(new { success = true, message = result, data = providerDTO });
                 }
+
                 return BadRequest(new { success = false, message = result });
             }
             catch (Exception ex)
@@ -192,14 +191,19 @@ namespace SmartParking.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("GetParkingLocations")]
-        public async Task<IActionResult> GetParkingLocations(int userId)
+        public async Task<IActionResult> GetParkingLocations()
         {
             try
             {
-                var result = await _iParkingProvider.GetParkingLocationsByUser(userId);
-                
-                // Convert relative paths to full URLs
+                var parkingUserId = GetAuthenticatedParkingUserId();
+                if (parkingUserId == null)
+                {
+                    return Unauthorized(new { success = false, message = "SmartParking login required." });
+                }
+
+                var result = await _iParkingProvider.GetParkingLocationsByUser(parkingUserId.Value);
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
                 foreach (var spot in result)
                 {
@@ -208,7 +212,7 @@ namespace SmartParking.Controllers
                     spot.img3 = ConvertToFullUrl(spot.img3, baseUrl);
                     spot.img4 = ConvertToFullUrl(spot.img4, baseUrl);
                 }
-                
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -223,7 +227,6 @@ namespace SmartParking.Controllers
             try
             {
                 var result = await _iParkingProvider.GetAllParkingLocations();
-                
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
                 foreach (var spot in result)
                 {
@@ -232,7 +235,7 @@ namespace SmartParking.Controllers
                     spot.img3 = ConvertToFullUrl(spot.img3, baseUrl);
                     spot.img4 = ConvertToFullUrl(spot.img4, baseUrl);
                 }
-                
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -241,16 +244,24 @@ namespace SmartParking.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete("DeleteParkingLocation")]
         public async Task<IActionResult> DeleteParkingLocation(int uniqueId)
         {
             try
             {
-                var result = await _iParkingProvider.DeleteParkingLocation(uniqueId);
+                var parkingUserId = GetAuthenticatedParkingUserId();
+                if (parkingUserId == null)
+                {
+                    return Unauthorized(new { success = false, message = "SmartParking login required." });
+                }
+
+                var result = await _iParkingProvider.DeleteParkingLocation(uniqueId, parkingUserId.Value);
                 if (result.Contains("successfully"))
                 {
                     return Ok(new { success = true, message = result });
                 }
+
                 return BadRequest(new { success = false, message = result });
             }
             catch (Exception ex)
@@ -269,8 +280,20 @@ namespace SmartParking.Controllers
 
             return $"{baseUrl}{(imagePath.StartsWith("/") ? "" : "/")}{imagePath}";
         }
+
+        private int? GetAuthenticatedParkingUserId()
+        {
+            var module = User.FindFirst("module")?.Value;
+            if (!string.Equals(module, "SmartParking", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            var claimValue =
+                User.FindFirst("parking_user_id")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return int.TryParse(claimValue, out var userId) ? userId : null;
+        }
     }
 }
-
-
-

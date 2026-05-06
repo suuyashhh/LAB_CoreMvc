@@ -9,19 +9,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
-using System.Text;
-using static Lab_Mvc.Controllers.LoginController;
 using SmartParking.Interfaces;
 using SmartParking.Repositories;
+using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services
+    .AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 builder.Services.AddScoped<IAdmin, AdminRepository>();
 builder.Services.AddScoped<ITest, TestRepository>();
@@ -38,57 +38,47 @@ builder.Services.AddScoped<IDoctorCommission, DoctorCommissionRepository>();
 builder.Services.AddScoped<IHome, HomeRepository>();
 builder.Services.AddScoped<IFinance, FinanceRepository>();
 
-
-//DairyFARM Project
 builder.Services.AddScoped<ILoginDairyFarm, LoginDairyFarmRepository>();
 builder.Services.AddScoped<IDairyMasters, DairyMastersRepository>();
 builder.Services.AddScoped<IFeeds, FeedsRepository>();
 builder.Services.AddScoped<IDoctorDairy, DoctorDairyRepository>();
 builder.Services.AddScoped<IOtherFeeds, OtherFeedsRepository>();
-builder.Services.AddScoped < IBillDairy, BillDairyRepository>();
-builder.Services.AddScoped < IHistoryDairy, HistoryDairyRepository>();
-builder.Services.AddScoped <IAnimalHealthHistory, AnimalHealthHistoryRepository>();
-builder.Services.AddScoped <IBreedingDateCheck, BreedingDateCheckRepository>();
-builder.Services.AddScoped <IMonthlyPERepository, MonthlyPERepository>();
-builder.Services.AddScoped <IDatePERepository, DatePERepository>();
+builder.Services.AddScoped<IBillDairy, BillDairyRepository>();
+builder.Services.AddScoped<IHistoryDairy, HistoryDairyRepository>();
+builder.Services.AddScoped<IAnimalHealthHistory, AnimalHealthHistoryRepository>();
+builder.Services.AddScoped<IBreedingDateCheck, BreedingDateCheckRepository>();
+builder.Services.AddScoped<IMonthlyPERepository, MonthlyPERepository>();
+builder.Services.AddScoped<IDatePERepository, DatePERepository>();
 builder.Services.AddScoped<INotification, NotificationRepository>();
-
 builder.Services.AddHostedService<DailyBreedingNotificationService>();
 
-
-
-//FARM Project
 builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 
-// SMART PARKING Project
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
 builder.Services.AddScoped<IParkingRegistration, ParkingRegistrationRepository>();
-
-
-
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
 );
 
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddDbContext<LabMvcDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("connString")));
-
+builder.Services.AddDbContext<LabMvcDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("connString")));
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        var jwtSettings = builder.Configuration.GetSection("Jwt"); // ✅ FIXED
+        var jwtSettings = builder.Configuration.GetSection("Jwt");
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidateLifetime = false, // ⛔ Token never expires unless manually blacklisted
+            ValidateLifetime = false,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
@@ -97,26 +87,21 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();                        // ✅ Auth first
-app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>(); // ✅ Then your Redis session middleware
+app.UseAuthentication();
+app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
+app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
 app.UseAuthorization();
 
 app.UseStaticFiles();
-// Add custom static file serving for FarmImgs folder at root
+
 var farmImgsPath = Path.Combine(app.Environment.ContentRootPath, "FarmImgs");
 if (!Directory.Exists(farmImgsPath))
 {
@@ -129,7 +114,6 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/FarmImgs"
 });
 
-// Add custom static file serving for ParkingImages folder at root
 var parkingImgsPath = Path.Combine(app.Environment.ContentRootPath, "ParkingImages");
 if (!Directory.Exists(parkingImgsPath))
 {
@@ -141,8 +125,6 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(parkingImgsPath),
     RequestPath = "/ParkingImages"
 });
-
-
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
