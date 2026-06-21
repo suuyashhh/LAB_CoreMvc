@@ -1,19 +1,40 @@
-﻿using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Shop;
 using Microsoft.AspNetCore.Mvc;
-using SmartParking.Interfaces;
-using System.Numerics;
+using Models.Shop;
+using System.Threading.Tasks;
+using System;
 
 namespace Lab_Mvc.Controllers.Shop
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/LoginShop")]
     public class ShopLoginController : Controller
     {
         private readonly IShopLogin _iShopLogin;
-        private readonly IConfiguration _config;
-        public IActionResult Index()
+
+        public ShopLoginController(IShopLogin iShopLogin)
         {
-            return View();
+            _iShopLogin = iShopLogin;
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] DTOShopLogin loginShop)
+        {
+            try
+            {
+                var result = await _iShopLogin.Login(loginShop);
+
+                if (result == null)
+                {
+                    return Unauthorized(new { message = "Invalid credentials" });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Something went wrong: " + ex.Message });
+            }
         }
     }
 }
