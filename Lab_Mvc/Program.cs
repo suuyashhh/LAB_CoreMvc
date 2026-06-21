@@ -101,6 +101,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
+app.UseMiddleware<Lab_Mvc.Controllers.Shop.ShopLoginController.ShopTokenValidationMiddleware>();
 app.UseAuthorization();
 
 app.UseStaticFiles();
