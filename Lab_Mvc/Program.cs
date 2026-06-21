@@ -58,6 +58,8 @@ builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
+builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
+
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
@@ -128,6 +130,18 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(parkingImgsPath),
     RequestPath = "/ParkingImages"
+});
+
+var shopImgsPath = Path.Combine(app.Environment.ContentRootPath, "ShopImgs");
+if (!Directory.Exists(shopImgsPath))
+{
+    Directory.CreateDirectory(shopImgsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(shopImgsPath),
+    RequestPath = "/ShopImgs"
 });
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
