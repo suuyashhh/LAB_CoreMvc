@@ -59,6 +59,7 @@ builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
 builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
+builder.Services.AddScoped<IShopUser, ShopUserRepository>();
 
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();

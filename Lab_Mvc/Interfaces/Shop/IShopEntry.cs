@@ -7,7 +7,7 @@ namespace Lab_Mvc.Interfaces.Shop
     public interface IShopEntry
     {
         Task<IEnumerable<DTOShopEntry>> GetAll(long userId, bool isPaid);
-        Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId);
+        Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId, System.DateTime? fromDate = null, System.DateTime? toDate = null);
         Task<DTOShopEntry> GetById(long shopEntryId, long userId);
         Task<long> Insert(DTOShopEntry model);
         Task<int> Update(DTOShopEntry model);

@@ -32,20 +32,20 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE4],
                     [DATE]
                 FROM [dbo].[SHOP_ENTRY]
-                WHERE [USER_ID] = @UserId AND [IS_PAID] = @IsPaid
+                WHERE [IS_PAID] = @IsPaid
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
 
             using (var connection = _dapperContext.CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopEntry>(
                     query,
-                    new { UserId = userId, IsPaid = isPaid }
+                    new { IsPaid = isPaid }
                 );
                 return result;
             }
         }
 
-        public async Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId)
+        public async Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId, System.DateTime? fromDate = null, System.DateTime? toDate = null)
         {
             var query = @"
                 SELECT 
@@ -60,14 +60,15 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE4],
                     [DATE]
                 FROM [dbo].[SHOP_ENTRY]
-                WHERE [USER_ID] = @UserId 
+                WHERE (@FromDate IS NULL OR [DATE] >= @FromDate)
+                  AND (@ToDate IS NULL OR [DATE] <= @ToDate)
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
 
             using (var connection = _dapperContext.CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopEntry>(
                     query,
-                    new { UserId = userId }
+                    new { FromDate = fromDate, ToDate = toDate }
                 );
                 return result;
             }
@@ -88,14 +89,13 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE4],
                     [DATE]
                 FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @ShopEntryId
-                AND [USER_ID] = @UserId";
+                WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
 
             using (var connection = _dapperContext.CreateConnection())
             {
                 var result = await connection.QueryFirstOrDefaultAsync<DTOShopEntry>(
                     query,
-                    new { ShopEntryId = shopEntryId, UserId = userId }
+                    new { ShopEntryId = shopEntryId }
                 );
                 return result;
             }
@@ -106,10 +106,9 @@ namespace Lab_Mvc.Repositries.Shop
             var query = @"
                 DECLARE @NewShopEntryId BIGINT;
                 
-                -- Get the next SHOP_ENTRY_ID for this user
+                -- Get the next SHOP_ENTRY_ID
                 SELECT @NewShopEntryId = ISNULL(MAX([SHOP_ENTRY_ID]), 0) + 1
-                FROM [dbo].[SHOP_ENTRY]
-                WHERE [USER_ID] = @USER_ID;
+                FROM [dbo].[SHOP_ENTRY];
 
                 -- Insert the new record
                 INSERT INTO [dbo].[SHOP_ENTRY]
@@ -161,8 +160,7 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE3] = @IMAGE3,
                     [IMAGE4] = @IMAGE4,
                     [DATE] = @DATE
-                WHERE [SHOP_ENTRY_ID] = @SHOP_ENTRY_ID
-                AND [USER_ID] = @USER_ID";
+                WHERE [SHOP_ENTRY_ID] = @SHOP_ENTRY_ID";
 
             using (var connection = _dapperContext.CreateConnection())
             {
@@ -175,14 +173,13 @@ namespace Lab_Mvc.Repositries.Shop
         {
             var query = @"
                 DELETE FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @ShopEntryId
-                AND [USER_ID] = @UserId";
+                WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
 
             using (var connection = _dapperContext.CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,
-                    new { ShopEntryId = shopEntryId, UserId = userId }
+                    new { ShopEntryId = shopEntryId }
                 );
                 return affectedRows;
             }
