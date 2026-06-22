@@ -2,9 +2,11 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Interfaces.Farm;
+using Lab_Mvc.Interfaces.Shop;
 using Lab_Mvc.Repositries;
 using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
+using Lab_Mvc.Repositries.Shop;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -55,6 +57,10 @@ builder.Services.AddHostedService<DailyBreedingNotificationService>();
 builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
+builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
+builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
+builder.Services.AddScoped<IShopUser, ShopUserRepository>();
+
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
@@ -98,6 +104,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
+app.UseMiddleware<Lab_Mvc.Controllers.Shop.ShopLoginController.ShopTokenValidationMiddleware>();
 app.UseAuthorization();
 
 app.UseStaticFiles();
@@ -124,6 +131,18 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(parkingImgsPath),
     RequestPath = "/ParkingImages"
+});
+
+var shopImgsPath = Path.Combine(app.Environment.ContentRootPath, "ShopImgs");
+if (!Directory.Exists(shopImgsPath))
+{
+    Directory.CreateDirectory(shopImgsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(shopImgsPath),
+    RequestPath = "/ShopImgs"
 });
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
