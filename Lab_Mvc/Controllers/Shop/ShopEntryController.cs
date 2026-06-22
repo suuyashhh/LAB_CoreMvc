@@ -44,11 +44,20 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpGet("GetAllTypesEntrys")]
-        public async Task<IActionResult> GetAllTypesEntrys(long userId)
+        public async Task<IActionResult> GetAllTypesEntrys(long userId, DateTime? fromDate = null, DateTime? toDate = null)
         {
             try
             {
-                var data = await _IShopEntry.GetAllTypesEntrys(userId);
+                if (fromDate.HasValue)
+                {
+                    fromDate = fromDate.Value.Date;
+                }
+                if (toDate.HasValue)
+                {
+                    toDate = toDate.Value.Date.AddDays(1).AddTicks(-1);
+                }
+
+                var data = await _IShopEntry.GetAllTypesEntrys(userId, fromDate, toDate);
 
                 // Convert relative paths to full URLs for all 4 images
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";

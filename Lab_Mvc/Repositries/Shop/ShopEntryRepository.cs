@@ -45,7 +45,7 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId)
+        public async Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId, System.DateTime? fromDate = null, System.DateTime? toDate = null)
         {
             var query = @"
                 SELECT 
@@ -61,13 +61,15 @@ namespace Lab_Mvc.Repositries.Shop
                     [DATE]
                 FROM [dbo].[SHOP_ENTRY]
                 WHERE [USER_ID] = @UserId 
+                  AND (@FromDate IS NULL OR [DATE] >= @FromDate)
+                  AND (@ToDate IS NULL OR [DATE] <= @ToDate)
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
 
             using (var connection = _dapperContext.CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopEntry>(
                     query,
-                    new { UserId = userId }
+                    new { UserId = userId, FromDate = fromDate, ToDate = toDate }
                 );
                 return result;
             }
