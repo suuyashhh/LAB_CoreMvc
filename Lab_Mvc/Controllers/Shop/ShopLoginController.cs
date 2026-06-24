@@ -76,7 +76,8 @@ namespace Lab_Mvc.Controllers.Shop
                     {
                         useR_ID = result.USER_ID,
                         useR_NAME = result.USER_NAME,
-                        contact = result.CONTACT
+                        contact = result.CONTACT,
+                        useR_IMG = result.USER_IMG
                     }
                 });
             }
