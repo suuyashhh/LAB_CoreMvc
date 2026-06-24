@@ -12,5 +12,6 @@ namespace Models.Shop
         public string? USER_NAME { get; set; }
         public string? PASS { get; set; }
         public string? CONTACT { get; set; }
+        public string? USER_IMG { get; set; }
     }
 }
