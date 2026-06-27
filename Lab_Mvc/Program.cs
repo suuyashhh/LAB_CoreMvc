@@ -60,6 +60,7 @@ builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
 builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
 builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
 builder.Services.AddScoped<IShopUser, ShopUserRepository>();
+builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
 
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
