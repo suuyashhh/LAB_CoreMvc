@@ -101,6 +101,8 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 app.UseAuthentication();
 app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
@@ -144,8 +146,6 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(shopImgsPath),
     RequestPath = "/ShopImgs"
 });
-
-app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.MapControllers();
 

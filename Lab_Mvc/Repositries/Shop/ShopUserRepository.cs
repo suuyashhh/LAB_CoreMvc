@@ -24,8 +24,9 @@ namespace Lab_Mvc.Repositries.Shop
                     [USER_ID],
                     [USER_NAME],
                     [PASS],
-                    [CONTACT]
-                FROM [dbo].[SHOP_USER]
+                    [CONTACT],
+                    [USER_IMG]
+                FROM [dbo].[SHOP_USER] WHERE ACTIVE='Y'
                 ORDER BY [USER_ID] DESC";
 
             using (var connection = _context.CreateConnection())
@@ -42,7 +43,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [USER_ID],
                     [USER_NAME],
                     [PASS],
-                    [CONTACT]
+                    [CONTACT],
+                    [USER_IMG]
                 FROM [dbo].[SHOP_USER]
                 WHERE [USER_ID] = @UserId";
 
@@ -59,8 +61,8 @@ namespace Lab_Mvc.Repositries.Shop
         public async Task<long> Insert(DTOShopLogin model)
         {
             var query = @"
-                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT])
-                VALUES (@USER_NAME, @PASS, @CONTACT);
+                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ACTIVE])
+                VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG,'Y');
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
             using (var connection = _context.CreateConnection())
@@ -76,7 +78,8 @@ namespace Lab_Mvc.Repositries.Shop
                 UPDATE [dbo].[SHOP_USER]
                 SET [USER_NAME] = @USER_NAME,
                     [PASS] = @PASS,
-                    [CONTACT] = @CONTACT
+                    [CONTACT] = @CONTACT,
+                    [USER_IMG] = @USER_IMG
                 WHERE [USER_ID] = @USER_ID";
 
             using (var connection = _context.CreateConnection())
