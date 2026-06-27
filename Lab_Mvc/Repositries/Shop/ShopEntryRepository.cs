@@ -30,7 +30,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE2],
                     [IMAGE3],
                     [IMAGE4],
-                    [DATE]
+                    [DATE],
+                    [EntryType]
                 FROM [dbo].[SHOP_ENTRY]
                 WHERE [IS_PAID] = @IsPaid
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
@@ -58,7 +59,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE2],
                     [IMAGE3],
                     [IMAGE4],
-                    [DATE]
+                    [DATE],
+                    [EntryType]
                 FROM [dbo].[SHOP_ENTRY]
                 WHERE (@FromDate IS NULL OR [DATE] >= @FromDate)
                   AND (@ToDate IS NULL OR [DATE] <= @ToDate)
@@ -87,7 +89,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE2],
                     [IMAGE3],
                     [IMAGE4],
-                    [DATE]
+                    [DATE],
+                    [EntryType]
                 FROM [dbo].[SHOP_ENTRY]
                 WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
 
@@ -122,7 +125,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE2],
                     [IMAGE3],
                     [IMAGE4],
-                    [DATE]
+                    [DATE],
+                    [EntryType]
                 )
                 VALUES
                 (
@@ -135,7 +139,8 @@ namespace Lab_Mvc.Repositries.Shop
                     @IMAGE2,
                     @IMAGE3,
                     @IMAGE4,
-                    @DATE
+                    @DATE,
+                    @EntryType
                 );
 
                 SELECT @NewShopEntryId;";
@@ -159,7 +164,8 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE2] = @IMAGE2,
                     [IMAGE3] = @IMAGE3,
                     [IMAGE4] = @IMAGE4,
-                    [DATE] = @DATE
+                    [DATE] = @DATE,
+                    [EntryType] = @EntryType
                 WHERE [SHOP_ENTRY_ID] = @SHOP_ENTRY_ID";
 
             using (var connection = _dapperContext.CreateConnection())

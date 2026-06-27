@@ -14,5 +14,6 @@ namespace Models.Shop
         public string? IMAGE3 { get; set; }
         public string? IMAGE4 { get; set; }
         public DateTime DATE { get; set; }
+        public int? EntryType { get; set; }
     }
 }
