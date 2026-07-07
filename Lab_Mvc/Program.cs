@@ -6,10 +6,12 @@ using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Interfaces.Farm;
 using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Market;
 using Lab_Mvc.Repositries;
 using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
 using Lab_Mvc.Repositries.Shop;
+using Lab_Mvc.Repositries.Market;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -64,6 +66,7 @@ builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
 builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
 builder.Services.AddScoped<IShopUser, ShopUserRepository>();
 builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
+builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
 
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
