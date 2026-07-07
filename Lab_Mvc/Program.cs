@@ -1,3 +1,6 @@
+using Lab_Mvc.Controllers.Lab;
+using Lab_Mvc.Interfaces.Lab;
+using Lab_Mvc.Repositries.Lab;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
@@ -105,7 +108,7 @@ app.UseHttpsRedirection();
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
-app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
+app.UseMiddleware<Lab_Mvc.Controllers.Lab.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
 app.UseMiddleware<Lab_Mvc.Controllers.Shop.ShopLoginController.ShopTokenValidationMiddleware>();
 app.UseAuthorization();
@@ -151,3 +154,4 @@ app.UseStaticFiles(new StaticFileOptions
 app.MapControllers();
 
 app.Run();
+

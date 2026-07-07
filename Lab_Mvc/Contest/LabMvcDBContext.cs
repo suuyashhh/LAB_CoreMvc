@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Lab;
 
 namespace Lab_Mvc.Contest
 {
