@@ -66,7 +66,9 @@ builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
 builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
 builder.Services.AddScoped<IShopUser, ShopUserRepository>();
 builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
+
 builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
+builder.Services.AddScoped<IMarketVegitables, MarketVegitablesRepository>();
 
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
