@@ -5,16 +5,14 @@ using Models.Shop;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Shop
 {
-    public class ShopEntryRepository : IShopEntry
+    public class ShopEntryRepository : DapperRepositoryBase, IShopEntry
     {
-        private readonly DapperContext _dapperContext;
-
-        public ShopEntryRepository(DapperContext dapperContext)
+        public ShopEntryRepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<IEnumerable<DTOShopEntry>> GetAll(long userId, bool isPaid)
@@ -36,7 +34,7 @@ namespace Lab_Mvc.Repositries.Shop
                 WHERE [IS_PAID] = @IsPaid
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopEntry>(
                     query,
@@ -66,7 +64,7 @@ namespace Lab_Mvc.Repositries.Shop
                   AND (@ToDate IS NULL OR [DATE] <= @ToDate)
                 ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopEntry>(
                     query,
@@ -94,7 +92,7 @@ namespace Lab_Mvc.Repositries.Shop
                 FROM [dbo].[SHOP_ENTRY]
                 WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryFirstOrDefaultAsync<DTOShopEntry>(
                     query,
@@ -145,7 +143,7 @@ namespace Lab_Mvc.Repositries.Shop
 
                 SELECT @NewShopEntryId;";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var newId = await connection.ExecuteScalarAsync<long>(query, model);
                 return newId;
@@ -168,7 +166,7 @@ namespace Lab_Mvc.Repositries.Shop
                     [EntryType] = @EntryType
                 WHERE [SHOP_ENTRY_ID] = @SHOP_ENTRY_ID";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(query, model);
                 return affectedRows;
@@ -181,7 +179,7 @@ namespace Lab_Mvc.Repositries.Shop
                 DELETE FROM [dbo].[SHOP_ENTRY]
                 WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,

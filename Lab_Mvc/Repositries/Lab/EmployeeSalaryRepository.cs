@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class EmployeeSalaryRepository : IEmployeeSalary
+    public class EmployeeSalaryRepository : DapperRepositoryBase, IEmployeeSalary
     {
-        private readonly DapperContext context;
-
-        public EmployeeSalaryRepository(DapperContext context)
+        public EmployeeSalaryRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOEmployeeSalary>> GetEmployeeSalary(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetEmployeeSalary);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var EmployeeSalary = await connection.QueryAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary.ToList();
@@ -52,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@EMP_TRN_ID", empSal_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var EmployeeSalary = await connection.QuerySingleAsync<DTOEmployeeSalary>(query, parameters, commandType: CommandType.StoredProcedure);
                     return EmployeeSalary;
@@ -69,7 +67,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseEmpSalary);
@@ -110,7 +108,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -137,7 +135,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -161,7 +159,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -180,7 +178,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 EMP_TRN_ID FROM MST_EMP_SALARY_SLIP WHERE EMP_TRN_ID LIKE @likePattern ORDER BY EMP_TRN_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

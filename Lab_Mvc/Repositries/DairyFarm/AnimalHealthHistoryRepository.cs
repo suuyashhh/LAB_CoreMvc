@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
@@ -6,16 +6,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class AnimalHealthHistoryRepository : IAnimalHealthHistory
+    public class AnimalHealthHistoryRepository : DapperRepositoryBase, IAnimalHealthHistory
     {
-        private readonly DapperContext context;
-
-        public AnimalHealthHistoryRepository(DapperContext context)
+        public AnimalHealthHistoryRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         // Get all animals with health record summary
@@ -35,7 +33,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 GROUP BY an.animal_id, an.animal_name
                 ORDER BY an.animal_name";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var animals = await connection.QueryAsync<AnimalHealthSummaryDTO>(query, new { UserId = userId });
                 return animals.ToList();
@@ -64,7 +62,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     AND e.expense_name IN ('Medicine', 'Doctor')
                 ORDER BY e.date DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var history = await connection.QueryAsync<AnimalHealthRecordDTO>(query,
                     new { UserId = userId, AnimalId = animalId });
@@ -93,7 +91,7 @@ GROUP BY
     an.animal_image
 ORDER BY an.animal_name";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var animals = await connection.QueryAsync<AnimalHealthSummaryDTO>(query, new { UserId = userId });
                 return animals.ToList();

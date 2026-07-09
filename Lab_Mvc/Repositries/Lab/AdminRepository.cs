@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class AdminRepository : IAdmin
+    public class AdminRepository : DapperRepositoryBase, IAdmin
     {
-        private readonly DapperContext context;
-
-        public AdminRepository(DapperContext context)
+        public AdminRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOAdmin>> GetCompanies()
@@ -27,7 +25,7 @@ namespace Lab_Mvc.Repositries.Lab
                 var parameters = new DynamicParameters();
                 parameters.Add("@Action", QueryConstant.GetCompanies);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var admins = await connection.QueryAsync<DTOAdmin>(query, parameters, commandType: CommandType.StoredProcedure);
                     return admins.ToList();

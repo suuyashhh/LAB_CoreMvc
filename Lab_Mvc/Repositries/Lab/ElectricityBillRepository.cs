@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class ElectricityBillRepository : IElectricityBill
+    public class ElectricityBillRepository : DapperRepositoryBase, IElectricityBill
     {
-        private readonly DapperContext context;
-
-        public ElectricityBillRepository(DapperContext context)
+        public ElectricityBillRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOElectricityBill>> GetElectricityBill(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetElectricityBill);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var ElectricityBill = await connection.QueryAsync<DTOElectricityBill>(query, parameters, commandType: CommandType.StoredProcedure);
                     return ElectricityBill.ToList();
@@ -52,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@ELC_TRN_ID", elcBill_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var ElectricityBill = await connection.QuerySingleAsync<DTOElectricityBill>(query, parameters, commandType: CommandType.StoredProcedure);
                     return ElectricityBill;
@@ -69,7 +67,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseElcBill);
@@ -110,7 +108,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -137,7 +135,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -161,7 +159,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -180,7 +178,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 ELC_TRN_ID FROM MST_ELECTRICITY_BILL WHERE ELC_TRN_ID LIKE @likePattern ORDER BY ELC_TRN_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

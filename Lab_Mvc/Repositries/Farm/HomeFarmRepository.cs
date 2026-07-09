@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.Farm;
 using Models.Farm;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Farm
 {
-    public class HomeFarmRepository : IHomeFarm
+    public class HomeFarmRepository : DapperRepositoryBase, IHomeFarm
     {
-        private readonly DapperContext _dapperContext;
-
-        public HomeFarmRepository(DapperContext dapperContext)
+        public HomeFarmRepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<IEnumerable<DTOHomeFarm>> GetAll(string userId)
@@ -21,7 +19,7 @@ namespace Lab_Mvc.Repositries.Farm
                           FROM FARM_NAMES
                           WHERE USER_ID = @USER_ID AND STATUS_CODE = 0";
 
-            using var connection = _dapperContext.CreateConnection();
+            using var connection = CreateConnection();
             return await connection.QueryAsync<DTOHomeFarm>(query, new { USER_ID = userId });
         }
 
@@ -41,7 +39,7 @@ namespace Lab_Mvc.Repositries.Farm
             
             SELECT @NewFarmId;";
 
-                using var connection = _dapperContext.CreateConnection();
+                using var connection = CreateConnection();
 
                 var newFarmId = await connection.ExecuteScalarAsync<int>(query, model);
 
@@ -65,7 +63,7 @@ namespace Lab_Mvc.Repositries.Farm
                           WHERE FARM_ID = @FARM_ID 
                             AND USER_ID = @USER_ID";
 
-            using var connection = _dapperContext.CreateConnection();
+            using var connection = CreateConnection();
             return await connection.ExecuteAsync(query, model);
         }
 
@@ -76,7 +74,7 @@ namespace Lab_Mvc.Repositries.Farm
                           WHERE FARM_ID = @FARM_ID 
                             AND USER_ID = @USER_ID";
 
-            using var connection = _dapperContext.CreateConnection();
+            using var connection = CreateConnection();
             return await connection.ExecuteAsync(query, new
             {
                 FARM_ID = farmId,
@@ -91,7 +89,7 @@ namespace Lab_Mvc.Repositries.Farm
                           FROM FARM_NAMES 
                           WHERE USER_ID = @USER_ID";
 
-            using var connection = _dapperContext.CreateConnection();
+            using var connection = CreateConnection();
             return await connection.ExecuteScalarAsync<int>(query, new { USER_ID = userId });
         }
     }

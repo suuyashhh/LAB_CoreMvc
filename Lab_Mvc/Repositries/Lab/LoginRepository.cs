@@ -6,17 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class LoginRepository : ILogin
+    public class LoginRepository : DapperRepositoryBase, ILogin
     {
-        private readonly DapperContext context;
-
-        public LoginRepository(DapperContext context)
+        public LoginRepository(DapperContext context) : base(context)
         {
-            //_dbContext = dBContext;
-            this.context = context;
         }
 
 
@@ -34,7 +31,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var result = await connection.QuerySingleOrDefaultAsync<DTOLogin>(query, parameters, commandType: CommandType.StoredProcedure);
                     return result;

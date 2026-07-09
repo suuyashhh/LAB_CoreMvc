@@ -7,17 +7,14 @@ using Models;
 using System.Data;
 using System.Numerics;
 using Lab_Mvc.Contest;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class DoctorRepository : IDoctor
+    public class DoctorRepository : DapperRepositoryBase, IDoctor
     {
-        private readonly DapperContext context;
-
-        public DoctorRepository(DapperContext context)
+        public DoctorRepository(DapperContext context) : base(context)
         {
-            //_dbContext = dBContext;
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTODoctor>> GetDoctors(int comId)
@@ -30,7 +27,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetDoctors);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var tests = await connection.QueryAsync<DTODoctor>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests.ToList();
@@ -53,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@DOCTOR_CODE", doctor_code);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var Doctors = await connection.QuerySingleAsync<DTODoctor>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Doctors;
@@ -85,7 +82,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -113,7 +110,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -138,7 +135,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -158,7 +155,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 DOCTOR_CODE FROM MST_DOCTOR WHERE DOCTOR_CODE LIKE @likePattern ORDER BY DOCTOR_CODE DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

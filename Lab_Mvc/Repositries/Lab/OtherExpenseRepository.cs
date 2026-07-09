@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class OtherExpenseRepository : IOtherExpense
+    public class OtherExpenseRepository : DapperRepositoryBase, IOtherExpense
     {
-        private readonly DapperContext context;
-
-        public OtherExpenseRepository(DapperContext context)
+        public OtherExpenseRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOOtherExpense>> GetOtherExpense(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetOtherExpense);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var OtherExpense = await connection.QueryAsync<DTOOtherExpense>(query, parameters, commandType: CommandType.StoredProcedure);
                     return OtherExpense.ToList();
@@ -52,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@OTHER_ID", otherEx_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var OtherExpense = await connection.QuerySingleAsync<DTOOtherExpense>(query, parameters, commandType: CommandType.StoredProcedure);
                     return OtherExpense;
@@ -69,7 +67,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseOthMaterials);
@@ -109,7 +107,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -136,7 +134,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -160,7 +158,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -179,7 +177,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 OTHER_ID FROM MST_OTHER_EXPANCE WHERE OTHER_ID LIKE @likePattern ORDER BY OTHER_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

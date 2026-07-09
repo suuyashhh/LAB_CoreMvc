@@ -1,17 +1,15 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class DoctorDairyRepository : IDoctorDairy
+    public class DoctorDairyRepository : DapperRepositoryBase, IDoctorDairy
     {
-        private readonly DapperContext context;
-
-        public DoctorDairyRepository(DapperContext context)
+        public DoctorDairyRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTODoctorDairy>> GetAllMedicienHistory(int userId)
@@ -22,7 +20,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                           ";
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var MedicienHistorys = await connection.QueryAsync<DTODoctorDairy>(query, new { UserId = userId });
 
@@ -42,7 +40,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                                where expense_id = @Exp_Id
                         ";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var Medicien = await connection.QuerySingleOrDefaultAsync<DTODoctorDairy>(query, new { Exp_Id = exp_id });
 
@@ -67,7 +65,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
                           ";
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var FeedsHistorys = await connection.QueryAsync<DTODoctorDairy>(query, new { UserId = userId });
 
@@ -90,7 +88,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
                                where e.expense_id = @Exp_Id
                         ";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var Doctor = await connection.QuerySingleOrDefaultAsync<DTODoctorDairy>(query, new { Exp_Id = exp_id });
 
@@ -114,7 +112,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -153,7 +151,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -184,7 +182,7 @@ select * from Expense where expense_name='Doctor' AND user_id=@UserId order by d
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {

@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class BillDairyRepository : IBillDairy
+    public class BillDairyRepository : DapperRepositoryBase, IBillDairy
     {
-        private readonly DapperContext context;
-
-        public BillDairyRepository(DapperContext context)
+        public BillDairyRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         // ================= BILL HISTORY =================
@@ -25,7 +23,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var billHistory = await connection.QueryAsync<DTOBillDairy>(query, new { UserId = userId });
                     return billHistory.ToList();
@@ -47,7 +45,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 where bill_id = @Exp_Id
             ";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var bill = await connection.QuerySingleOrDefaultAsync<DTOBillDairy>(query, new { Exp_Id = exp_id });
 
@@ -72,7 +70,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -106,7 +104,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -136,7 +134,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {

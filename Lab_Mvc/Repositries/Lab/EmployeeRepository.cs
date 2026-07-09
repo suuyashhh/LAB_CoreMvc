@@ -7,17 +7,14 @@ using Models;
 using System.Data;
 using System.Numerics;
 using Lab_Mvc.Contest;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class EmployeeRepository : IEmployee
+    public class EmployeeRepository : DapperRepositoryBase, IEmployee
     {
-        private readonly DapperContext context;
-
-        public EmployeeRepository(DapperContext context)
+        public EmployeeRepository(DapperContext context) : base(context)
         {
-            //_dbContext = dBContext;
-            this.context = context;
         }
         public async Task<IEnumerable<DTOEmployee>> GetEmployees(int comId)
         {
@@ -29,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetEmployees);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var Employees = await connection.QueryAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Employees.ToList();
@@ -52,7 +49,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@EMP_ID", emp_code);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var Employees = await connection.QuerySingleAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
                     return Employees;
@@ -83,7 +80,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -111,7 +108,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -136,7 +133,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -156,7 +153,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 EMP_ID FROM MST_EMPLOYEE WHERE EMP_ID LIKE @likePattern ORDER BY EMP_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

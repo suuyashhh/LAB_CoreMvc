@@ -1,4 +1,4 @@
-﻿// MonthlyPERepository.cs
+// MonthlyPERepository.cs
 using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
@@ -6,16 +6,14 @@ using Models.DairyFarm;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class MonthlyPERepository : IMonthlyPERepository
+    public class MonthlyPERepository : DapperRepositoryBase, IMonthlyPERepository
     {
-        private readonly DapperContext _dapperContext;
-
-        public MonthlyPERepository(DapperContext dapperContext)
+        public MonthlyPERepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<IEnumerable<MonthlyPEDto>> GetMonthlySummary(int userId)
@@ -68,7 +66,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 ORDER BY 
                     YearValue DESC, MonthNumber DESC";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             return await conn.QueryAsync<MonthlyPEDto>(sql, new { userId });
         }
     }

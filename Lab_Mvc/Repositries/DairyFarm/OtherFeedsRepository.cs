@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Constants;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
@@ -6,15 +6,14 @@ using Models;
 using Models.DairyFarm;
 using System.Data;
 using System.Security.AccessControl;
+using SmartParking.Repositories;
+
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class OtherFeedsRepository : IOtherFeeds
+    public class OtherFeedsRepository : DapperRepositoryBase, IOtherFeeds
     {
-        private readonly DapperContext context;
-
-        public OtherFeedsRepository(DapperContext context)
+        public OtherFeedsRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOFeeds>> GetAllFeedHistory(int userId)
@@ -27,7 +26,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                           ";
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var FeedsHistorys = await connection.QueryAsync<DTOFeeds>(query, new { UserId = userId });
 
@@ -48,7 +47,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
  where expense_id = @Exp_Id
     ";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var feed = await connection.QuerySingleOrDefaultAsync<DTOFeeds>(query, new { Exp_Id = exp_id });
 
@@ -71,7 +70,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -109,7 +108,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {
@@ -140,7 +139,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, new
                     {

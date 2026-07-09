@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class BikeFuleRepository : IBikeFule
+    public class BikeFuleRepository : DapperRepositoryBase, IBikeFule
     {
-        private readonly DapperContext context;
-
-        public BikeFuleRepository(DapperContext context)
+        public BikeFuleRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOBikeFule>> GetBikeFule(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetBikeFule);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var BikeFule = await connection.QueryAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule.ToList();
@@ -52,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@BIKE_ID", bike_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var BikeFule = await connection.QuerySingleAsync<DTOBikeFule>(query, parameters, commandType: CommandType.StoredProcedure);
                     return BikeFule;
@@ -69,7 +67,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseBikeFule);
@@ -109,7 +107,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -136,7 +134,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -160,7 +158,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -179,7 +177,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 BIKE_ID FROM MST_BIKE_FULE WHERE BIKE_ID LIKE @likePattern ORDER BY BIKE_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

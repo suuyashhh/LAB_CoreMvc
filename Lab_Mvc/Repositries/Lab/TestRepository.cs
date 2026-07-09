@@ -8,17 +8,14 @@ using Models;
 using System.Data;
 using System.Numerics;
 using static System.Net.Mime.MediaTypeNames;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class TestRepository : ITest
+    public class TestRepository : DapperRepositoryBase, ITest
     {
-        private readonly DapperContext context;
-
-        public TestRepository(DapperContext context)
+        public TestRepository(DapperContext context) : base(context)
         {
-            //_dbContext = dBContext;
-            this.context = context;
         }
         public async Task<IEnumerable<DTOTest>> GetTests(int comId)
         {
@@ -30,7 +27,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetTests);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var tests = await connection.QueryAsync<DTOTest>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests.ToList();
@@ -54,7 +51,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@TEST_CODE", test_code);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var tests = await connection.QuerySingleAsync<DTOTest>(query, parameters, commandType: CommandType.StoredProcedure);
                     return tests;
@@ -88,7 +85,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -116,7 +113,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -141,7 +138,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -159,9 +156,9 @@ namespace Lab_Mvc.Repositries.Lab
             string fixedPartSec = comId;
             string likePattern = fixedPart + fixedPartSec + "%";
 
-            string query = "SELECT TOP 1 TEST_CODE FROM MST_TEST WHERE TEST_CODE LIKE @likePattern ORDER BY TEST_CODE DESC";
+            string query = "SELECT TOP 1 TEST_CODE FROM MST_TEST WHERE TEST_CODE LIKE @likePattern ORDER BY TEST_CODEÂ DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

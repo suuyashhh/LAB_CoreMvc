@@ -10,17 +10,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
 using System.Reflection;
 using System.Globalization;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class CasePaperRepository : ICasePaper
+    public class CasePaperRepository : DapperRepositoryBase, ICasePaper
     {
-        private readonly DapperContext context;
-
-        public CasePaperRepository(DapperContext context)
+        public CasePaperRepository(DapperContext context) : base(context)
         {
-            //_dbContext = dBContext;
-            this.context = context;
         }
         public async Task<IEnumerable<DTOCasePaper>> GetCasePapers(int comId)
         {
@@ -32,7 +29,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetCasePapers);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var CasePapers = await connection.QueryAsync<DTOCasePaper>(query, parameters, commandType: CommandType.StoredProcedure);
                     return CasePapers.ToList();
@@ -49,7 +46,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetCasePaperById);
@@ -81,7 +78,7 @@ namespace Lab_Mvc.Repositries.Lab
             {
                 var query = QueryConstant.sp;
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseCasePaper);
@@ -108,7 +105,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
@@ -193,7 +190,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
@@ -282,7 +279,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                     //return await property;
@@ -303,7 +300,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 TRN_NO FROM MST_PATIENT WHERE TRN_NO LIKE @key + '%' ORDER BY TRN_NO DESC";
 
-            using (var conn = context.CreateConnection())
+            using (var conn = CreateConnection())
             {
                 string lastId = await conn.ExecuteScalarAsync<string>(query, new { key = dateComboKey });
 
@@ -326,7 +323,7 @@ namespace Lab_Mvc.Repositries.Lab
             {
                 var query = QueryConstant.sp;
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())

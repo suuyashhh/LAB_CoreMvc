@@ -6,16 +6,14 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class DoctorCommissionRepository : IDoctorCommission
+    public class DoctorCommissionRepository : DapperRepositoryBase, IDoctorCommission
     {
-        private readonly DapperContext context;
-
-        public DoctorCommissionRepository(DapperContext context)
+        public DoctorCommissionRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTODoctorCommission>> GetDoctorCommission(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetDoctorCommission);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission.ToList();
@@ -52,7 +50,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@DOC_COM_ID", docCom_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
                     return DoctorCommission;
@@ -69,7 +67,7 @@ namespace Lab_Mvc.Repositries.Lab
             try
             {
                 var query = QueryConstant.sp;
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Action", QueryConstant.GetDateWiseDocCommission);
@@ -109,7 +107,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -136,7 +134,7 @@ namespace Lab_Mvc.Repositries.Lab
 
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -160,7 +158,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", comId);
 
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -179,7 +177,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 DOC_COM_ID FROM MST_DOCTOR_COMMISSION WHERE DOC_COM_ID LIKE @likePattern ORDER BY DOC_COM_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
@@ -7,16 +7,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class BreedingDateCheckRepository : IBreedingDateCheck
+    public class BreedingDateCheckRepository : DapperRepositoryBase, IBreedingDateCheck
     {
-        private readonly DapperContext context;
-
-        public BreedingDateCheckRepository(DapperContext context)
+        public BreedingDateCheckRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         // Get all animals with breeding record summary
@@ -53,7 +51,7 @@ ORDER BY an.animal_name;";
             try
             {
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var animals = await connection.QueryAsync<BreedingAnimalSummaryDTO>(query, new { UserId = userId });
 
@@ -93,7 +91,7 @@ ORDER BY an.animal_name;";
                     AND e.Switch = 22
                 ORDER BY e.date DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var records = await connection.QueryAsync<BreedingRecordDTO>(query,
                     new { UserId = userId, AnimalId = animalId });

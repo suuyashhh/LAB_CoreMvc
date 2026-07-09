@@ -5,16 +5,14 @@ using Models.Shop;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Shop
 {
-    public class ShopExpenseTypeRepository : IShopExpenseType
+    public class ShopExpenseTypeRepository : DapperRepositoryBase, IShopExpenseType
     {
-        private readonly DapperContext _context;
-
-        public ShopExpenseTypeRepository(DapperContext context)
+        public ShopExpenseTypeRepository(DapperContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<DTOShopExpenseType>> GetAll()
@@ -26,7 +24,7 @@ namespace Lab_Mvc.Repositries.Shop
                 FROM [dbo].[SHOP_EXPENSE_TYPE]
                 ORDER BY [EX_ID] DESC";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopExpenseType>(query);
                 return result;
@@ -42,7 +40,7 @@ namespace Lab_Mvc.Repositries.Shop
                 FROM [dbo].[SHOP_EXPENSE_TYPE]
                 WHERE [EX_ID] = @ExId";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QuerySingleOrDefaultAsync<DTOShopExpenseType>(
                     query,
@@ -59,7 +57,7 @@ namespace Lab_Mvc.Repositries.Shop
                 VALUES (@NAME);
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var id = await connection.QuerySingleAsync<int>(query, model);
                 return id;
@@ -73,7 +71,7 @@ namespace Lab_Mvc.Repositries.Shop
                 SET [NAME] = @NAME
                 WHERE [EX_ID] = @EX_ID";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(query, model);
                 return affectedRows;
@@ -86,7 +84,7 @@ namespace Lab_Mvc.Repositries.Shop
                 DELETE FROM [dbo].[SHOP_EXPENSE_TYPE]
                 WHERE [EX_ID] = @ExId";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,

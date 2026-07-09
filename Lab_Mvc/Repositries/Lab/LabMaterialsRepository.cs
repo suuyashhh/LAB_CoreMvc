@@ -7,16 +7,14 @@ using Lab_Mvc.Interfaces;
 using Microsoft.Identity.Client;
 using Models;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Lab
 {
-    public class LabMaterialsRepository : ILabMaterials
+    public class LabMaterialsRepository : DapperRepositoryBase, ILabMaterials
     {
-        private readonly DapperContext context; 
-
-        public LabMaterialsRepository(DapperContext context)
+        public LabMaterialsRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         public async Task<IEnumerable<DTOLabMaterials>> GetLabMaterials(int comId)
@@ -28,7 +26,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@Action", QueryConstant.GetLabMaterials);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var labMaterials = await connection.QueryAsync<DTOLabMaterials>(
                         query,
@@ -55,7 +53,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@MAT_ID", mat_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var labMaterial = await connection.QuerySingleAsync<DTOLabMaterials>(
                         query,
@@ -83,7 +81,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@To_Date", to_date);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 using (var multi = await connection.QueryMultipleAsync(
                     query,
                     parameters,
@@ -116,7 +114,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@COM_ID", objMat.COM_ID);
                 parameters.Add("@CRT_BY", objMat.CRT_BY);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(
                         query,
@@ -144,7 +142,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@MAT_PRICE", objMat.MAT_PRICE);
                 parameters.Add("@DATE", objMat.DATE);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(
                         query,
@@ -170,7 +168,7 @@ namespace Lab_Mvc.Repositries.Lab
                 parameters.Add("@MAT_ID", mat_id);
                 parameters.Add("@COM_ID", comId);
 
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     await connection.ExecuteAsync(
                         query,
@@ -193,7 +191,7 @@ namespace Lab_Mvc.Repositries.Lab
 
             string query = "SELECT TOP 1 MAT_ID FROM MST_MATERIALS WHERE MAT_ID LIKE @likePattern ORDER BY MAT_ID DESC";
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
 

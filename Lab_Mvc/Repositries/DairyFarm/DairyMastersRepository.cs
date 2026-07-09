@@ -1,20 +1,18 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class DairyMastersRepository : IDairyMasters
+    public class DairyMastersRepository : DapperRepositoryBase, IDairyMasters
     {
-        private readonly DapperContext _dapperContext;
-
-        public DairyMastersRepository(DapperContext dapperContext)
+        public DairyMastersRepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         // Animals
@@ -31,7 +29,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 WHERE user_id = @userId 
                 ORDER BY animal_id DESC";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             return await conn.QueryAsync<AnimalDto>(sql, new { userId });
         }
 
@@ -42,7 +40,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 VALUES (@AnimalName, @UserId, @AnimalImage, GETDATE()); 
                 SELECT CAST(SCOPE_IDENTITY() as int)";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var id = await conn.QuerySingleAsync<int>(sql, animal);
             return id;
         }
@@ -55,7 +53,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     animal_image = @AnimalImage 
                 WHERE animal_id = @AnimalId";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var rows = await conn.ExecuteAsync(sql, animal);
             return rows > 0;
         }
@@ -63,7 +61,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
         public async Task<bool> DeleteAnimal(int animalId)
         {
             var sql = "DELETE FROM AnimalsName WHERE animal_id = @animalId";
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var rows = await conn.ExecuteAsync(sql, new { animalId });
             return rows > 0;
         }
@@ -81,7 +79,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 WHERE user_id = @userId 
                 ORDER BY feed_id DESC";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             return await conn.QueryAsync<FeedDto>(sql, new { userId });
         }
 
@@ -92,7 +90,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 VALUES (@FeedName, @UserId, @FeedImage); 
                 SELECT CAST(SCOPE_IDENTITY() as int)";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var id = await conn.QuerySingleAsync<int>(sql, feed);
             return id;
         }
@@ -105,7 +103,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     feed_image = @FeedImage 
                 WHERE feed_id = @FeedId";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var rows = await conn.ExecuteAsync(sql, feed);
             return rows > 0;
         }
@@ -113,7 +111,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
         public async Task<bool> DeleteFeed(int feedId)
         {
             var sql = "DELETE FROM Feeds WHERE feed_id = @feedId";
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var rows = await conn.ExecuteAsync(sql, new { feedId });
             return rows > 0;
         }
