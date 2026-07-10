@@ -64,7 +64,7 @@ namespace Lab_Mvc.Controllers.Market
             )).ToList();
 
             var vegetables = (await connection.QueryAsync<Vegetable>(
-                "SELECT id, vegetable_name AS VegetableName FROM [dbo].[Market_Vegetable]"
+                "SELECT id, Eng_vegetable_name AS EngVegetableName, Mar_vegetable_name AS MarVegetableName FROM [dbo].[Market_Vegetable]"
             )).ToList();
 
             var entries = (await connection.QueryAsync<PurchaseEntryExport>(
@@ -110,8 +110,8 @@ namespace Lab_Mvc.Controllers.Market
                     foreach (var veg in data.Vegetables)
                     {
                         await connection.ExecuteAsync(
-                            "INSERT INTO [dbo].[Market_Vegetable] (id, vegetable_name) VALUES (@Id, @VegetableName)",
-                            new { Id = veg.Id, VegetableName = veg.VegetableName },
+                            "INSERT INTO [dbo].[Market_Vegetable] (id, Eng_vegetable_name, Mar_vegetable_name) VALUES (@Id, @EngVegetableName, @MarVegetableName)",
+                            new { Id = veg.Id, EngVegetableName = veg.EngVegetableName, MarVegetableName = veg.MarVegetableName },
                             transaction: transaction
                         );
                     }

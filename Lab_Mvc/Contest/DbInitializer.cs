@@ -53,7 +53,8 @@ namespace Lab_Mvc.Contest
                 BEGIN
                     CREATE TABLE [dbo].[Market_Vegetable] (
                         [id] INT IDENTITY(1,1) PRIMARY KEY,
-                        [vegetable_name] NVARCHAR(200) NOT NULL UNIQUE
+                        [Eng_vegetable_name] NVARCHAR(200) NOT NULL UNIQUE,
+                        [Mar_vegetable_name] NVARCHAR(200) NULL
                     );
                 END
             ");

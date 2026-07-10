@@ -61,7 +61,10 @@ namespace Lab_Mvc.Repositries.Market
                     pi.id, 
                     pi.purchase_id AS PurchaseId, 
                     pi.vegetable_id AS VegetableId, 
-                    v.vegetable_name AS VegetableName, 
+                    CASE 
+                        WHEN v.Mar_vegetable_name IS NULL OR v.Mar_vegetable_name = '' THEN v.Eng_vegetable_name 
+                        ELSE v.Eng_vegetable_name + ' - ' + v.Mar_vegetable_name 
+                    END AS VegetableName, 
                     pi.quantity, 
                     pi.price_per_kg AS PricePerKg, 
                     pi.total
