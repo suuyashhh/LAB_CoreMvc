@@ -69,6 +69,10 @@ builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
 
 builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
 builder.Services.AddScoped<IMarketVegitables, MarketVegitablesRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IVegetableRepository, VegetableRepository>();
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
@@ -103,6 +107,21 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 var app = builder.Build();
+
+try
+{
+    var connString = app.Configuration.GetConnectionString("connString");
+    if (!string.IsNullOrEmpty(connString))
+    {
+        Console.WriteLine("Initializing Database for Market Module...");
+        DbInitializer.Initialize(connString);
+        Console.WriteLine("Database Initialized Successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Database initialization failed: {ex.Message}");
+}
 
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
