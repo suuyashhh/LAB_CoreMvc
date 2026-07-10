@@ -6,7 +6,7 @@ namespace Lab_Mvc.Interfaces.Market
 {
     public interface IPurchaseRepository
     {
-        Task<IEnumerable<PurchaseEntry>> GetAllAsync();
+        Task<IEnumerable<PurchaseEntry>> GetAllAsync(System.DateTime? fromDate = null, System.DateTime? toDate = null);
         Task<PurchaseEntry?> GetByIdAsync(int id);
         Task<int> AddAsync(PurchaseEntry entry);
         Task<bool> UpdateAsync(PurchaseEntry entry);

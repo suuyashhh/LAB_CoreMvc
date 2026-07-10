@@ -23,9 +23,9 @@ namespace Lab_Mvc.Controllers.Market
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] System.DateTime? fromDate, [FromQuery] System.DateTime? toDate)
         {
-            var purchases = await _purchaseRepository.GetAllAsync();
+            var purchases = await _purchaseRepository.GetAllAsync(fromDate, toDate);
             return Ok(purchases);
         }
 
