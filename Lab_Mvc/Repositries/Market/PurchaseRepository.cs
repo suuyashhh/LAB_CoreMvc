@@ -16,7 +16,7 @@ namespace Lab_Mvc.Repositries.Market
         {
         }
 
-        public async Task<IEnumerable<PurchaseEntry>> GetAllAsync()
+        public async Task<IEnumerable<PurchaseEntry>> GetAllAsync(System.DateTime? fromDate = null, System.DateTime? toDate = null)
         {
             using var connection = CreateConnection();
             var sql = @"
@@ -33,8 +33,24 @@ namespace Lab_Mvc.Repositries.Market
                     pe.notes
                 FROM [dbo].[Market_PurchaseEntry] pe
                 INNER JOIN [dbo].[Market_Hotel] h ON pe.hotel_id = h.id
-                ORDER BY pe.date DESC, pe.id DESC";
-            return await connection.QueryAsync<PurchaseEntry>(sql);
+                WHERE 1=1";
+
+            var parameters = new DynamicParameters();
+
+            if (fromDate.HasValue)
+            {
+                sql += " AND CAST(pe.date AS DATE) >= CAST(@FromDate AS DATE)";
+                parameters.Add("FromDate", fromDate.Value);
+            }
+            if (toDate.HasValue)
+            {
+                sql += " AND CAST(pe.date AS DATE) <= CAST(@ToDate AS DATE)";
+                parameters.Add("ToDate", toDate.Value);
+            }
+
+            sql += " ORDER BY pe.date DESC, pe.id DESC";
+
+            return await connection.QueryAsync<PurchaseEntry>(sql, parameters);
         }
 
         public async Task<PurchaseEntry?> GetByIdAsync(int id)
@@ -61,7 +77,10 @@ namespace Lab_Mvc.Repositries.Market
                     pi.id, 
                     pi.purchase_id AS PurchaseId, 
                     pi.vegetable_id AS VegetableId, 
-                    v.vegetable_name AS VegetableName, 
+                    CASE 
+                        WHEN v.Mar_vegetable_name IS NULL OR v.Mar_vegetable_name = '' THEN v.Eng_vegetable_name 
+                        ELSE v.Eng_vegetable_name + ' - ' + v.Mar_vegetable_name 
+                    END AS VegetableName, 
                     pi.quantity, 
                     pi.price_per_kg AS PricePerKg, 
                     pi.total

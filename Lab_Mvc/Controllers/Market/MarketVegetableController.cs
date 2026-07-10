@@ -37,9 +37,9 @@ namespace Lab_Mvc.Controllers.Market
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Vegetable vegetable)
         {
-            if (string.IsNullOrEmpty(vegetable.VegetableName))
+            if (string.IsNullOrEmpty(vegetable.EngVegetableName))
             {
-                return BadRequest(new { Message = "Vegetable Name is required." });
+                return BadRequest(new { Message = "English Vegetable Name is required." });
             }
 
             int id = await _vegetableRepository.AddAsync(vegetable);
@@ -51,9 +51,9 @@ namespace Lab_Mvc.Controllers.Market
         public async Task<IActionResult> Update(int id, [FromBody] Vegetable vegetable)
         {
             if (id != vegetable.Id) return BadRequest(new { Message = "ID mismatch." });
-            if (string.IsNullOrEmpty(vegetable.VegetableName))
+            if (string.IsNullOrEmpty(vegetable.EngVegetableName))
             {
-                return BadRequest(new { Message = "Vegetable Name is required." });
+                return BadRequest(new { Message = "English Vegetable Name is required." });
             }
 
             bool updated = await _vegetableRepository.UpdateAsync(vegetable);

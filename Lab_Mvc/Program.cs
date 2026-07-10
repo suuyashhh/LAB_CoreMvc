@@ -68,7 +68,6 @@ builder.Services.AddScoped<IShopUser, ShopUserRepository>();
 builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
 
 builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
-builder.Services.AddScoped<IMarketVegitables, MarketVegitablesRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IVegetableRepository, VegetableRepository>();

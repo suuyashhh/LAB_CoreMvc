@@ -17,13 +17,13 @@ namespace Lab_Mvc.Repositries.Market
 
         public async Task<IEnumerable<Vegetable>> GetAllAsync()
         {
-            var sql = "SELECT id, vegetable_name AS VegetableName FROM [dbo].[Market_Vegetable] ORDER BY vegetable_name";
+            var sql = "SELECT id, Eng_vegetable_name AS EngVegetableName, Mar_vegetable_name AS MarVegetableName FROM [dbo].[Market_Vegetable] ORDER BY Eng_vegetable_name";
             return await QueryAsync<Vegetable>(sql);
         }
 
         public async Task<Vegetable?> GetByIdAsync(int id)
         {
-            var sql = "SELECT id, vegetable_name AS VegetableName FROM [dbo].[Market_Vegetable] WHERE id = @Id";
+            var sql = "SELECT id, Eng_vegetable_name AS EngVegetableName, Mar_vegetable_name AS MarVegetableName FROM [dbo].[Market_Vegetable] WHERE id = @Id";
             return await QuerySingleOrDefaultAsync<Vegetable>(sql, new { Id = id });
         }
 
@@ -31,8 +31,8 @@ namespace Lab_Mvc.Repositries.Market
         {
             using var connection = CreateConnection();
             return await connection.ExecuteScalarAsync<int>(
-                "INSERT INTO [dbo].[Market_Vegetable] (vegetable_name) VALUES (@vegetable_name); SELECT SCOPE_IDENTITY();",
-                new { vegetable_name = vegetable.VegetableName }
+                "INSERT INTO [dbo].[Market_Vegetable] (Eng_vegetable_name, Mar_vegetable_name) VALUES (@EngVegetableName, @MarVegetableName); SELECT SCOPE_IDENTITY();",
+                new { EngVegetableName = vegetable.EngVegetableName, MarVegetableName = vegetable.MarVegetableName }
             );
         }
 
@@ -40,8 +40,8 @@ namespace Lab_Mvc.Repositries.Market
         {
             using var connection = CreateConnection();
             int rowsAffected = await connection.ExecuteAsync(
-                "UPDATE [dbo].[Market_Vegetable] SET vegetable_name = @vegetable_name WHERE id = @id",
-                new { id = vegetable.Id, vegetable_name = vegetable.VegetableName }
+                "UPDATE [dbo].[Market_Vegetable] SET Eng_vegetable_name = @EngVegetableName, Mar_vegetable_name = @MarVegetableName WHERE id = @id",
+                new { id = vegetable.Id, EngVegetableName = vegetable.EngVegetableName, MarVegetableName = vegetable.MarVegetableName }
             );
             return rowsAffected > 0;
         }
