@@ -71,7 +71,27 @@ namespace Lab_Mvc.Contest
                         [paid_amount] DECIMAL(18,2) NOT NULL,
                         [payment_image] NVARCHAR(MAX) NULL,
                         [grand_total] DECIMAL(18,2) NOT NULL,
-                        [notes] NVARCHAR(MAX) NULL
+                        [notes] NVARCHAR(MAX) NULL,
+                        [show_marathi] BIT NOT NULL DEFAULT 0
+                    );
+                END
+                ELSE
+                BEGIN
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Market_PurchaseEntry]') AND name = 'show_marathi')
+                    BEGIN
+                        ALTER TABLE [dbo].[Market_PurchaseEntry] ADD [show_marathi] BIT NOT NULL DEFAULT 0;
+                    END
+                END
+            ");
+
+            // Table PurchasePdf (Separate storage)
+            connection.Execute(@"
+                IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Market_PurchasePdf]') AND type in (N'U'))
+                BEGIN
+                    CREATE TABLE [dbo].[Market_PurchasePdf] (
+                        [id] INT IDENTITY(1,1) PRIMARY KEY,
+                        [purchase_id] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[Market_PurchaseEntry]([id]) ON DELETE CASCADE UNIQUE,
+                        [pdf_file] VARBINARY(MAX) NOT NULL
                     );
                 END
             ");

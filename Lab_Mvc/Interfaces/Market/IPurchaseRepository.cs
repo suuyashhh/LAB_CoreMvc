@@ -12,5 +12,7 @@ namespace Lab_Mvc.Interfaces.Market
         Task<bool> UpdateAsync(PurchaseEntry entry);
         Task<bool> DeleteAsync(int id);
         Task<DashboardStats> GetDashboardStatsAsync();
+        Task<bool> UpdatePdfAsync(int id, byte[] pdfData);
+        Task<byte[]?> GetPdfAsync(int id);
     }
 }

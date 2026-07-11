@@ -30,7 +30,8 @@ namespace Lab_Mvc.Repositries.Market
                     pe.paid_amount AS PaidAmount, 
                     pe.payment_image AS PaymentImage, 
                     pe.grand_total AS GrandTotal, 
-                    pe.notes
+                    pe.notes,
+                    pe.show_marathi AS ShowMarathi
                 FROM [dbo].[Market_PurchaseEntry] pe
                 INNER JOIN [dbo].[Market_Hotel] h ON pe.hotel_id = h.id
                 WHERE 1=1";
@@ -68,7 +69,8 @@ namespace Lab_Mvc.Repositries.Market
                     pe.paid_amount AS PaidAmount, 
                     pe.payment_image AS PaymentImage, 
                     pe.grand_total AS GrandTotal, 
-                    pe.notes
+                    pe.notes,
+                    pe.show_marathi AS ShowMarathi
                 FROM [dbo].[Market_PurchaseEntry] pe
                 INNER JOIN [dbo].[Market_Hotel] h ON pe.hotel_id = h.id
                 WHERE pe.id = @id;
@@ -106,8 +108,8 @@ namespace Lab_Mvc.Repositries.Market
             try
             {
                 var insertEntrySql = @"
-                    INSERT INTO [dbo].[Market_PurchaseEntry] (hotel_id, date, payment_method, paid_amount, payment_image, grand_total, notes)
-                    VALUES (@hotel_id, @date, @payment_method, @paid_amount, @payment_image, @grand_total, @notes);
+                    INSERT INTO [dbo].[Market_PurchaseEntry] (hotel_id, date, payment_method, paid_amount, payment_image, grand_total, notes, show_marathi)
+                    VALUES (@hotel_id, @date, @payment_method, @paid_amount, @payment_image, @grand_total, @notes, @show_marathi);
                     SELECT SCOPE_IDENTITY();";
 
                 var newId = await connection.ExecuteScalarAsync<int>(
@@ -120,7 +122,8 @@ namespace Lab_Mvc.Repositries.Market
                         paid_amount = entry.PaidAmount,
                         payment_image = entry.PaymentImage,
                         grand_total = entry.GrandTotal,
-                        notes = entry.Notes
+                        notes = entry.Notes,
+                        show_marathi = entry.ShowMarathi
                     },
                     transaction: transaction
                 );
@@ -171,7 +174,8 @@ namespace Lab_Mvc.Repositries.Market
                           paid_amount = @PaidAmount,
                           payment_image = @PaymentImage,
                           grand_total = @GrandTotal,
-                          notes = @Notes
+                          notes = @Notes,
+                          show_marathi = @ShowMarathi
                       WHERE id = @Id",
                     new
                     {
@@ -182,6 +186,7 @@ namespace Lab_Mvc.Repositries.Market
                         PaymentImage = entry.PaymentImage,
                         GrandTotal = entry.GrandTotal,
                         Notes = entry.Notes,
+                        ShowMarathi = entry.ShowMarathi,
                         Id = entry.Id
                     },
                     transaction: transaction
@@ -257,6 +262,31 @@ namespace Lab_Mvc.Repositries.Market
                     @OverallPurchaseTotal AS OverallPurchaseTotal;";
 
             return await connection.QueryFirstOrDefaultAsync<DashboardStats>(sql) ?? new DashboardStats();
+        }
+
+        public async Task<bool> UpdatePdfAsync(int id, byte[] pdfData)
+        {
+            using var connection = CreateConnection();
+            var sql = @"
+                IF EXISTS (SELECT 1 FROM [dbo].[Market_PurchasePdf] WHERE purchase_id = @id)
+                BEGIN
+                    UPDATE [dbo].[Market_PurchasePdf] SET pdf_file = @pdfData WHERE purchase_id = @id;
+                END
+                ELSE
+                BEGIN
+                    INSERT INTO [dbo].[Market_PurchasePdf] (purchase_id, pdf_file) VALUES (@id, @pdfData);
+                END";
+            int rowsAffected = await connection.ExecuteAsync(sql, new { id, pdfData });
+            return rowsAffected > 0;
+        }
+
+        public async Task<byte[]?> GetPdfAsync(int id)
+        {
+            using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<byte[]>(
+                "SELECT pdf_file FROM [dbo].[Market_PurchasePdf] WHERE purchase_id = @id",
+                new { id }
+            );
         }
     }
 }

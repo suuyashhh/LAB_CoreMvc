@@ -16,6 +16,7 @@ namespace Models.Market
         public string? PaymentImage { get; set; }
         public decimal GrandTotal { get; set; }
         public string? Notes { get; set; }
+        public bool ShowMarathi { get; set; }
         
         public List<PurchaseItem> Items { get; set; } = new List<PurchaseItem>();
     }
