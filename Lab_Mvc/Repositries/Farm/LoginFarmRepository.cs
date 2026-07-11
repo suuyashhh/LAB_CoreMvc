@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.Farm;
 using Models.DairyFarm;
 using Models.Farm;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Farm
 {
-    public class LoginFarmRepository : ILoginFarm
+    public class LoginFarmRepository : DapperRepositoryBase, ILoginFarm
     {
-        private readonly DapperContext _dapperContext;
-
-        public LoginFarmRepository(DapperContext dapperContext)
+        public LoginFarmRepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<DTOLoginFarm> LoginFarm(DTOLoginFarm loginFarm)
@@ -23,7 +21,7 @@ namespace Lab_Mvc.Repositries.Farm
 
             try
             {
-                using (var con = _dapperContext.CreateConnection())
+                using (var con = CreateConnection())
                 {
                     var result = await con.QuerySingleOrDefaultAsync<DTOLoginFarm>(query, new { Contact = loginFarm.CONTACT, Password = loginFarm.PASSWORD });
                     return result;
@@ -43,7 +41,7 @@ namespace Lab_Mvc.Repositries.Farm
 
             try
             {
-                using (var con = _dapperContext.CreateConnection())
+                using (var con = CreateConnection())
                 {
                     var result = await con.QuerySingleOrDefaultAsync<DTOLoginFarm>(query, new { USER_ID = user_id });
                     return result;
@@ -67,7 +65,7 @@ namespace Lab_Mvc.Repositries.Farm
 
             try
             {
-                using (var con = _dapperContext.CreateConnection())
+                using (var con = CreateConnection())
                 {
                     // Execute the update command
                     var rowsAffected = await con.ExecuteAsync(query, new

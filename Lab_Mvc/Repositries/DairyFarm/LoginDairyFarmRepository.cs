@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
 using System.Diagnostics.CodeAnalysis;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class LoginDairyFarmRepository : ILoginDairyFarm
+    public class LoginDairyFarmRepository : DapperRepositoryBase, ILoginDairyFarm
     {
-        private readonly DapperContext _dapperContext;
-
-        public LoginDairyFarmRepository(DapperContext dapperContext)
+        public LoginDairyFarmRepository(DapperContext dapperContext) : base(dapperContext)
         { 
-            _dapperContext = dapperContext;
         }
 
         public async Task<DTOLoginDairyFarm> LoginDairyFarm(DTOLoginDairyFarm loginDairyFarm)
@@ -23,7 +21,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var con = _dapperContext.CreateConnection()) 
+                using (var con = CreateConnection()) 
                 {
                     var result = await con.QuerySingleOrDefaultAsync<DTOLoginDairyFarm>(query, new {Contact= loginDairyFarm.contact,Password = loginDairyFarm.password });
                     return result;

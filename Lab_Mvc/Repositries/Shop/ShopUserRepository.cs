@@ -5,16 +5,14 @@ using Models.Shop;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Shop
 {
-    public class ShopUserRepository : IShopUser
+    public class ShopUserRepository : DapperRepositoryBase, IShopUser
     {
-        private readonly DapperContext _context;
-
-        public ShopUserRepository(DapperContext context)
+        public ShopUserRepository(DapperContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<DTOShopLogin>> GetAll()
@@ -29,7 +27,7 @@ namespace Lab_Mvc.Repositries.Shop
                 FROM [dbo].[SHOP_USER] WHERE ACTIVE='Y'
                 ORDER BY [USER_ID] DESC";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOShopLogin>(query);
                 return result;
@@ -48,7 +46,7 @@ namespace Lab_Mvc.Repositries.Shop
                 FROM [dbo].[SHOP_USER]
                 WHERE [USER_ID] = @UserId";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QuerySingleOrDefaultAsync<DTOShopLogin>(
                     query,
@@ -65,7 +63,7 @@ namespace Lab_Mvc.Repositries.Shop
                 VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG,'Y');
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var id = await connection.QuerySingleAsync<long>(query, model);
                 return id;
@@ -82,7 +80,7 @@ namespace Lab_Mvc.Repositries.Shop
                     [USER_IMG] = @USER_IMG
                 WHERE [USER_ID] = @USER_ID";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(query, model);
                 return affectedRows;
@@ -95,7 +93,7 @@ namespace Lab_Mvc.Repositries.Shop
                 DELETE FROM [dbo].[SHOP_USER]
                 WHERE [USER_ID] = @UserId";
 
-            using (var connection = _context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,

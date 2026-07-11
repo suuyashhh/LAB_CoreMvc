@@ -1,12 +1,17 @@
+using Lab_Mvc.Controllers.Lab;
+using Lab_Mvc.Interfaces.Lab;
+using Lab_Mvc.Repositries.Lab;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Interfaces.Farm;
 using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Market;
 using Lab_Mvc.Repositries;
 using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
 using Lab_Mvc.Repositries.Shop;
+using Lab_Mvc.Repositries.Market;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -62,6 +67,12 @@ builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
 builder.Services.AddScoped<IShopUser, ShopUserRepository>();
 builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
 
+builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IVegetableRepository, VegetableRepository>();
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+
 
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
@@ -96,6 +107,21 @@ builder.Services.AddAuthentication("Bearer")
 
 var app = builder.Build();
 
+try
+{
+    var connString = app.Configuration.GetConnectionString("connString");
+    if (!string.IsNullOrEmpty(connString))
+    {
+        Console.WriteLine("Initializing Database for Market Module...");
+        DbInitializer.Initialize(connString);
+        Console.WriteLine("Database Initialized Successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Database initialization failed: {ex.Message}");
+}
+
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -105,7 +131,7 @@ app.UseHttpsRedirection();
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
-app.UseMiddleware<Lab_Mvc.Controllers.LoginController.TokenValidationMiddleware>();
+app.UseMiddleware<Lab_Mvc.Controllers.Lab.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
 app.UseMiddleware<Lab_Mvc.Controllers.Shop.ShopLoginController.ShopTokenValidationMiddleware>();
 app.UseAuthorization();
@@ -151,3 +177,4 @@ app.UseStaticFiles(new StaticFileOptions
 app.MapControllers();
 
 app.Run();
+
