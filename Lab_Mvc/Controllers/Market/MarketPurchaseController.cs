@@ -88,5 +88,30 @@ namespace Lab_Mvc.Controllers.Market
             var fileUrl = $"/uploads/{uniqueFileName}";
             return Ok(new { Url = fileUrl });
         }
+
+        [HttpPost("{id}/pdf")]
+        public async Task<IActionResult> UploadPdf(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest(new { Message = "No file uploaded." });
+            
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            var pdfData = ms.ToArray();
+            
+            bool updated = await _purchaseRepository.UpdatePdfAsync(id, pdfData);
+            if (!updated) return NotFound(new { Message = "Purchase entry not found." });
+            
+            return Ok(new { Message = "PDF uploaded successfully to database." });
+        }
+
+        [HttpGet("{id}/pdf")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPdf(int id)
+        {
+            var pdfData = await _purchaseRepository.GetPdfAsync(id);
+            if (pdfData == null || pdfData.Length == 0) return NotFound(new { Message = "PDF invoice not found." });
+            
+            return File(pdfData, "application/pdf", $"Invoice_{id}.pdf");
+        }
     }
 }
