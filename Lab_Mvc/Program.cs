@@ -20,6 +20,8 @@ using SmartParking.Interfaces;
 using SmartParking.Repositories;
 using StackExchange.Redis;
 using System.Text;
+using Lab_Mvc.Interfaces.Fab;
+using Lab_Mvc.Repositries.Fab;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +79,16 @@ builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 builder.Services.AddScoped<IParkingLogin, ParkingLoginRepository>();
 builder.Services.AddScoped<IParkingProvider, ParkingProviderRepository>();
 builder.Services.AddScoped<IParkingRegistration, ParkingRegistrationRepository>();
+
+builder.Services.AddScoped<IFabLoginRepository, FabLoginRepository>();
+builder.Services.AddScoped<IFabUsersRepository, FabUsersRepository>();
+builder.Services.AddScoped<IFabAttendanceRepository, FabAttendanceRepository>();
+builder.Services.AddScoped<IFabAdvanceRepository, FabAdvanceRepository>();
+builder.Services.AddScoped<IFabExpenseRepository, FabExpenseRepository>();
+builder.Services.AddScoped<IFabProfitRepository, FabProfitRepository>();
+builder.Services.AddScoped<IFabTransportRepository, FabTransportRepository>();
+builder.Services.AddScoped<IFabPESummaryRepository, FabPESummaryRepository>();
+builder.Services.AddScoped<IFabSalarySlipRepository, FabSalarySlipRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
