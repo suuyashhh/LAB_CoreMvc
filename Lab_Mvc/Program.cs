@@ -89,6 +89,7 @@ builder.Services.AddScoped<IFabProfitRepository, FabProfitRepository>();
 builder.Services.AddScoped<IFabTransportRepository, FabTransportRepository>();
 builder.Services.AddScoped<IFabPESummaryRepository, FabPESummaryRepository>();
 builder.Services.AddScoped<IFabSalarySlipRepository, FabSalarySlipRepository>();
+builder.Services.AddScoped<IFabHistoryRepository, FabHistoryRepository>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false")
