@@ -23,7 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Fab\" />
     <Folder Include="FarmImgs\" />
+    <Folder Include="Interfaces\Fab\" />
+    <Folder Include="Repositries\Fab\" />
   </ItemGroup>
 
 </Project>
