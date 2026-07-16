@@ -110,6 +110,34 @@ namespace Lab_Mvc.Contest
                     );
                 END
             ");
+
+            // Notes Users Table
+            connection.Execute(@"
+                IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Notes_Users]') AND type in (N'U'))
+                BEGIN
+                    CREATE TABLE [dbo].[Notes_Users] (
+                        [id] INT IDENTITY(1,1) PRIMARY KEY,
+                        [name] NVARCHAR(150) NOT NULL,
+                        [number] NVARCHAR(50) NOT NULL UNIQUE,
+                        [password] NVARCHAR(255) NOT NULL,
+                        [created_at] DATETIME DEFAULT GETDATE()
+                    );
+                END
+            ");
+
+            // Notes Items Table
+            connection.Execute(@"
+                IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Notes_Items]') AND type in (N'U'))
+                BEGIN
+                    CREATE TABLE [dbo].[Notes_Items] (
+                        [id] INT IDENTITY(1,1) PRIMARY KEY,
+                        [user_id] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[Notes_Users]([id]) ON DELETE CASCADE,
+                        [title] NVARCHAR(255) NOT NULL,
+                        [content] NVARCHAR(MAX) NOT NULL,
+                        [created_date] DATETIME DEFAULT GETDATE()
+                    );
+                END
+            ");
         }
     }
 }
