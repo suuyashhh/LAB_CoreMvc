@@ -125,20 +125,7 @@ builder.Services.AddAuthentication("Bearer")
 
 var app = builder.Build();
 
-try
-{
-    var connString = app.Configuration.GetConnectionString("connString");
-    if (!string.IsNullOrEmpty(connString))
-    {
-        Console.WriteLine("Initializing Database for Market Module...");
-        DbInitializer.Initialize(connString);
-        Console.WriteLine("Database Initialized Successfully.");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Database initialization failed: {ex.Message}");
-}
+
 
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
