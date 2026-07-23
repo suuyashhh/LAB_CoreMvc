@@ -138,7 +138,7 @@ app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
 app.UseAuthentication();
 app.UseMiddleware<Lab_Mvc.Controllers.Lab.LoginController.TokenValidationMiddleware>();
 app.UseMiddleware<SmartParking.Controllers.ParkingLoginController.ParkingTokenValidationMiddleware>();
-app.UseMiddleware<Lab_Mvc.Controllers.Shop.ShopLoginController.ShopTokenValidationMiddleware>();
+
 app.UseAuthorization();
 
 app.UseStaticFiles();
