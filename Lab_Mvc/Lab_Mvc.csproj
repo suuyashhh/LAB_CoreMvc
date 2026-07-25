@@ -24,9 +24,12 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Fab\" />
+    <Folder Include="Controllers\BillingApp\" />
     <Folder Include="FarmImgs\" />
     <Folder Include="Interfaces\Fab\" />
+    <Folder Include="Interfaces\BillingApp\" />
     <Folder Include="Repositries\Fab\" />
+    <Folder Include="Repositries\BillingApp\" />
   </ItemGroup>
 
 </Project>

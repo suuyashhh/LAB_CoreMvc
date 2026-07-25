@@ -24,6 +24,8 @@ using Lab_Mvc.Interfaces.Fab;
 using Lab_Mvc.Repositries.Fab;
 using Lab_Mvc.Interfaces.Notes;
 using Lab_Mvc.Repositries.Notes;
+using Lab_Mvc.Interfaces.BillingApp;
+using Lab_Mvc.Repositries.BillingApp;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,6 +96,7 @@ builder.Services.AddScoped<IFabPESummaryRepository, FabPESummaryRepository>();
 builder.Services.AddScoped<IFabSalarySlipRepository, FabSalarySlipRepository>();
 builder.Services.AddScoped<IFabHistoryRepository, FabHistoryRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
