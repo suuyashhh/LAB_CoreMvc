@@ -23,7 +23,7 @@ namespace Lab_Mvc.Repositries.BillingApp
                     product_id, 
                     english_name, 
                     marathi_name, 
-                    quantity, 
+                    weight, 
                     price, 
                     barcodeNo
                 FROM Billing_ProductEntries
@@ -46,7 +46,7 @@ namespace Lab_Mvc.Repositries.BillingApp
                 (
                     english_name, 
                     marathi_name, 
-                    quantity, 
+                    weight, 
                     price, 
                     barcodeNo
                 )
@@ -54,7 +54,7 @@ namespace Lab_Mvc.Repositries.BillingApp
                 (
                     @english_name, 
                     @marathi_name, 
-                    @quantity, 
+                    @weight, 
                     @price, 
                     @barcodeNo
                 )";
@@ -77,7 +77,7 @@ namespace Lab_Mvc.Repositries.BillingApp
                 SET 
                     english_name = @english_name,
                     marathi_name = @marathi_name,
-                    quantity = @quantity,
+                    weight = @weight,
                     price = @price,
                     barcodeNo = @barcodeNo
                 WHERE product_id = @product_id";
@@ -85,6 +85,23 @@ namespace Lab_Mvc.Repositries.BillingApp
             {
                 using var connection = CreateConnection();
                 int affectedRows = await connection.ExecuteAsync(query, entry);
+                return affectedRows > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteProductEntry(long productId)
+        {
+            const string query = @"
+                DELETE FROM Billing_ProductEntries
+                WHERE product_id = @productId";
+            try
+            {
+                using var connection = CreateConnection();
+                int affectedRows = await connection.ExecuteAsync(query, new { productId });
                 return affectedRows > 0;
             }
             catch (Exception)

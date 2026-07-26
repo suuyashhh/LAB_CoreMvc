@@ -9,5 +9,6 @@ namespace Lab_Mvc.Interfaces.BillingApp
         Task<IEnumerable<DTOProductEntries>> GetAllEntries();
         Task<bool> SaveProductEntry(DTOProductEntries entry);
         Task<bool> UpdateProductEntry(DTOProductEntries entry);
+        Task<bool> DeleteProductEntry(long productId);
     }
 }

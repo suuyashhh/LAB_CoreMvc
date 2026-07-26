@@ -51,9 +51,9 @@ namespace Lab_Mvc.Controllers.BillingApp
                     return BadRequest(new { success = false, message = "Marathi name is required." });
                 }
 
-                if (string.IsNullOrWhiteSpace(entry.quantity))
+                if (string.IsNullOrWhiteSpace(entry.weight))
                 {
-                    return BadRequest(new { success = false, message = "Quantity is required." });
+                    return BadRequest(new { success = false, message = "Weight is required." });
                 }
 
                 if (entry.price < 0)
@@ -95,9 +95,9 @@ namespace Lab_Mvc.Controllers.BillingApp
                     return BadRequest(new { success = false, message = "Marathi name is required." });
                 }
 
-                if (string.IsNullOrWhiteSpace(entry.quantity))
+                if (string.IsNullOrWhiteSpace(entry.weight))
                 {
-                    return BadRequest(new { success = false, message = "Quantity is required." });
+                    return BadRequest(new { success = false, message = "Weight is required." });
                 }
 
                 if (entry.price < 0)
@@ -106,6 +106,25 @@ namespace Lab_Mvc.Controllers.BillingApp
                 }
 
                 bool success = await _productEntriesRepository.UpdateProductEntry(entry);
+                return Ok(new { success });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpDelete("DeleteProductEntry/{productId}")]
+        public async Task<IActionResult> DeleteProductEntry(long productId)
+        {
+            try
+            {
+                if (productId <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Valid Product ID is required." });
+                }
+
+                bool success = await _productEntriesRepository.DeleteProductEntry(productId);
                 return Ok(new { success });
             }
             catch (Exception ex)
