@@ -96,6 +96,7 @@ builder.Services.AddScoped<IFabPESummaryRepository, FabPESummaryRepository>();
 builder.Services.AddScoped<IFabSalarySlipRepository, FabSalarySlipRepository>();
 builder.Services.AddScoped<IFabHistoryRepository, FabHistoryRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<INotesExplorerRepository, NotesExplorerRepository>();
 builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
 
 
