@@ -46,7 +46,7 @@ namespace Lab_Mvc.Repositries.Notes
             // Based on user requirements, they want a warning. So we just attempt delete. If it fails due to FK, controller can catch it, but we can also use Cascade or recursive delete if needed.
             // Actually, we can use a CTE or just delete and rely on Cascade if we set it up. I set up cascade for Pages but not SubFolders (NO ACTION on ParentFolderId).
             // Let's manually delete subfolders recursively or assume the user clears them first.
-            
+
             var query = "DELETE FROM Notes_Folders WHERE FolderId = @FolderId AND UserId = @UserId";
             using (var conn = CreateConnection())
             {
@@ -58,7 +58,7 @@ namespace Lab_Mvc.Repositries.Notes
                 catch (Exception ex)
                 {
                     // FK constraint violation means it has subfolders.
-                    if (ex.Message.Contains("REFERENCE constraint") || ex.Message.Contains("FOREIGN KEY")) 
+                    if (ex.Message.Contains("REFERENCE constraint") || ex.Message.Contains("FOREIGN KEY"))
                         throw new Exception("Cannot delete folder because it contains subfolders. Please delete subfolders first.");
                     throw;
                 }
@@ -142,6 +142,36 @@ namespace Lab_Mvc.Repositries.Notes
             using (var conn = CreateConnection())
             {
                 return await conn.QueryAsync<NoteFolder>(query, new { UserId = userId, Search = $"%{queryText}%" });
+            }
+        }
+
+        // ── File support (delegated queries for tree-building / search) ──────────
+
+        public async Task<IEnumerable<NoteFileDto>> GetAllFilesByUser(int userId)
+        {
+            var query = @"
+                SELECT FileId, FolderId, DisplayName, Extension, MimeType, SizeBytes, DownloadCount, CreatedDate, UpdatedDate
+                FROM Notes_Files
+                WHERE UserId = @UserId AND Status = 'Active'
+                ORDER BY DisplayName";
+
+            using (var conn = CreateConnection())
+            {
+                return await conn.QueryAsync<NoteFileDto>(query, new { UserId = userId });
+            }
+        }
+
+        public async Task<IEnumerable<NoteFileDto>> SearchFiles(int userId, string queryText)
+        {
+            var query = @"
+                SELECT FileId, FolderId, DisplayName, Extension, MimeType, SizeBytes, DownloadCount, CreatedDate, UpdatedDate
+                FROM Notes_Files
+                WHERE UserId = @UserId AND Status = 'Active' AND DisplayName LIKE @Search
+                ORDER BY DisplayName";
+
+            using (var conn = CreateConnection())
+            {
+                return await conn.QueryAsync<NoteFileDto>(query, new { UserId = userId, Search = $"%{queryText}%" });
             }
         }
     }

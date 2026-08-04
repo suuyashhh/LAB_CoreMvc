@@ -13,10 +13,12 @@ namespace Lab_Mvc.Controllers.Notes
     public class NotesExplorerController : Controller
     {
         private readonly INotesExplorerRepository _repo;
+        private readonly INoteFileRepository _fileRepo;
 
-        public NotesExplorerController(INotesExplorerRepository repo)
+        public NotesExplorerController(INotesExplorerRepository repo, INoteFileRepository fileRepo)
         {
             _repo = repo;
+            _fileRepo = fileRepo;
         }
 
         [HttpGet("tree/{userId}")]
@@ -25,7 +27,8 @@ namespace Lab_Mvc.Controllers.Notes
             try
             {
                 var folders = (await _repo.GetAllFoldersByUser(userId)).ToList();
-                var pages = (await _repo.GetAllPagesByUser(userId)).ToList();
+                var pages   = (await _repo.GetAllPagesByUser(userId)).ToList();
+                var files   = (await _repo.GetAllFilesByUser(userId)).ToList();
 
                 var rootNodes = new List<FolderNode>();
                 var dict = new Dictionary<int, FolderNode>();
@@ -34,32 +37,28 @@ namespace Lab_Mvc.Controllers.Notes
                 {
                     dict[f.FolderId] = new FolderNode
                     {
-                        FolderId = f.FolderId,
-                        UserId = f.UserId,
+                        FolderId      = f.FolderId,
+                        UserId        = f.UserId,
                         ParentFolderId = f.ParentFolderId,
-                        FolderName = f.FolderName
+                        FolderName    = f.FolderName
                     };
                 }
 
                 foreach (var f in dict.Values)
                 {
                     if (f.ParentFolderId.HasValue && dict.ContainsKey(f.ParentFolderId.Value))
-                    {
                         dict[f.ParentFolderId.Value].SubFolders.Add(f);
-                    }
                     else
-                    {
                         rootNodes.Add(f);
-                    }
                 }
 
                 foreach (var p in pages)
-                {
                     if (dict.ContainsKey(p.FolderId))
-                    {
                         dict[p.FolderId].Pages.Add(p);
-                    }
-                }
+
+                foreach (var file in files)
+                    if (dict.ContainsKey(file.FolderId))
+                        dict[file.FolderId].Files.Add(file);
 
                 return Ok(rootNodes);
             }
@@ -111,9 +110,11 @@ namespace Lab_Mvc.Controllers.Notes
             {
                 var pages = await _repo.GetAllPagesByUser(userId);
                 if (pages.Any(p => p.FolderId == id))
-                {
                     return BadRequest("This folder contains pages. Please delete them first.");
-                }
+
+                var hasFiles = await _fileRepo.FolderHasFiles(id, userId);
+                if (hasFiles)
+                    return BadRequest("This folder contains uploaded files. Please delete them first.");
 
                 var success = await _repo.DeleteFolder(id, userId);
                 if (!success) return NotFound();
@@ -196,12 +197,13 @@ namespace Lab_Mvc.Controllers.Notes
             try
             {
                 if (string.IsNullOrWhiteSpace(query))
-                    return Ok(new { folders = new List<NoteFolder>(), pages = new List<NotePageDto>() });
+                    return Ok(new { folders = new List<NoteFolder>(), pages = new List<NotePageDto>(), files = new List<NoteFileDto>() });
 
                 var folders = await _repo.SearchFolders(userId, query);
-                var pages = await _repo.SearchPages(userId, query);
+                var pages   = await _repo.SearchPages(userId, query);
+                var files   = await _repo.SearchFiles(userId, query);
 
-                return Ok(new { folders, pages });
+                return Ok(new { folders, pages, files });
             }
             catch (Exception ex)
             {

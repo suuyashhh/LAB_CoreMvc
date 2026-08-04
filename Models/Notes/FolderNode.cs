@@ -8,9 +8,10 @@ namespace Models.Notes
         public int UserId { get; set; }
         public int? ParentFolderId { get; set; }
         public string FolderName { get; set; }
-        
+
         public List<FolderNode> SubFolders { get; set; } = new List<FolderNode>();
         public List<NotePageDto> Pages { get; set; } = new List<NotePageDto>();
+        public List<NoteFileDto> Files { get; set; } = new List<NoteFileDto>();
     }
 
     public class NotePageDto

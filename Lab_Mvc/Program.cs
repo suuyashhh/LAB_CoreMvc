@@ -13,6 +13,7 @@ using Lab_Mvc.Repositries.Farm;
 using Lab_Mvc.Repositries.Shop;
 using Lab_Mvc.Repositries.Market;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -34,6 +35,16 @@ builder.Services
     .AddControllers()
     .AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52_428_800; // 50 MB
+});
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 52_428_800; // 50 MB
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -97,6 +108,7 @@ builder.Services.AddScoped<IFabSalarySlipRepository, FabSalarySlipRepository>();
 builder.Services.AddScoped<IFabHistoryRepository, FabHistoryRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
 builder.Services.AddScoped<INotesExplorerRepository, NotesExplorerRepository>();
+builder.Services.AddScoped<INoteFileRepository, NoteFileRepository>();
 builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
 
 
