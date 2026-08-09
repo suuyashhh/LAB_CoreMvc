@@ -32,5 +32,33 @@ namespace Lab_Mvc.Repositries.DairyFarm
                 throw;
             }
         }
+        public async Task<bool> RegisterDairyFarm(DTOLoginDairyFarm registerDairyFarm)
+        {
+            var checkQuery = @"SELECT COUNT(*) FROM Users WHERE contact = @Contact";
+            var insertQuery = @"INSERT INTO Users (user_name, contact, password, email, date) 
+                                VALUES (@UserName, @Contact, @Password, @Email, @Date)";
+            try
+            {
+                using (var con = CreateConnection())
+                {
+                    var exists = await con.ExecuteScalarAsync<int>(checkQuery, new { Contact = registerDairyFarm.contact });
+                    if (exists > 0)
+                        return false; // User already exists
+                    
+                    var rowsAffected = await con.ExecuteAsync(insertQuery, new { 
+                        UserName = registerDairyFarm.user_name,
+                        Contact = registerDairyFarm.contact, 
+                        Password = registerDairyFarm.password,
+                        Email = registerDairyFarm.email,
+                        Date = DateTime.Now
+                    });
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
