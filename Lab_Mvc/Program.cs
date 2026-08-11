@@ -12,6 +12,8 @@ using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
 using Lab_Mvc.Repositries.Shop;
 using Lab_Mvc.Repositries.Market;
+using Lab_Mvc.Interfaces.Admin;
+using Lab_Mvc.Repositries.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -110,6 +112,7 @@ builder.Services.AddScoped<INotesRepository, NotesRepository>();
 builder.Services.AddScoped<INotesExplorerRepository, NotesExplorerRepository>();
 builder.Services.AddScoped<INoteFileRepository, NoteFileRepository>();
 builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
+builder.Services.AddScoped<IMainAdminRepository, MainAdminRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
