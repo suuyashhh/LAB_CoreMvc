@@ -113,6 +113,7 @@ builder.Services.AddScoped<INotesExplorerRepository, NotesExplorerRepository>();
 builder.Services.AddScoped<INoteFileRepository, NoteFileRepository>();
 builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
 builder.Services.AddScoped<IMainAdminRepository, MainAdminRepository>();
+builder.Services.AddScoped<IPortfolioProjectRepository, PortfolioProjectRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
@@ -196,6 +197,18 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(shopImgsPath),
     RequestPath = "/ShopImgs"
+});
+
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
 });
 
 app.MapControllers();
