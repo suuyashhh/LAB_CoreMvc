@@ -1,6 +1,7 @@
 using Lab_Mvc.Interfaces.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Models.Admin;
+using System;
 using System.Threading.Tasks;
 
 namespace Lab_Mvc.Controllers.Admin
@@ -36,6 +37,20 @@ namespace Lab_Mvc.Controllers.Admin
                 adminId = admin.Id,
                 username = admin.Username 
             });
+        }
+
+        [HttpGet("GetModuleUsers/{moduleName}")]
+        public async Task<IActionResult> GetModuleUsers(string moduleName)
+        {
+            try
+            {
+                var users = await _repository.GetModuleUsers(moduleName);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error retrieving module users", error = ex.Message });
+            }
         }
     }
 }
