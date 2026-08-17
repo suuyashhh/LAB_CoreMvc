@@ -60,7 +60,7 @@ namespace Lab_Mvc.Controllers.Admin
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file, [FromForm] string type)
+        public async Task<IActionResult> UploadFile(IFormFile file, [FromForm] string type, [FromForm] string? oldPath = null)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -72,6 +72,22 @@ namespace Lab_Mvc.Controllers.Admin
                 "image" => "projects/images",
                 _ => "projects/other"
             };
+
+            if (!string.IsNullOrEmpty(oldPath))
+            {
+                try
+                {
+                    var oldFilePath = Path.Combine(_env.ContentRootPath, oldPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+                catch (Exception)
+                {
+                    // Ignore deletion errors
+                }
+            }
 
             var uploadsFolder = Path.Combine(_env.ContentRootPath, "uploads", folderName);
             if (!Directory.Exists(uploadsFolder))
