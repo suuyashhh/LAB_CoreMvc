@@ -29,6 +29,8 @@ using Lab_Mvc.Interfaces.Notes;
 using Lab_Mvc.Repositries.Notes;
 using Lab_Mvc.Interfaces.BillingApp;
 using Lab_Mvc.Repositries.BillingApp;
+using Lab_Mvc.Interfaces.Tejas;
+using Lab_Mvc.Repositries.Tejas;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -114,6 +116,8 @@ builder.Services.AddScoped<INoteFileRepository, NoteFileRepository>();
 builder.Services.AddScoped<IProductEntries, ProductEntriesRepository>();
 builder.Services.AddScoped<IMainAdminRepository, MainAdminRepository>();
 builder.Services.AddScoped<IPortfolioProjectRepository, PortfolioProjectRepository>();
+builder.Services.AddScoped<ITejasFood, TejasFoodRepository>();
+builder.Services.AddScoped<ITejasBilling, TejasBillingRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
