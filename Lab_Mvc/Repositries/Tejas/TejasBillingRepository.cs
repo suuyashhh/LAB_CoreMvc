@@ -221,25 +221,14 @@ namespace Lab_Mvc.Repositries.Tejas
 
         public async Task<string> GetNextBillNumber()
         {
-            var query = "SELECT [BillNumber] FROM [dbo].[Tejas_Bill]";
+            var query = @"
+                SELECT MAX(TRY_CAST(SUBSTRING([BillNumber], 3, LEN([BillNumber]) - 2) AS INT))
+                FROM [dbo].[Tejas_Bill]
+                WHERE [BillNumber] LIKE 'BR%'";
+
             using (var connection = CreateConnection())
             {
-                var billNumbers = await connection.QueryAsync<string>(query);
-                int maxId = 0;
-                foreach (var billNumber in billNumbers)
-                {
-                    if (!string.IsNullOrEmpty(billNumber) && billNumber.StartsWith("BR"))
-                    {
-                        var numStr = billNumber.Substring(2);
-                        if (int.TryParse(numStr, out int num))
-                        {
-                            if (num > maxId)
-                            {
-                                maxId = num;
-                            }
-                        }
-                    }
-                }
+                var maxId = await connection.ExecuteScalarAsync<int?>(query) ?? 0;
                 return "BR" + (maxId + 1);
             }
         }

@@ -16,6 +16,21 @@ namespace Lab_Mvc.Controllers.Tejas
             _tejasBilling = tejasBilling;
         }
 
+        private System.DateTime GetIndianStandardTime()
+        {
+            System.DateTime istTime;
+            try
+            {
+                var tz = System.TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                istTime = System.TimeZoneInfo.ConvertTimeFromUtc(System.DateTime.UtcNow, tz);
+            }
+            catch
+            {
+                istTime = System.DateTime.UtcNow.AddHours(5).AddMinutes(30);
+            }
+            return System.DateTime.SpecifyKind(istTime, System.DateTimeKind.Unspecified);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllBills([FromQuery] System.DateTime? startDate, [FromQuery] System.DateTime? endDate)
         {
@@ -47,8 +62,9 @@ namespace Lab_Mvc.Controllers.Tejas
             {
                 bill.Id = "bill_" + System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
-            if (bill.CreatedAt == default) bill.CreatedAt = System.DateTime.UtcNow;
-            if (bill.UpdatedAt == default) bill.UpdatedAt = System.DateTime.UtcNow;
+            
+            bill.CreatedAt = GetIndianStandardTime();
+            bill.UpdatedAt = bill.CreatedAt;
 
             bill.BillNumber = await _tejasBilling.GetNextBillNumber();
 
@@ -60,7 +76,7 @@ namespace Lab_Mvc.Controllers.Tejas
         public async Task<IActionResult> UpdateBill(string id, [FromBody] TejasBill bill)
         {
             bill.Id = id;
-            bill.UpdatedAt = System.DateTime.UtcNow;
+            bill.UpdatedAt = GetIndianStandardTime();
             var affected = await _tejasBilling.UpdateBill(bill);
             if (affected == 0) return NotFound();
             return Ok(bill);
