@@ -52,6 +52,45 @@ namespace Lab_Mvc.Repositries.Tejas
             }
         }
 
+        public async Task<IEnumerable<TejasBill>> GetBillsByDateRange(System.DateTime startDate, System.DateTime endDate)
+        {
+            var query = @"
+                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt],
+                       i.[Id], i.[BillId], i.[FoodId], i.[Name], i.[Price], i.[Quantity], i.[Image]
+                FROM [dbo].[Tejas_Bill] b
+                LEFT JOIN [dbo].[Tejas_BillItem] i ON b.[Id] = i.[BillId]
+                WHERE b.[CreatedAt] >= @StartDate AND b.[CreatedAt] <= @EndDate
+                ORDER BY b.[CreatedAt] DESC";
+
+            using (var connection = CreateConnection())
+            {
+                var billDictionary = new Dictionary<string, TejasBill>();
+
+                var list = await connection.QueryAsync<TejasBill, TejasBillItem, TejasBill>(
+                    query,
+                    (bill, item) =>
+                    {
+                        if (!billDictionary.TryGetValue(bill.Id, out var billEntry))
+                        {
+                            billEntry = bill;
+                            billEntry.Items = new List<TejasBillItem>();
+                            billDictionary.Add(billEntry.Id, billEntry);
+                        }
+
+                        if (item != null)
+                        {
+                            billEntry.Items.Add(item);
+                        }
+                        return billEntry;
+                    },
+                    new { StartDate = startDate, EndDate = endDate },
+                    splitOn: "Id"
+                );
+
+                return billDictionary.Values.ToList();
+            }
+        }
+
         public async Task<TejasBill?> GetBillById(string id)
         {
             var query = @"

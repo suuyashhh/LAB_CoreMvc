@@ -17,10 +17,19 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBills()
+        public async Task<IActionResult> GetAllBills([FromQuery] System.DateTime? startDate, [FromQuery] System.DateTime? endDate)
         {
-            var result = await _tejasBilling.GetAllBills();
-            return Ok(result);
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                var result = await _tejasBilling.GetBillsByDateRange(startDate.Value, endDate.Value);
+                return Ok(result);
+            }
+            else
+            {
+                // Note: if no dates provided, you might want to limit to last 7 days to avoid loading everything, but preserving existing behavior for now.
+                var result = await _tejasBilling.GetAllBills();
+                return Ok(result);
+            }
         }
 
         [HttpGet("{id}")]
