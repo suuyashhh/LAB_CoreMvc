@@ -41,6 +41,8 @@ namespace Lab_Mvc.Controllers.Tejas
             if (bill.CreatedAt == default) bill.CreatedAt = System.DateTime.UtcNow;
             if (bill.UpdatedAt == default) bill.UpdatedAt = System.DateTime.UtcNow;
 
+            bill.BillNumber = await _tejasBilling.GetNextBillNumber();
+
             await _tejasBilling.InsertBill(bill);
             return Ok(bill);
         }

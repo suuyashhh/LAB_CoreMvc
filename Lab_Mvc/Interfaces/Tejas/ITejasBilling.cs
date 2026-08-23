@@ -11,5 +11,6 @@ namespace Lab_Mvc.Interfaces.Tejas
         Task<string> InsertBill(TejasBill bill);
         Task<int> UpdateBill(TejasBill bill);
         Task<int> DeleteBill(string id);
+        Task<string> GetNextBillNumber();
     }
 }
