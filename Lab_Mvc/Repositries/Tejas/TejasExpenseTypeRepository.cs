@@ -1,21 +1,21 @@
 using Dapper;
 using Lab_Mvc.Contest;
-using Lab_Mvc.Interfaces.Shop;
-using Models.Shop;
+using Lab_Mvc.Interfaces.Tejas;
+using Models.Tejas;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using SmartParking.Repositories;
 
-namespace Lab_Mvc.Repositries.Shop
+namespace Lab_Mvc.Repositries.Tejas
 {
-    public class ShopExpenseTypeRepository : DapperRepositoryBase, IShopExpenseType
+    public class TejasExpenseTypeRepository : DapperRepositoryBase, ITejasExpenseType
     {
-        public ShopExpenseTypeRepository(DapperContext context) : base(context)
+        public TejasExpenseTypeRepository(DapperContext context) : base(context)
         {
         }
 
-        public async Task<IEnumerable<DTOShopExpenseType>> GetAll()
+        public async Task<IEnumerable<DTOTejasExpenseType>> GetAll()
         {
             var query = @"
                 SELECT 
@@ -26,12 +26,12 @@ namespace Lab_Mvc.Repositries.Shop
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOShopExpenseType>(query);
+                var result = await connection.QueryAsync<DTOTejasExpenseType>(query);
                 return result;
             }
         }
 
-        public async Task<DTOShopExpenseType?> GetById(int exId)
+        public async Task<DTOTejasExpenseType?> GetById(int exId)
         {
             var query = @"
                 SELECT 
@@ -42,7 +42,7 @@ namespace Lab_Mvc.Repositries.Shop
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<DTOShopExpenseType>(
+                var result = await connection.QuerySingleOrDefaultAsync<DTOTejasExpenseType>(
                     query,
                     new { ExId = exId }
                 );
@@ -50,7 +50,7 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<int> Insert(DTOShopExpenseType model)
+        public async Task<int> Insert(DTOTejasExpenseType model)
         {
             var query = @"
                 INSERT INTO [dbo].[SHOP_EXPENSE_TYPE] ([NAME])
@@ -64,7 +64,7 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<int> Update(DTOShopExpenseType model)
+        public async Task<int> Update(DTOTejasExpenseType model)
         {
             var query = @"
                 UPDATE [dbo].[SHOP_EXPENSE_TYPE]

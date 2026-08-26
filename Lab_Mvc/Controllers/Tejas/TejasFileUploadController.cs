@@ -6,15 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lab_Mvc.Controllers.Shop
+namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ShopFileUploadController : ControllerBase
+    public class TejasFileUploadController : ControllerBase
     {
         private readonly IWebHostEnvironment _environment;
 
-        public ShopFileUploadController(IWebHostEnvironment environment)
+        public TejasFileUploadController(IWebHostEnvironment environment)
         {
             _environment = environment;
         }
@@ -40,8 +40,8 @@ namespace Lab_Mvc.Controllers.Shop
                 // Create unique file name
                 var fileName = $"{Guid.NewGuid():N}{extension}";
 
-                // Define upload path - ShopImgs folder at root level
-                var uploadPath = Path.Combine(_environment.ContentRootPath, "ShopImgs");
+                // Define upload path - TejasImgs folder at root level
+                var uploadPath = Path.Combine(_environment.ContentRootPath, "TejasImgs");
 
                 // Create directory if it doesn't exist
                 if (!Directory.Exists(uploadPath))
@@ -57,7 +57,7 @@ namespace Lab_Mvc.Controllers.Shop
                 }
 
                 // Return relative path for storage in database
-                var relativePath = $"/ShopImgs/{fileName}";
+                var relativePath = $"/TejasImgs/{fileName}";
 
                 return Ok(new
                 {
@@ -82,8 +82,8 @@ namespace Lab_Mvc.Controllers.Shop
                 if (string.IsNullOrEmpty(fileName))
                     return BadRequest(new { success = false, message = "File name is required" });
 
-                // Define upload path - ShopImgs folder at root level
-                var uploadPath = Path.Combine(_environment.ContentRootPath, "ShopImgs");
+                // Define upload path - TejasImgs folder at root level
+                var uploadPath = Path.Combine(_environment.ContentRootPath, "TejasImgs");
                 var filePath = Path.Combine(uploadPath, fileName);
 
                 if (!System.IO.File.Exists(filePath))
@@ -107,7 +107,7 @@ namespace Lab_Mvc.Controllers.Shop
                 if (string.IsNullOrEmpty(fileName))
                     return BadRequest("File name is required");
 
-                var uploadPath = Path.Combine(_environment.ContentRootPath, "ShopImgs");
+                var uploadPath = Path.Combine(_environment.ContentRootPath, "TejasImgs");
                 var filePath = Path.Combine(uploadPath, fileName);
 
                 if (!System.IO.File.Exists(filePath))

@@ -1,25 +1,25 @@
 using Dapper;
 using Lab_Mvc.Contest;
-using Lab_Mvc.Interfaces.Shop;
-using Models.Shop;
+using Lab_Mvc.Interfaces.Tejas;
+using Models.Tejas;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using SmartParking.Repositories;
 
-namespace Lab_Mvc.Repositries.Shop
+namespace Lab_Mvc.Repositries.Tejas
 {
-    public class ShopEntryRepository : DapperRepositoryBase, IShopEntry
+    public class TejasEntryRepository : DapperRepositoryBase, ITejasEntry
     {
-        public ShopEntryRepository(DapperContext dapperContext) : base(dapperContext)
+        public TejasEntryRepository(DapperContext dapperContext) : base(dapperContext)
         {
         }
 
-        public async Task<IEnumerable<DTOShopEntry>> GetAll(long userId, bool isPaid)
+        public async Task<IEnumerable<DTOTejasEntry>> GetAll(long userId, bool isPaid)
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID],
+                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -36,7 +36,7 @@ namespace Lab_Mvc.Repositries.Shop
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOShopEntry>(
+                var result = await connection.QueryAsync<DTOTejasEntry>(
                     query,
                     new { IsPaid = isPaid }
                 );
@@ -44,11 +44,11 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<IEnumerable<DTOShopEntry>> GetAllTypesEntrys(long userId, System.DateTime? fromDate = null, System.DateTime? toDate = null)
+        public async Task<IEnumerable<DTOTejasEntry>> GetAllTypesEntrys(long userId, System.DateTime? fromDate = null, System.DateTime? toDate = null)
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID],
+                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -66,7 +66,7 @@ namespace Lab_Mvc.Repositries.Shop
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOShopEntry>(
+                var result = await connection.QueryAsync<DTOTejasEntry>(
                     query,
                     new { FromDate = fromDate, ToDate = toDate }
                 );
@@ -74,11 +74,11 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<DTOShopEntry> GetById(long shopEntryId, long userId)
+        public async Task<DTOTejasEntry> GetById(long tejasEntryId, long userId)
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID],
+                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -90,25 +90,25 @@ namespace Lab_Mvc.Repositries.Shop
                     [DATE],
                     [EntryType]
                 FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
+                WHERE [SHOP_ENTRY_ID] = @TejasEntryId";
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryFirstOrDefaultAsync<DTOShopEntry>(
+                var result = await connection.QueryFirstOrDefaultAsync<DTOTejasEntry>(
                     query,
-                    new { ShopEntryId = shopEntryId }
+                    new { TejasEntryId = tejasEntryId }
                 );
                 return result;
             }
         }
 
-        public async Task<long> Insert(DTOShopEntry model)
+        public async Task<long> Insert(DTOTejasEntry model)
         {
             var query = @"
-                DECLARE @NewShopEntryId BIGINT;
+                DECLARE @NewTejasEntryId BIGINT;
                 
                 -- Get the next SHOP_ENTRY_ID
-                SELECT @NewShopEntryId = ISNULL(MAX([SHOP_ENTRY_ID]), 0) + 1
+                SELECT @NewTejasEntryId = ISNULL(MAX([SHOP_ENTRY_ID]), 0) + 1
                 FROM [dbo].[SHOP_ENTRY];
 
                 -- Insert the new record
@@ -128,7 +128,7 @@ namespace Lab_Mvc.Repositries.Shop
                 )
                 VALUES
                 (
-                    @NewShopEntryId,
+                    @NewTejasEntryId,
                     @IS_PAID,
                     @REASON,
                     @PRICE,
@@ -141,7 +141,7 @@ namespace Lab_Mvc.Repositries.Shop
                     @EntryType
                 );
 
-                SELECT @NewShopEntryId;";
+                SELECT @NewTejasEntryId;";
 
             using (var connection = CreateConnection())
             {
@@ -150,7 +150,7 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<int> Update(DTOShopEntry model)
+        public async Task<int> Update(DTOTejasEntry model)
         {
             var query = @"
                 UPDATE [dbo].[SHOP_ENTRY]
@@ -164,7 +164,7 @@ namespace Lab_Mvc.Repositries.Shop
                     [IMAGE4] = @IMAGE4,
                     [DATE] = @DATE,
                     [EntryType] = @EntryType
-                WHERE [SHOP_ENTRY_ID] = @SHOP_ENTRY_ID";
+                WHERE [SHOP_ENTRY_ID] = @TEJAS_ENTRY_ID";
 
             using (var connection = CreateConnection())
             {
@@ -173,17 +173,17 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<int> Delete(long shopEntryId, long userId)
+        public async Task<int> Delete(long tejasEntryId, long userId)
         {
             var query = @"
                 DELETE FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @ShopEntryId";
+                WHERE [SHOP_ENTRY_ID] = @TejasEntryId";
 
             using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,
-                    new { ShopEntryId = shopEntryId }
+                    new { TejasEntryId = tejasEntryId }
                 );
                 return affectedRows;
             }

@@ -1,21 +1,21 @@
-using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Tejas;
 using Microsoft.AspNetCore.Mvc;
-using Models.Shop;
+using Models.Tejas;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Lab_Mvc.Controllers.Shop
+namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ShopEntryController : ControllerBase
+    public class TejasEntryController : ControllerBase
     {
-        private readonly IShopEntry _IShopEntry;
+        private readonly ITejasEntry _ITejasEntry;
 
-        public ShopEntryController(IShopEntry IShopEntry)
+        public TejasEntryController(ITejasEntry ITejasEntry)
         {
-            _IShopEntry = IShopEntry;
+            _ITejasEntry = ITejasEntry;
         }
 
         [HttpGet("GetAll")]
@@ -23,7 +23,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var data = await _IShopEntry.GetAll(userId, isPaid);
+                var data = await _ITejasEntry.GetAll(userId, isPaid);
 
                 // Convert relative paths to full URLs for all 4 images
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
@@ -57,7 +57,7 @@ namespace Lab_Mvc.Controllers.Shop
                     toDate = toDate.Value.Date.AddDays(1).AddTicks(-1);
                 }
 
-                var data = await _IShopEntry.GetAllTypesEntrys(userId, fromDate, toDate);
+                var data = await _ITejasEntry.GetAllTypesEntrys(userId, fromDate, toDate);
 
                 // Convert relative paths to full URLs for all 4 images
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
@@ -78,15 +78,15 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpGet("GetById")]
-        public async Task<IActionResult> GetById(long shopEntryId, long userId)
+        public async Task<IActionResult> GetById(long tejasEntryId, long userId)
         {
             try
             {
-                var data = await _IShopEntry.GetById(shopEntryId, userId);
+                var data = await _ITejasEntry.GetById(tejasEntryId, userId);
 
                 if (data == null)
                 {
-                    return NotFound(new { message = "Shop entry not found" });
+                    return NotFound(new { message = "Tejas entry not found" });
                 }
 
                 // Convert relative paths to full URLs
@@ -105,7 +105,7 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] DTOShopEntry model)
+        public async Task<IActionResult> Insert([FromBody] DTOTejasEntry model)
         {
             try
             {
@@ -114,8 +114,8 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "User ID is required" });
                 }
 
-                var result = await _IShopEntry.Insert(model);
-                return Ok(new { success = true, shopEntryId = result });
+                var result = await _ITejasEntry.Insert(model);
+                return Ok(new { success = true, tejasEntryId = result });
             }
             catch (Exception ex)
             {
@@ -124,14 +124,14 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] DTOShopEntry model)
+        public async Task<IActionResult> Update([FromBody] DTOTejasEntry model)
         {
             try
             {
                 // Validate required fields
-                if (model.SHOP_ENTRY_ID <= 0)
+                if (model.TEJAS_ENTRY_ID <= 0)
                 {
-                    return BadRequest(new { success = false, message = "Shop Entry ID is required" });
+                    return BadRequest(new { success = false, message = "Tejas Entry ID is required" });
                 }
 
                 if (model.USER_ID <= 0)
@@ -139,7 +139,7 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "User ID is required" });
                 }
 
-                var result = await _IShopEntry.Update(model);
+                var result = await _ITejasEntry.Update(model);
 
                 if (result > 0)
                 {
@@ -147,7 +147,7 @@ namespace Lab_Mvc.Controllers.Shop
                 }
                 else
                 {
-                    return NotFound(new { success = false, message = "Shop entry not found or not authorized" });
+                    return NotFound(new { success = false, message = "Tejas entry not found or not authorized" });
                 }
             }
             catch (Exception ex)
@@ -157,12 +157,12 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(long shopEntryId, long userId)
+        public async Task<IActionResult> Delete(long tejasEntryId, long userId)
         {
             try
             {
-                // First, get the shop entry to find its image paths
-                var entryToDelete = await _IShopEntry.GetById(shopEntryId, userId);
+                // First, get the tejas entry to find its image paths
+                var entryToDelete = await _ITejasEntry.GetById(tejasEntryId, userId);
 
                 if (entryToDelete != null)
                 {
@@ -174,7 +174,7 @@ namespace Lab_Mvc.Controllers.Shop
                 }
 
                 // Delete from database
-                var result = await _IShopEntry.Delete(shopEntryId, userId);
+                var result = await _ITejasEntry.Delete(tejasEntryId, userId);
 
                 if (result > 0)
                 {
@@ -182,7 +182,7 @@ namespace Lab_Mvc.Controllers.Shop
                 }
                 else
                 {
-                    return NotFound(new { success = false, message = "Shop entry not found or not authorized" });
+                    return NotFound(new { success = false, message = "Tejas entry not found or not authorized" });
                 }
             }
             catch (Exception ex)
@@ -216,7 +216,7 @@ namespace Lab_Mvc.Controllers.Shop
                 if (!string.IsNullOrEmpty(fileName))
                 {
                     // Delete the image file
-                    var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "ShopImgs");
+                    var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "TejasImgs");
                     var filePath = Path.Combine(uploadPath, fileName);
 
                     if (System.IO.File.Exists(filePath))

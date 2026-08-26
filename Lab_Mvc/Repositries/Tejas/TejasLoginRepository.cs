@@ -1,23 +1,23 @@
 using Lab_Mvc.Contest;
-using Lab_Mvc.Interfaces.Shop;
-using Models.Shop;
+using Lab_Mvc.Interfaces.Tejas;
+using Models.Tejas;
 using SmartParking.Interfaces;
 using SmartParking.Repositories;
 using Dapper;
 using System.Threading.Tasks;
 using System;
 
-namespace Lab_Mvc.Repositries.Shop
+namespace Lab_Mvc.Repositries.Tejas
 {
-    public class ShopLoginRepository : DapperRepositoryBase, IShopLogin
+    public class TejasLoginRepository : DapperRepositoryBase, ITejasLogin
     {
-        public ShopLoginRepository(DapperContext context) : base(context)
+        public TejasLoginRepository(DapperContext context) : base(context)
         {
         }
 
-        public async Task<DTOShopLogin?> Login(DTOShopLogin login)
+        public async Task<DTOTejasLogin?> Login(DTOTejasLogin login)
         {
-            var query = @"SELECT USER_ID, USER_NAME, CONTACT, USER_IMG 
+            var query = @"SELECT USER_ID, USER_NAME, CONTACT, USER_IMG ,ROLE
                           FROM SHOP_USER 
                           WHERE CONTACT = @Contact AND PASS = @Pass";
 
@@ -25,7 +25,7 @@ namespace Lab_Mvc.Repositries.Shop
             {
                 using (var connection = CreateConnection())
                 {
-                    var result = await connection.QuerySingleOrDefaultAsync<DTOShopLogin>(query, new 
+                    var result = await connection.QuerySingleOrDefaultAsync<DTOTejasLogin>(query, new 
                     { 
                         Contact = login.CONTACT, 
                         Pass = login.PASS 

@@ -1,20 +1,20 @@
-using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Tejas;
 using Microsoft.AspNetCore.Mvc;
-using Models.Shop;
+using Models.Tejas;
 using System;
 using System.Threading.Tasks;
 
-namespace Lab_Mvc.Controllers.Shop
+namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ShopUserController : ControllerBase
+    public class TejasUserController : ControllerBase
     {
-        private readonly IShopUser _shopUser;
+        private readonly ITejasUser _tejasUser;
 
-        public ShopUserController(IShopUser shopUser)
+        public TejasUserController(ITejasUser tejasUser)
         {
-            _shopUser = shopUser;
+            _tejasUser = tejasUser;
         }
 
         [HttpGet("GetAll")]
@@ -22,7 +22,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var data = await _shopUser.GetAll();
+                var data = await _tejasUser.GetAll();
                 return Ok(data);
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var data = await _shopUser.GetById(userId);
+                var data = await _tejasUser.GetById(userId);
                 if (data == null)
                 {
                     return NotFound(new { message = "User not found" });
@@ -50,7 +50,7 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] DTOShopLogin model)
+        public async Task<IActionResult> Insert([FromBody] DTOTejasLogin model)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "Username, password, and contact are required" });
                 }
 
-                var result = await _shopUser.Insert(model);
+                var result = await _tejasUser.Insert(model);
                 return Ok(new { success = true, userId = result });
             }
             catch (Exception ex)
@@ -69,7 +69,7 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] DTOShopLogin model)
+        public async Task<IActionResult> Update([FromBody] DTOTejasLogin model)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "Username, password, and contact are required" });
                 }
 
-                var result = await _shopUser.Update(model);
+                var result = await _tejasUser.Update(model);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });
@@ -103,7 +103,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var result = await _shopUser.Delete(userId);
+                var result = await _tejasUser.Delete(userId);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });

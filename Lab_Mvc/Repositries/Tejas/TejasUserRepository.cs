@@ -1,21 +1,21 @@
 using Dapper;
 using Lab_Mvc.Contest;
-using Lab_Mvc.Interfaces.Shop;
-using Models.Shop;
+using Lab_Mvc.Interfaces.Tejas;
+using Models.Tejas;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using SmartParking.Repositories;
 
-namespace Lab_Mvc.Repositries.Shop
+namespace Lab_Mvc.Repositries.Tejas
 {
-    public class ShopUserRepository : DapperRepositoryBase, IShopUser
+    public class TejasUserRepository : DapperRepositoryBase, ITejasUser
     {
-        public ShopUserRepository(DapperContext context) : base(context)
+        public TejasUserRepository(DapperContext context) : base(context)
         {
         }
 
-        public async Task<IEnumerable<DTOShopLogin>> GetAll()
+        public async Task<IEnumerable<DTOTejasLogin>> GetAll()
         {
             var query = @"
                 SELECT 
@@ -23,18 +23,19 @@ namespace Lab_Mvc.Repositries.Shop
                     [USER_NAME],
                     [PASS],
                     [CONTACT],
-                    [USER_IMG]
+                    [USER_IMG],
+                    [ROLE]
                 FROM [dbo].[SHOP_USER] WHERE ACTIVE='Y'
                 ORDER BY [USER_ID] DESC";
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOShopLogin>(query);
+                var result = await connection.QueryAsync<DTOTejasLogin>(query);
                 return result;
             }
         }
 
-        public async Task<DTOShopLogin?> GetById(long userId)
+        public async Task<DTOTejasLogin?> GetById(long userId)
         {
             var query = @"
                 SELECT 
@@ -42,13 +43,14 @@ namespace Lab_Mvc.Repositries.Shop
                     [USER_NAME],
                     [PASS],
                     [CONTACT],
-                    [USER_IMG]
+                    [USER_IMG],
+                    [ROLE]
                 FROM [dbo].[SHOP_USER]
                 WHERE [USER_ID] = @UserId";
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<DTOShopLogin>(
+                var result = await connection.QuerySingleOrDefaultAsync<DTOTejasLogin>(
                     query,
                     new { UserId = userId }
                 );
@@ -56,11 +58,11 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<long> Insert(DTOShopLogin model)
+        public async Task<long> Insert(DTOTejasLogin model)
         {
             var query = @"
-                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ACTIVE])
-                VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG,'Y');
+                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ROLE],[ACTIVE])
+                VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG, @ROLE, 'Y');
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
             using (var connection = CreateConnection())
@@ -70,14 +72,15 @@ namespace Lab_Mvc.Repositries.Shop
             }
         }
 
-        public async Task<int> Update(DTOShopLogin model)
+        public async Task<int> Update(DTOTejasLogin model)
         {
             var query = @"
                 UPDATE [dbo].[SHOP_USER]
                 SET [USER_NAME] = @USER_NAME,
                     [PASS] = @PASS,
                     [CONTACT] = @CONTACT,
-                    [USER_IMG] = @USER_IMG
+                    [USER_IMG] = @USER_IMG,
+                    [ROLE] = @ROLE
                 WHERE [USER_ID] = @USER_ID";
 
             using (var connection = CreateConnection())
