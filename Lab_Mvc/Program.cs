@@ -5,12 +5,12 @@ using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Lab_Mvc.Interfaces.Farm;
-using Lab_Mvc.Interfaces.Shop;
+
 using Lab_Mvc.Interfaces.Market;
 using Lab_Mvc.Repositries;
 using Lab_Mvc.Repositries.DairyFarm;
 using Lab_Mvc.Repositries.Farm;
-using Lab_Mvc.Repositries.Shop;
+
 using Lab_Mvc.Repositries.Market;
 using Lab_Mvc.Interfaces.Admin;
 using Lab_Mvc.Repositries.Admin;
@@ -84,10 +84,10 @@ builder.Services.AddHostedService<DailyBreedingNotificationService>();
 builder.Services.AddScoped<ILoginFarm, LoginFarmRepository>();
 builder.Services.AddScoped<IHomeFarm, HomeFarmRepository>();
 builder.Services.AddScoped<IFarmEntry, FarmEntryRepository>();
-builder.Services.AddScoped<IShopLogin, ShopLoginRepository>();
-builder.Services.AddScoped<IShopEntry, ShopEntryRepository>();
-builder.Services.AddScoped<IShopUser, ShopUserRepository>();
-builder.Services.AddScoped<IShopExpenseType, ShopExpenseTypeRepository>();
+builder.Services.AddScoped<ITejasLogin, TejasLoginRepository>();
+builder.Services.AddScoped<ITejasEntry, TejasEntryRepository>();
+builder.Services.AddScoped<ITejasUser, TejasUserRepository>();
+builder.Services.AddScoped<ITejasExpenseType, TejasExpenseTypeRepository>();
 
 builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -191,16 +191,16 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/ParkingImages"
 });
 
-var shopImgsPath = Path.Combine(app.Environment.ContentRootPath, "ShopImgs");
-if (!Directory.Exists(shopImgsPath))
+var tejasImgsPath = Path.Combine(app.Environment.ContentRootPath, "TejasImgs");
+if (!Directory.Exists(tejasImgsPath))
 {
-    Directory.CreateDirectory(shopImgsPath);
+    Directory.CreateDirectory(tejasImgsPath);
 }
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(shopImgsPath),
-    RequestPath = "/ShopImgs"
+    FileProvider = new PhysicalFileProvider(tejasImgsPath),
+    RequestPath = "/TejasImgs"
 });
 
 var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");

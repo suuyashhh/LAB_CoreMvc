@@ -1,30 +1,30 @@
-using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Tejas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Shop;
+using Models.Tejas;
 using System;
 using System.Threading.Tasks;
 
-namespace Lab_Mvc.Controllers.Shop
+namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
-    [Route("api/LoginShop")]
-    public class ShopLoginController : Controller
+    [Route("api/LoginTejas")]
+    public class TejasLoginController : Controller
     {
-        private readonly IShopLogin _iShopLogin;
+        private readonly ITejasLogin _iTejasLogin;
 
-        public ShopLoginController(IShopLogin iShopLogin)
+        public TejasLoginController(ITejasLogin iTejasLogin)
         {
-            _iShopLogin = iShopLogin;
+            _iTejasLogin = iTejasLogin;
         }
 
         [HttpPost("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] DTOShopLogin loginShop)
+        public async Task<IActionResult> Login([FromBody] DTOTejasLogin loginTejas)
         {
             try
             {
-                var result = await _iShopLogin.Login(loginShop);
+                var result = await _iTejasLogin.Login(loginTejas);
 
                 if (result == null)
                 {
@@ -38,7 +38,8 @@ namespace Lab_Mvc.Controllers.Shop
                         useR_ID = result.USER_ID,
                         useR_NAME = result.USER_NAME,
                         contact = result.CONTACT,
-                        useR_IMG = result.USER_IMG
+                        useR_IMG = result.USER_IMG,
+                        role = result.ROLE
                     }
                 });
             }

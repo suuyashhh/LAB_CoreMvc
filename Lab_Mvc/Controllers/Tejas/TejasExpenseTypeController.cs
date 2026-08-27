@@ -1,20 +1,20 @@
-using Lab_Mvc.Interfaces.Shop;
+using Lab_Mvc.Interfaces.Tejas;
 using Microsoft.AspNetCore.Mvc;
-using Models.Shop;
+using Models.Tejas;
 using System;
 using System.Threading.Tasks;
 
-namespace Lab_Mvc.Controllers.Shop
+namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ShopExpenseTypeController : ControllerBase
+    public class TejasExpenseTypeController : ControllerBase
     {
-        private readonly IShopExpenseType _shopExpenseType;
+        private readonly ITejasExpenseType _tejasExpenseType;
 
-        public ShopExpenseTypeController(IShopExpenseType shopExpenseType)
+        public TejasExpenseTypeController(ITejasExpenseType tejasExpenseType)
         {
-            _shopExpenseType = shopExpenseType;
+            _tejasExpenseType = tejasExpenseType;
         }
 
         [HttpGet("GetAll")]
@@ -22,7 +22,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var data = await _shopExpenseType.GetAll();
+                var data = await _tejasExpenseType.GetAll();
                 return Ok(data);
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var data = await _shopExpenseType.GetById(exId);
+                var data = await _tejasExpenseType.GetById(exId);
                 if (data == null)
                 {
                     return NotFound(new { message = "Expense type not found" });
@@ -50,7 +50,7 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] DTOShopExpenseType model)
+        public async Task<IActionResult> Insert([FromBody] DTOTejasExpenseType model)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "Name is required" });
                 }
 
-                var result = await _shopExpenseType.Insert(model);
+                var result = await _tejasExpenseType.Insert(model);
                 return Ok(new { success = true, exId = result });
             }
             catch (Exception ex)
@@ -69,7 +69,7 @@ namespace Lab_Mvc.Controllers.Shop
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] DTOShopExpenseType model)
+        public async Task<IActionResult> Update([FromBody] DTOTejasExpenseType model)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Lab_Mvc.Controllers.Shop
                     return BadRequest(new { success = false, message = "Name is required" });
                 }
 
-                var result = await _shopExpenseType.Update(model);
+                var result = await _tejasExpenseType.Update(model);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });
@@ -103,7 +103,7 @@ namespace Lab_Mvc.Controllers.Shop
         {
             try
             {
-                var result = await _shopExpenseType.Delete(exId);
+                var result = await _tejasExpenseType.Delete(exId);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });

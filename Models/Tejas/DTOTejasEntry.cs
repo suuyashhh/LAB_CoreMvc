@@ -1,10 +1,10 @@
 using System;
 
-namespace Models.Shop
+namespace Models.Tejas
 {
-    public class DTOShopEntry
+    public class DTOTejasEntry
     {
-        public long SHOP_ENTRY_ID { get; set; }
+        public long TEJAS_ENTRY_ID { get; set; }
         public bool IS_PAID { get; set; }
         public string REASON { get; set; }
         public long PRICE { get; set; }
