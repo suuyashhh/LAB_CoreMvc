@@ -19,7 +19,7 @@ namespace Lab_Mvc.Repositries.Tejas
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
+                    [Tejas_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -30,9 +30,9 @@ namespace Lab_Mvc.Repositries.Tejas
                     [IMAGE4],
                     [DATE],
                     [EntryType]
-                FROM [dbo].[SHOP_ENTRY]
+                FROM [dbo].[Tejas_ENTRY]
                 WHERE [IS_PAID] = @IsPaid
-                ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
+                ORDER BY [DATE] DESC, [Tejas_ENTRY_ID] DESC";
 
             using (var connection = CreateConnection())
             {
@@ -48,7 +48,7 @@ namespace Lab_Mvc.Repositries.Tejas
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
+                    [Tejas_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -59,10 +59,10 @@ namespace Lab_Mvc.Repositries.Tejas
                     [IMAGE4],
                     [DATE],
                     [EntryType]
-                FROM [dbo].[SHOP_ENTRY]
+                FROM [dbo].[Tejas_ENTRY]
                 WHERE (@FromDate IS NULL OR [DATE] >= @FromDate)
                   AND (@ToDate IS NULL OR [DATE] <= @ToDate)
-                ORDER BY [DATE] DESC, [SHOP_ENTRY_ID] DESC";
+                ORDER BY [DATE] DESC, [Tejas_ENTRY_ID] DESC";
 
             using (var connection = CreateConnection())
             {
@@ -78,7 +78,7 @@ namespace Lab_Mvc.Repositries.Tejas
         {
             var query = @"
                 SELECT 
-                    [SHOP_ENTRY_ID] AS TEJAS_ENTRY_ID,
+                    [Tejas_ENTRY_ID] AS TEJAS_ENTRY_ID,
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -89,8 +89,8 @@ namespace Lab_Mvc.Repositries.Tejas
                     [IMAGE4],
                     [DATE],
                     [EntryType]
-                FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @TejasEntryId";
+                FROM [dbo].[Tejas_ENTRY]
+                WHERE [Tejas_ENTRY_ID] = @TejasEntryId";
 
             using (var connection = CreateConnection())
             {
@@ -107,14 +107,14 @@ namespace Lab_Mvc.Repositries.Tejas
             var query = @"
                 DECLARE @NewTejasEntryId BIGINT;
                 
-                -- Get the next SHOP_ENTRY_ID
-                SELECT @NewTejasEntryId = ISNULL(MAX([SHOP_ENTRY_ID]), 0) + 1
-                FROM [dbo].[SHOP_ENTRY];
+                -- Get the next Tejas_ENTRY_ID
+                SELECT @NewTejasEntryId = ISNULL(MAX([Tejas_ENTRY_ID]), 0) + 1
+                FROM [dbo].[Tejas_ENTRY];
 
                 -- Insert the new record
-                INSERT INTO [dbo].[SHOP_ENTRY]
+                INSERT INTO [dbo].[Tejas_ENTRY]
                 (
-                    [SHOP_ENTRY_ID],
+                    [Tejas_ENTRY_ID],
                     [IS_PAID],
                     [REASON],
                     [PRICE],
@@ -153,7 +153,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Update(DTOTejasEntry model)
         {
             var query = @"
-                UPDATE [dbo].[SHOP_ENTRY]
+                UPDATE [dbo].[Tejas_ENTRY]
                 SET 
                     [IS_PAID] = @IS_PAID,
                     [REASON] = @REASON,
@@ -164,7 +164,7 @@ namespace Lab_Mvc.Repositries.Tejas
                     [IMAGE4] = @IMAGE4,
                     [DATE] = @DATE,
                     [EntryType] = @EntryType
-                WHERE [SHOP_ENTRY_ID] = @TEJAS_ENTRY_ID";
+                WHERE [Tejas_ENTRY_ID] = @TEJAS_ENTRY_ID";
 
             using (var connection = CreateConnection())
             {
@@ -176,8 +176,8 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Delete(long tejasEntryId, long userId)
         {
             var query = @"
-                DELETE FROM [dbo].[SHOP_ENTRY]
-                WHERE [SHOP_ENTRY_ID] = @TejasEntryId";
+                DELETE FROM [dbo].[Tejas_ENTRY]
+                WHERE [Tejas_ENTRY_ID] = @TejasEntryId";
 
             using (var connection = CreateConnection())
             {

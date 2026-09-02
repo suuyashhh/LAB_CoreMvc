@@ -18,7 +18,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<DTOTejasLogin?> Login(DTOTejasLogin login)
         {
             var query = @"SELECT USER_ID, USER_NAME, CONTACT, USER_IMG ,ROLE
-                          FROM SHOP_USER 
+                          FROM Tejas_USER 
                           WHERE CONTACT = @Contact AND PASS = @Pass";
 
             try

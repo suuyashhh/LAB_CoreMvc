@@ -21,7 +21,7 @@ namespace Lab_Mvc.Repositries.Tejas
                 SELECT 
                     [EX_ID],
                     [NAME]
-                FROM [dbo].[SHOP_EXPENSE_TYPE]
+                FROM [dbo].[Tejas_EXPENSE_TYPE]
                 ORDER BY [EX_ID] DESC";
 
             using (var connection = CreateConnection())
@@ -37,7 +37,7 @@ namespace Lab_Mvc.Repositries.Tejas
                 SELECT 
                     [EX_ID],
                     [NAME]
-                FROM [dbo].[SHOP_EXPENSE_TYPE]
+                FROM [dbo].[Tejas_EXPENSE_TYPE]
                 WHERE [EX_ID] = @ExId";
 
             using (var connection = CreateConnection())
@@ -53,7 +53,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Insert(DTOTejasExpenseType model)
         {
             var query = @"
-                INSERT INTO [dbo].[SHOP_EXPENSE_TYPE] ([NAME])
+                INSERT INTO [dbo].[Tejas_EXPENSE_TYPE] ([NAME])
                 VALUES (@NAME);
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -67,7 +67,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Update(DTOTejasExpenseType model)
         {
             var query = @"
-                UPDATE [dbo].[SHOP_EXPENSE_TYPE]
+                UPDATE [dbo].[Tejas_EXPENSE_TYPE]
                 SET [NAME] = @NAME
                 WHERE [EX_ID] = @EX_ID";
 
@@ -81,7 +81,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Delete(int exId)
         {
             var query = @"
-                DELETE FROM [dbo].[SHOP_EXPENSE_TYPE]
+                DELETE FROM [dbo].[Tejas_EXPENSE_TYPE]
                 WHERE [EX_ID] = @ExId";
 
             using (var connection = CreateConnection())

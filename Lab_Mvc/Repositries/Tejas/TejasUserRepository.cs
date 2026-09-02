@@ -25,7 +25,7 @@ namespace Lab_Mvc.Repositries.Tejas
                     [CONTACT],
                     [USER_IMG],
                     [ROLE]
-                FROM [dbo].[SHOP_USER] WHERE ACTIVE='Y'
+                FROM [dbo].[Tejas_USER] WHERE ACTIVE='Y'
                 ORDER BY [USER_ID] DESC";
 
             using (var connection = CreateConnection())
@@ -45,7 +45,7 @@ namespace Lab_Mvc.Repositries.Tejas
                     [CONTACT],
                     [USER_IMG],
                     [ROLE]
-                FROM [dbo].[SHOP_USER]
+                FROM [dbo].[Tejas_USER]
                 WHERE [USER_ID] = @UserId";
 
             using (var connection = CreateConnection())
@@ -61,7 +61,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<long> Insert(DTOTejasLogin model)
         {
             var query = @"
-                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ROLE],[ACTIVE])
+                INSERT INTO [dbo].[Tejas_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ROLE],[ACTIVE])
                 VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG, @ROLE, 'Y');
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
@@ -75,7 +75,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Update(DTOTejasLogin model)
         {
             var query = @"
-                UPDATE [dbo].[SHOP_USER]
+                UPDATE [dbo].[Tejas_USER]
                 SET [USER_NAME] = @USER_NAME,
                     [PASS] = @PASS,
                     [CONTACT] = @CONTACT,
@@ -93,7 +93,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Delete(long userId)
         {
             var query = @"
-                DELETE FROM [dbo].[SHOP_USER]
+                DELETE FROM [dbo].[Tejas_USER]
                 WHERE [USER_ID] = @UserId";
 
             using (var connection = CreateConnection())
