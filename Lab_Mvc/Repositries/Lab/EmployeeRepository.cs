@@ -1,0 +1,177 @@
+using Lab_Mvc.Interfaces.Lab;
+using Models.Lab;
+using Dapper;
+using Lab_Mvc.Constants;
+using Lab_Mvc.Interfaces;
+using Models;
+using System.Data;
+using System.Numerics;
+using Lab_Mvc.Contest;
+using SmartParking.Repositories;
+
+namespace Lab_Mvc.Repositries.Lab
+{
+    public class EmployeeRepository : DapperRepositoryBase, IEmployee
+    {
+        public EmployeeRepository(DapperContext context) : base(context)
+        {
+        }
+        public async Task<IEnumerable<DTOEmployee>> GetEmployees(int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetEmployees);
+                parameters.Add("@COM_ID", comId);
+
+                using (var connection = CreateConnection())
+                {
+                    var Employees = await connection.QueryAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
+                    return Employees.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DTOEmployee> GetEmployeeById(long emp_code, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetEmployeeById);
+                parameters.Add("@EMP_ID", emp_code);
+                parameters.Add("@COM_ID", comId);
+
+                using (var connection = CreateConnection())
+                {
+                    var Employees = await connection.QuerySingleAsync<DTOEmployee>(query, parameters, commandType: CommandType.StoredProcedure);
+                    return Employees;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task SaveEmployee(DTOEmployee emp)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                Int64 newEmployeeId = await GenerateEmployeeId(emp.COM_ID);
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.InsertEmployee);
+                parameters.Add("@EMP_ID", newEmployeeId);
+                parameters.Add("@EMP_NAME", emp.EMP_NAME);
+                parameters.Add("@EMP_CONTACT", emp.EMP_CONTACT);
+                parameters.Add("@EMP_PASSWORD", emp.EMP_PASSWORD);
+                parameters.Add("@COM_ID", emp.COM_ID);
+
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    //return await property;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task EditEmployee(DTOEmployee emp, long emp_code)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.UpdateEmployee);
+                parameters.Add("@EMP_ID", emp_code);
+                parameters.Add("@EMP_NAME", emp.EMP_NAME);
+                parameters.Add("@EMP_CONTACT", emp.EMP_CONTACT);
+                parameters.Add("@EMP_PASSWORD", emp.EMP_PASSWORD);
+
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    //return await property;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task DeleteEmployee(long emp_code, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.DeleteEmployee);
+                parameters.Add("@EMP_ID", emp_code);
+                parameters.Add("@COM_ID", comId);
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                    //return await property;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task<long> GenerateEmployeeId(int comId)
+        {
+            string fixedPart = "4";
+            string fixedPartSec = comId.ToString();
+            string likePattern = fixedPart + fixedPartSec + "%";
+
+            string query = "SELECT TOP 1 EMP_ID FROM MST_EMPLOYEE WHERE EMP_ID LIKE @likePattern ORDER BY EMP_ID DESC";
+
+            using (var connection = CreateConnection())
+            {
+                string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
+
+                int nextNumber = 1;
+                if (!string.IsNullOrEmpty(lastId) && lastId.StartsWith(fixedPart + fixedPartSec))
+                {
+                    int prefixLength = (fixedPart + fixedPartSec).Length;
+                    int lastNumber = int.Parse(lastId.Substring(prefixLength));
+                    nextNumber = lastNumber + 1;
+                }
+
+                long newEmployeeId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newEmployeeId;
+            }
+        }
+
+
+
+    }
+}
+

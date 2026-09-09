@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class HistoryDairyRepository : IHistoryDairy
+    public class HistoryDairyRepository : DapperRepositoryBase, IHistoryDairy
     {
-        private readonly DapperContext context;
-
-        public HistoryDairyRepository(DapperContext context)
+        public HistoryDairyRepository(DapperContext context) : base(context)
         {
-            this.context = context;
         }
 
         // ================= GET ALL HISTORY =================
@@ -113,7 +111,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
 
             try
             {
-                using (var connection = context.CreateConnection())
+                using (var connection = CreateConnection())
                 {
                     var history = await connection.QueryAsync<HistoryDTO>(query, new { UserId = userId });
 
@@ -168,7 +166,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     SELECT NULL AS Image"
             };
 
-            using (var connection = context.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QuerySingleOrDefaultAsync<dynamic>(query, new { ExpenseId = expenseId });
                 return result ?? new { Image = (string?)null };

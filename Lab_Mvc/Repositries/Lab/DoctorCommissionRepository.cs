@@ -1,0 +1,200 @@
+using Lab_Mvc.Interfaces.Lab;
+using Models.Lab;
+using Dapper;
+using Lab_Mvc.Constants;
+using Lab_Mvc.Contest;
+using Lab_Mvc.Interfaces;
+using Models;
+using System.Data;
+using SmartParking.Repositories;
+
+namespace Lab_Mvc.Repositries.Lab
+{
+    public class DoctorCommissionRepository : DapperRepositoryBase, IDoctorCommission
+    {
+        public DoctorCommissionRepository(DapperContext context) : base(context)
+        {
+        }
+
+        public async Task<IEnumerable<DTODoctorCommission>> GetDoctorCommission(int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetDoctorCommission);
+                parameters.Add("@COM_ID", comId);
+
+                using (var connection = CreateConnection())
+                {
+                    var DoctorCommission = await connection.QueryAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
+                    return DoctorCommission.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<DTODoctorCommission> GetDoctorCommissionById(long docCom_id, int comId)
+        {
+            try
+            {
+                var query = "dbo.sp_master";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.GetDoctorCommissionById);
+                parameters.Add("@DOC_COM_ID", docCom_id);
+                parameters.Add("@COM_ID", comId);
+
+                using (var connection = CreateConnection())
+                {
+                    var DoctorCommission = await connection.QuerySingleAsync<DTODoctorCommission>(query, parameters, commandType: CommandType.StoredProcedure);
+                    return DoctorCommission;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<DTODoctorCommission>> GetDateWiseDocCommission(string from_date, string to_date, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+                using (var connection = CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", QueryConstant.GetDateWiseDocCommission);
+                    parameters.Add("@From_Date", from_date);
+                    parameters.Add("@To_Date", to_date);
+                    parameters.Add("@COM_ID", comId);
+
+                    using (var multi = await connection.QueryMultipleAsync(query, parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var casepapers = (await multi.ReadAsync<DTODoctorCommission>()).ToList();
+                        return casepapers;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error fetching case paper data", ex);
+            }
+        }
+        public async Task SaveDoctorCommission(DTODoctorCommission objDocCom)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                Int64 newDoctorCommissionId = await GenerateDoctorCommissionId(objDocCom.COM_ID);
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.InsertDoctorCommission);
+                parameters.Add("@DOC_COM_ID", newDoctorCommissionId);
+                parameters.Add("@DOCTOR_ID", objDocCom.DOCTOR_ID);
+                parameters.Add("@DOC_COM_PRICE", objDocCom.DOC_COM_PRICE);
+                parameters.Add("@DATE", objDocCom.DATE);
+                parameters.Add("@COM_ID", objDocCom.COM_ID);
+                parameters.Add("@CRT_BY", objDocCom.CRT_BY);
+
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task EditDoctorCommission(DTODoctorCommission objDocCom, long docCom_id)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.UpdateDoctorCommission);
+                parameters.Add("@DOC_COM_ID", docCom_id);
+                parameters.Add("@DOCTOR_ID", objDocCom.DOCTOR_ID);
+                parameters.Add("@DOC_COM_PRICE", objDocCom.DOC_COM_PRICE);
+                parameters.Add("@DATE", objDocCom.DATE);
+
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task DeleteDoctorCommission(long docCom_id, int comId)
+        {
+            try
+            {
+                var query = QueryConstant.sp;
+
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Action", QueryConstant.DeleteDoctorCommission);
+                parameters.Add("@DOC_COM_ID", docCom_id);
+                parameters.Add("@COM_ID", comId);
+
+
+                using (var connection = CreateConnection())
+                {
+                    await connection.ExecuteAsync(query, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task<long> GenerateDoctorCommissionId(string comId)
+        {
+            string fixedPart = "206";
+            string fixedPartSec = comId.ToString();
+            string likePattern = fixedPart + fixedPartSec + "%";
+
+            string query = "SELECT TOP 1 DOC_COM_ID FROM MST_DOCTOR_COMMISSION WHERE DOC_COM_ID LIKE @likePattern ORDER BY DOC_COM_ID DESC";
+
+            using (var connection = CreateConnection())
+            {
+                string lastId = await connection.ExecuteScalarAsync<string>(query, new { likePattern });
+
+                int nextNumber = 1;
+                if (!string.IsNullOrEmpty(lastId) && lastId.StartsWith(fixedPart + fixedPartSec))
+                {
+                    int prefixLength = (fixedPart + fixedPartSec).Length;
+                    int lastNumber = int.Parse(lastId.Substring(prefixLength));
+                    nextNumber = lastNumber + 1;
+                }
+
+                long newDoctorCommissionId = long.Parse(fixedPart + fixedPartSec + nextNumber);
+                return newDoctorCommissionId;
+            }
+        }
+
+
+    }
+}
+

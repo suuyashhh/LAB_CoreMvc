@@ -1,18 +1,16 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.Farm;
 using Models.Farm;
 using System.Data;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.Farm
 {
-    public class FarmEntryRepository : IFarmEntry
+    public class FarmEntryRepository : DapperRepositoryBase, IFarmEntry
     {
-        private readonly DapperContext _dapperContext;
-
-        public FarmEntryRepository(DapperContext dapperContext)
+        public FarmEntryRepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<DTOReportCalculation> GetReportCalculation(long farmId, long userId)
@@ -27,7 +25,7 @@ namespace Lab_Mvc.Repositries.Farm
                 WHERE farm_id = @FarmId
                   AND user_id = @UserId;";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryFirstOrDefaultAsync<DTOReportCalculation>(
                     query,
@@ -57,7 +55,7 @@ namespace Lab_Mvc.Repositries.Farm
                 AND [USER_ID] = @UserId 
                 ORDER BY [DATE] DESC, [FARM_ENTRY_ID] DESC";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOFarmEntry>(
                     query,
@@ -87,7 +85,7 @@ namespace Lab_Mvc.Repositries.Farm
                 AND [USER_ID] = @UserId AND ENTRY_TYPE =@EntryType
                 ORDER BY [DATE] DESC, [FARM_ENTRY_ID] DESC";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryAsync<DTOFarmEntry>(
                     query,
@@ -117,7 +115,7 @@ namespace Lab_Mvc.Repositries.Farm
                 AND [FARM_ID] = @FarmId 
                 AND [USER_ID] = @UserId";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var result = await connection.QueryFirstOrDefaultAsync<DTOFarmEntry>(
                     query,
@@ -170,7 +168,7 @@ namespace Lab_Mvc.Repositries.Farm
 
                 SELECT @NewFarmEntryId;";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var newId = await connection.ExecuteScalarAsync<long>(query, model);
                 return newId;
@@ -194,7 +192,7 @@ namespace Lab_Mvc.Repositries.Farm
                 AND [FARM_ID] = @FARM_ID
                 AND [USER_ID] = @USER_ID";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(query, model);
                 return affectedRows;
@@ -209,7 +207,7 @@ namespace Lab_Mvc.Repositries.Farm
                 AND [FARM_ID] = @FarmId
                 AND [USER_ID] = @UserId";
 
-            using (var connection = _dapperContext.CreateConnection())
+            using (var connection = CreateConnection())
             {
                 var affectedRows = await connection.ExecuteAsync(
                     query,

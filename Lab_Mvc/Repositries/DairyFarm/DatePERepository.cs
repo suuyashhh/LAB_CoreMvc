@@ -1,4 +1,4 @@
-﻿// DatePERepository.cs
+// DatePERepository.cs
 using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
@@ -6,16 +6,14 @@ using Models.DairyFarm;
 using System;
 using System.Data;
 using System.Threading.Tasks;
+using SmartParking.Repositories;
 
 namespace Lab_Mvc.Repositries.DairyFarm
 {
-    public class DatePERepository : IDatePERepository
+    public class DatePERepository : DapperRepositoryBase, IDatePERepository
     {
-        private readonly DapperContext _dapperContext;
-
-        public DatePERepository(DapperContext dapperContext)
+        public DatePERepository(DapperContext dapperContext) : base(dapperContext)
         {
-            _dapperContext = dapperContext;
         }
 
         public async Task<DatePEDto> GetDateRangeSummary(DatePEQueryDto query)
@@ -38,7 +36,7 @@ namespace Lab_Mvc.Repositries.DairyFarm
                     AND date BETWEEN @FromDate AND @ToDate
                 ) e";
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
             var result = await conn.QuerySingleOrDefaultAsync<DatePEDto>(sql, query);
 
             if (result == null)

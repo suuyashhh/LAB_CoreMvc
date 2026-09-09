@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +12,7 @@ namespace Models.DairyFarm
         public string? user_name {  get; set; }
         public string? password { get; set; }
         public string? contact { get; set; }
+        public string? email { get; set; }
+        public DateTime? date { get; set; }
     }
 }

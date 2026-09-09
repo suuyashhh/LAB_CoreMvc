@@ -1,22 +1,21 @@
-﻿using Dapper;
+using Dapper;
 using Lab_Mvc.Contest;
 using Lab_Mvc.Interfaces.DairyFarm;
 using Models.DairyFarm;
+using SmartParking.Repositories;
 
-public class NotificationRepository : INotification
+public class NotificationRepository : DapperRepositoryBase, INotification
 {
-    private readonly DapperContext _dapperContext;
     private readonly ILogger<NotificationRepository> _logger;
 
-    public NotificationRepository(DapperContext dapperContext, ILogger<NotificationRepository> logger)
+    public NotificationRepository(DapperContext dapperContext, ILogger<NotificationRepository> logger) : base(dapperContext)
     {
-        _dapperContext = dapperContext;
         _logger = logger;
     }
 
     public async Task<List<int>> GetAllUserIds()
     {
-        using var conn = _dapperContext.CreateConnection();
+        using var conn = CreateConnection();
 
         var query = "SELECT user_id FROM users";
 
@@ -33,7 +32,7 @@ public class NotificationRepository : INotification
 
     public async Task<List<DTONotification>> GetBreedingNotifications(int userId)
     {
-        using var conn = _dapperContext.CreateConnection();
+        using var conn = CreateConnection();
 
         try
         {
@@ -102,7 +101,7 @@ ORDER BY n.CreatedOn DESC";
         {
             _logger.LogDebug("UpdateBreedingNotifications started for userId: {UserId}", userId);
 
-            using var conn = _dapperContext.CreateConnection();
+            using var conn = CreateConnection();
 
             var query = @"
 SELECT 
@@ -248,7 +247,7 @@ WHERE UserId = @UserId
 
     public async Task<int> GetNotificationCount(int userId)
     {
-        using var conn = _dapperContext.CreateConnection();
+        using var conn = CreateConnection();
 
         try
         {
@@ -281,7 +280,7 @@ WHERE UserId = @UserId
 
     public async Task MarkAsChecked(int id)
     {
-        using var conn = _dapperContext.CreateConnection();
+        using var conn = CreateConnection();
 
         try
         {
