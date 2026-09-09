@@ -31,6 +31,8 @@ using Lab_Mvc.Interfaces.BillingApp;
 using Lab_Mvc.Repositries.BillingApp;
 using Lab_Mvc.Interfaces.Tejas;
 using Lab_Mvc.Repositries.Tejas;
+using Lab_Mvc.Interfaces.HaaS;
+using Lab_Mvc.Repositries.HaaS;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -119,6 +121,13 @@ builder.Services.AddScoped<IMainAdminRepository, MainAdminRepository>();
 builder.Services.AddScoped<IPortfolioProjectRepository, PortfolioProjectRepository>();
 builder.Services.AddScoped<ITejasFood, TejasFoodRepository>();
 builder.Services.AddScoped<ITejasBilling, TejasBillingRepository>();
+
+// ── HaaS – Heat as a Service ─────────────────────────────────────────────────
+builder.Services.AddScoped<IHaaSDataCenter, HaaSDataCenterRepository>();
+builder.Services.AddScoped<IHaaSEcosystem, HaaSEcosystemRepository>();
+builder.Services.AddScoped<IHaaSThermalStorage, HaaSThermalStorageRepository>();
+builder.Services.AddScoped<IHaaSOptimization, HaaSOptimizationRepository>();
+
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
