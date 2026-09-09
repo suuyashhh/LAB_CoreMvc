@@ -15,18 +15,20 @@ namespace Lab_Mvc.Repositries.Tejas
         {
         }
 
-        public async Task<IEnumerable<DTOTejasExpenseType>> GetAll()
+        public async Task<IEnumerable<DTOTejasExpenseType>> GetAll(long? shopId = null)
         {
             var query = @"
                 SELECT 
                     [EX_ID],
-                    [NAME]
+                    [NAME],
+                    [TEJAS_SHOPES_ID]
                 FROM [dbo].[Tejas_EXPENSE_TYPE]
+                WHERE (@ShopId IS NULL OR [TEJAS_SHOPES_ID] = @ShopId OR [TEJAS_SHOPES_ID] IS NULL)
                 ORDER BY [EX_ID] DESC";
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOTejasExpenseType>(query);
+                var result = await connection.QueryAsync<DTOTejasExpenseType>(query, new { ShopId = shopId });
                 return result;
             }
         }
@@ -36,7 +38,8 @@ namespace Lab_Mvc.Repositries.Tejas
             var query = @"
                 SELECT 
                     [EX_ID],
-                    [NAME]
+                    [NAME],
+                    [TEJAS_SHOPES_ID]
                 FROM [dbo].[Tejas_EXPENSE_TYPE]
                 WHERE [EX_ID] = @ExId";
 
@@ -53,8 +56,8 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Insert(DTOTejasExpenseType model)
         {
             var query = @"
-                INSERT INTO [dbo].[Tejas_EXPENSE_TYPE] ([NAME])
-                VALUES (@NAME);
+                INSERT INTO [dbo].[Tejas_EXPENSE_TYPE] ([NAME], [TEJAS_SHOPES_ID])
+                VALUES (@NAME, @TEJAS_SHOPES_ID);
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using (var connection = CreateConnection())
@@ -68,7 +71,8 @@ namespace Lab_Mvc.Repositries.Tejas
         {
             var query = @"
                 UPDATE [dbo].[Tejas_EXPENSE_TYPE]
-                SET [NAME] = @NAME
+                SET [NAME] = @NAME,
+                    [TEJAS_SHOPES_ID] = @TEJAS_SHOPES_ID
                 WHERE [EX_ID] = @EX_ID";
 
             using (var connection = CreateConnection())

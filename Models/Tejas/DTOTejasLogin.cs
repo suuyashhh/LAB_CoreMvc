@@ -14,5 +14,7 @@ namespace Models.Tejas
         public string? CONTACT { get; set; }
         public string? USER_IMG { get; set; }
         public string? ROLE { get; set; }
+        public long? TEJAS_SHOPES_ID { get; set; }
+        public string? SHOP_NAME { get; set; }
     }
 }

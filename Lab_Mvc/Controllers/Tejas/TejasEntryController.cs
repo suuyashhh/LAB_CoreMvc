@@ -19,11 +19,11 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(long userId, bool isPaid)
+        public async Task<IActionResult> GetAll(long userId, bool isPaid, [FromQuery] long? shopId = null)
         {
             try
             {
-                var data = await _ITejasEntry.GetAll(userId, isPaid);
+                var data = await _ITejasEntry.GetAll(userId, isPaid, shopId);
 
                 // Convert relative paths to full URLs for all 4 images
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
@@ -44,7 +44,7 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet("GetAllTypesEntrys")]
-        public async Task<IActionResult> GetAllTypesEntrys(long userId, DateTime? fromDate = null, DateTime? toDate = null)
+        public async Task<IActionResult> GetAllTypesEntrys(long userId, DateTime? fromDate = null, DateTime? toDate = null, [FromQuery] long? shopId = null)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Lab_Mvc.Controllers.Tejas
                     toDate = toDate.Value.Date.AddDays(1).AddTicks(-1);
                 }
 
-                var data = await _ITejasEntry.GetAllTypesEntrys(userId, fromDate, toDate);
+                var data = await _ITejasEntry.GetAllTypesEntrys(userId, fromDate, toDate, shopId);
 
                 // Convert relative paths to full URLs for all 4 images
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";

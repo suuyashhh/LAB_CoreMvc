@@ -15,5 +15,6 @@ namespace Models.Tejas
         public string? IMAGE4 { get; set; }
         public DateTime DATE { get; set; }
         public int? EntryType { get; set; }
+        public long? TEJAS_SHOPES_ID { get; set; }
     }
 }

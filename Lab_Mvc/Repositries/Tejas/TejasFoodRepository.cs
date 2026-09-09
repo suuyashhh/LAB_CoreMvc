@@ -14,18 +14,22 @@ namespace Lab_Mvc.Repositries.Tejas
         {
         }
 
-        public async Task<IEnumerable<TejasFoodItem>> GetAll()
+        public async Task<IEnumerable<TejasFoodItem>> GetAll(long? shopId = null)
         {
-            var query = @"SELECT [Id], [Name], [Price], [Category], [Image], [Active] FROM [dbo].[Tejas_FoodItem]";
+            var query = @"
+                SELECT [Id], [Name], [Price], [Category], [Image], [Active], [TEJAS_SHOPES_ID] 
+                FROM [dbo].[Tejas_FoodItem]
+                WHERE (@ShopId IS NULL OR [TEJAS_SHOPES_ID] = @ShopId)
+                ORDER BY [Name] ASC";
             using (var connection = CreateConnection())
             {
-                return await connection.QueryAsync<TejasFoodItem>(query);
+                return await connection.QueryAsync<TejasFoodItem>(query, new { ShopId = shopId });
             }
         }
 
         public async Task<TejasFoodItem?> GetById(string id)
         {
-            var query = @"SELECT [Id], [Name], [Price], [Category], [Image], [Active] FROM [dbo].[Tejas_FoodItem] WHERE [Id] = @Id";
+            var query = @"SELECT [Id], [Name], [Price], [Category], [Image], [Active], [TEJAS_SHOPES_ID] FROM [dbo].[Tejas_FoodItem] WHERE [Id] = @Id";
             using (var connection = CreateConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<TejasFoodItem>(query, new { Id = id });
@@ -35,8 +39,8 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Insert(TejasFoodItem item)
         {
             var query = @"
-                INSERT INTO [dbo].[Tejas_FoodItem] ([Id], [Name], [Price], [Category], [Image], [Active])
-                VALUES (@Id, @Name, @Price, @Category, @Image, @Active)";
+                INSERT INTO [dbo].[Tejas_FoodItem] ([Id], [Name], [Price], [Category], [Image], [Active], [TEJAS_SHOPES_ID])
+                VALUES (@Id, @Name, @Price, @Category, @Image, @Active, @TEJAS_SHOPES_ID)";
             using (var connection = CreateConnection())
             {
                 return await connection.ExecuteAsync(query, item);
@@ -51,7 +55,8 @@ namespace Lab_Mvc.Repositries.Tejas
                     [Price] = @Price,
                     [Category] = @Category,
                     [Image] = @Image,
-                    [Active] = @Active
+                    [Active] = @Active,
+                    [TEJAS_SHOPES_ID] = @TEJAS_SHOPES_ID
                 WHERE [Id] = @Id";
             using (var connection = CreateConnection())
             {

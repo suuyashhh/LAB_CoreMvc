@@ -10,5 +10,6 @@ namespace Models.Tejas
         public string Category { get; set; }
         public string Image { get; set; }
         public bool Active { get; set; }
+        public long? TEJAS_SHOPES_ID { get; set; }
     }
 }

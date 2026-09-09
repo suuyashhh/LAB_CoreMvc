@@ -11,6 +11,8 @@ namespace Models.Tejas
         public decimal GrandTotal { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public long? TEJAS_SHOPES_ID { get; set; }
+        public string? ShopName { get; set; }
 
         public List<TejasBillItem> Items { get; set; } = new List<TejasBillItem>();
     }

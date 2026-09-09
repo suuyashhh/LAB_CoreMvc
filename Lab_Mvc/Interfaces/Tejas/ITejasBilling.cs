@@ -6,12 +6,12 @@ namespace Lab_Mvc.Interfaces.Tejas
 {
     public interface ITejasBilling
     {
-        Task<IEnumerable<TejasBill>> GetAllBills();
-        Task<IEnumerable<TejasBill>> GetBillsByDateRange(System.DateTime startDate, System.DateTime endDate);
+        Task<IEnumerable<TejasBill>> GetAllBills(long? shopId = null);
+        Task<IEnumerable<TejasBill>> GetBillsByDateRange(System.DateTime startDate, System.DateTime endDate, long? shopId = null);
         Task<TejasBill?> GetBillById(string id);
         Task<string> InsertBill(TejasBill bill);
         Task<int> UpdateBill(TejasBill bill);
         Task<int> DeleteBill(string id);
-        Task<string> GetNextBillNumber();
+        Task<string> GetNextBillNumber(long? shopId = null);
     }
 }
