@@ -15,22 +15,27 @@ namespace Lab_Mvc.Repositries.Tejas
         {
         }
 
-        public async Task<IEnumerable<DTOTejasLogin>> GetAll()
+        public async Task<IEnumerable<DTOTejasLogin>> GetAll(long? shopId = null)
         {
             var query = @"
                 SELECT 
-                    [USER_ID],
-                    [USER_NAME],
-                    [PASS],
-                    [CONTACT],
-                    [USER_IMG],
-                    [ROLE]
-                FROM [dbo].[SHOP_USER] WHERE ACTIVE='Y'
-                ORDER BY [USER_ID] DESC";
+                    u.[USER_ID],
+                    u.[USER_NAME],
+                    u.[PASS],
+                    u.[CONTACT],
+                    u.[USER_IMG],
+                    u.[ROLE],
+                    u.[TEJAS_SHOPES_ID],
+                    s.[SHOP_NAME]
+                FROM [dbo].[Tejas_USER] u
+                LEFT JOIN [dbo].[Tejas_Shopes] s ON u.[TEJAS_SHOPES_ID] = s.[TEJAS_SHOPES_ID]
+                WHERE u.[ACTIVE] = 'Y'
+                  AND (@ShopId IS NULL OR u.[TEJAS_SHOPES_ID] = @ShopId)
+                ORDER BY u.[USER_ID] DESC";
 
             using (var connection = CreateConnection())
             {
-                var result = await connection.QueryAsync<DTOTejasLogin>(query);
+                var result = await connection.QueryAsync<DTOTejasLogin>(query, new { ShopId = shopId });
                 return result;
             }
         }
@@ -39,14 +44,17 @@ namespace Lab_Mvc.Repositries.Tejas
         {
             var query = @"
                 SELECT 
-                    [USER_ID],
-                    [USER_NAME],
-                    [PASS],
-                    [CONTACT],
-                    [USER_IMG],
-                    [ROLE]
-                FROM [dbo].[SHOP_USER]
-                WHERE [USER_ID] = @UserId";
+                    u.[USER_ID],
+                    u.[USER_NAME],
+                    u.[PASS],
+                    u.[CONTACT],
+                    u.[USER_IMG],
+                    u.[ROLE],
+                    u.[TEJAS_SHOPES_ID],
+                    s.[SHOP_NAME]
+                FROM [dbo].[Tejas_USER] u
+                LEFT JOIN [dbo].[Tejas_Shopes] s ON u.[TEJAS_SHOPES_ID] = s.[TEJAS_SHOPES_ID]
+                WHERE u.[USER_ID] = @UserId";
 
             using (var connection = CreateConnection())
             {
@@ -61,8 +69,8 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<long> Insert(DTOTejasLogin model)
         {
             var query = @"
-                INSERT INTO [dbo].[SHOP_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ROLE],[ACTIVE])
-                VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG, @ROLE, 'Y');
+                INSERT INTO [dbo].[Tejas_USER] ([USER_NAME], [PASS], [CONTACT], [USER_IMG],[ROLE],[ACTIVE],[TEJAS_SHOPES_ID])
+                VALUES (@USER_NAME, @PASS, @CONTACT, @USER_IMG, @ROLE, 'Y', @TEJAS_SHOPES_ID);
                 SELECT CAST(SCOPE_IDENTITY() as bigint);";
 
             using (var connection = CreateConnection())
@@ -75,12 +83,13 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Update(DTOTejasLogin model)
         {
             var query = @"
-                UPDATE [dbo].[SHOP_USER]
+                UPDATE [dbo].[Tejas_USER]
                 SET [USER_NAME] = @USER_NAME,
                     [PASS] = @PASS,
                     [CONTACT] = @CONTACT,
                     [USER_IMG] = @USER_IMG,
-                    [ROLE] = @ROLE
+                    [ROLE] = @ROLE,
+                    [TEJAS_SHOPES_ID] = @TEJAS_SHOPES_ID
                 WHERE [USER_ID] = @USER_ID";
 
             using (var connection = CreateConnection())
@@ -93,7 +102,7 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<int> Delete(long userId)
         {
             var query = @"
-                DELETE FROM [dbo].[SHOP_USER]
+                DELETE FROM [dbo].[Tejas_USER]
                 WHERE [USER_ID] = @UserId";
 
             using (var connection = CreateConnection())

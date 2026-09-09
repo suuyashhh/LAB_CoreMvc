@@ -10,5 +10,6 @@ namespace Models.Tejas
     {
         public int EX_ID { get; set; }
         public string? NAME { get; set; }
+        public long? TEJAS_SHOPES_ID { get; set; }
     }
 }

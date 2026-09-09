@@ -32,19 +32,26 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBills([FromQuery] System.DateTime? startDate, [FromQuery] System.DateTime? endDate)
+        public async Task<IActionResult> GetAllBills([FromQuery] System.DateTime? startDate, [FromQuery] System.DateTime? endDate, [FromQuery] long? shopId = null)
         {
             if (startDate.HasValue && endDate.HasValue)
             {
-                var result = await _tejasBilling.GetBillsByDateRange(startDate.Value, endDate.Value);
+                var result = await _tejasBilling.GetBillsByDateRange(startDate.Value, endDate.Value, shopId);
                 return Ok(result);
             }
             else
             {
                 // Note: if no dates provided, you might want to limit to last 7 days to avoid loading everything, but preserving existing behavior for now.
-                var result = await _tejasBilling.GetAllBills();
+                var result = await _tejasBilling.GetAllBills(shopId);
                 return Ok(result);
             }
+        }
+
+        [HttpGet("NextBillNumber")]
+        public async Task<IActionResult> GetNextBillNumber([FromQuery] long? shopId = null)
+        {
+            var nextNumber = await _tejasBilling.GetNextBillNumber(shopId);
+            return Ok(new { billNumber = nextNumber });
         }
 
         [HttpGet("{id}")]
@@ -66,7 +73,10 @@ namespace Lab_Mvc.Controllers.Tejas
             bill.CreatedAt = GetIndianStandardTime();
             bill.UpdatedAt = bill.CreatedAt;
 
-            bill.BillNumber = await _tejasBilling.GetNextBillNumber();
+            if (string.IsNullOrEmpty(bill.BillNumber))
+            {
+                bill.BillNumber = await _tejasBilling.GetNextBillNumber(bill.TEJAS_SHOPES_ID);
+            }
 
             await _tejasBilling.InsertBill(bill);
             return Ok(bill);

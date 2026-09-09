@@ -6,7 +6,7 @@ namespace Lab_Mvc.Interfaces.Tejas
 {
     public interface ITejasExpenseType
     {
-        Task<IEnumerable<DTOTejasExpenseType>> GetAll();
+        Task<IEnumerable<DTOTejasExpenseType>> GetAll(long? shopId = null);
         Task<DTOTejasExpenseType?> GetById(int exId);
         Task<int> Insert(DTOTejasExpenseType model);
         Task<int> Update(DTOTejasExpenseType model);

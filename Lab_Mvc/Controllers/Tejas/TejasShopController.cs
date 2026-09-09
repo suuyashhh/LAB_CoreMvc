@@ -8,21 +8,21 @@ namespace Lab_Mvc.Controllers.Tejas
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TejasExpenseTypeController : ControllerBase
+    public class TejasShopController : ControllerBase
     {
-        private readonly ITejasExpenseType _tejasExpenseType;
+        private readonly ITejasShop _tejasShop;
 
-        public TejasExpenseTypeController(ITejasExpenseType tejasExpenseType)
+        public TejasShopController(ITejasShop tejasShop)
         {
-            _tejasExpenseType = tejasExpenseType;
+            _tejasShop = tejasShop;
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] long? shopId = null)
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var data = await _tejasExpenseType.GetAll(shopId);
+                var data = await _tejasShop.GetAll();
                 return Ok(data);
             }
             catch (Exception ex)
@@ -32,14 +32,14 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet("GetById")]
-        public async Task<IActionResult> GetById(int exId)
+        public async Task<IActionResult> GetById(long shopId)
         {
             try
             {
-                var data = await _tejasExpenseType.GetById(exId);
+                var data = await _tejasShop.GetById(shopId);
                 if (data == null)
                 {
-                    return NotFound(new { message = "Expense type not found" });
+                    return NotFound(new { message = "Shop not found" });
                 }
                 return Ok(data);
             }
@@ -50,17 +50,17 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] DTOTejasExpenseType model)
+        public async Task<IActionResult> Insert([FromBody] DTOTejasShop model)
         {
             try
             {
-                if (string.IsNullOrEmpty(model.NAME))
+                if (string.IsNullOrEmpty(model.SHOP_NAME))
                 {
-                    return BadRequest(new { success = false, message = "Name is required" });
+                    return BadRequest(new { success = false, message = "Shop name is required" });
                 }
 
-                var result = await _tejasExpenseType.Insert(model);
-                return Ok(new { success = true, exId = result });
+                var result = await _tejasShop.Insert(model);
+                return Ok(new { success = true, shopId = result });
             }
             catch (Exception ex)
             {
@@ -69,27 +69,27 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] DTOTejasExpenseType model)
+        public async Task<IActionResult> Update([FromBody] DTOTejasShop model)
         {
             try
             {
-                if (model.EX_ID <= 0)
+                if (model.TEJAS_SHOPES_ID <= 0)
                 {
-                    return BadRequest(new { success = false, message = "Valid Expense Type ID is required" });
+                    return BadRequest(new { success = false, message = "Valid Shop ID is required" });
                 }
-                if (string.IsNullOrEmpty(model.NAME))
+                if (string.IsNullOrEmpty(model.SHOP_NAME))
                 {
-                    return BadRequest(new { success = false, message = "Name is required" });
+                    return BadRequest(new { success = false, message = "Shop name is required" });
                 }
 
-                var result = await _tejasExpenseType.Update(model);
+                var result = await _tejasShop.Update(model);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });
                 }
                 else
                 {
-                    return NotFound(new { success = false, message = "Expense type not found" });
+                    return NotFound(new { success = false, message = "Shop not found" });
                 }
             }
             catch (Exception ex)
@@ -99,18 +99,18 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(int exId)
+        public async Task<IActionResult> Delete(long shopId)
         {
             try
             {
-                var result = await _tejasExpenseType.Delete(exId);
+                var result = await _tejasShop.Delete(shopId);
                 if (result > 0)
                 {
                     return Ok(new { success = true, affectedRows = result });
                 }
                 else
                 {
-                    return NotFound(new { success = false, message = "Expense type not found" });
+                    return NotFound(new { success = false, message = "Shop not found" });
                 }
             }
             catch (Exception ex)

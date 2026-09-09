@@ -18,11 +18,11 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] long? shopId = null)
         {
             try
             {
-                var data = await _tejasUser.GetAll();
+                var data = await _tejasUser.GetAll(shopId);
                 return Ok(data);
             }
             catch (Exception ex)

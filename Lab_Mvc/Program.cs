@@ -88,6 +88,7 @@ builder.Services.AddScoped<ITejasLogin, TejasLoginRepository>();
 builder.Services.AddScoped<ITejasEntry, TejasEntryRepository>();
 builder.Services.AddScoped<ITejasUser, TejasUserRepository>();
 builder.Services.AddScoped<ITejasExpenseType, TejasExpenseTypeRepository>();
+builder.Services.AddScoped<ITejasShop, TejasShopRepository>();
 
 builder.Services.AddScoped<IMarketLogin, MarketLoginRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

@@ -6,7 +6,7 @@ namespace Lab_Mvc.Interfaces.Tejas
 {
     public interface ITejasUser
     {
-        Task<IEnumerable<DTOTejasLogin>> GetAll();
+        Task<IEnumerable<DTOTejasLogin>> GetAll(long? shopId = null);
         Task<DTOTejasLogin?> GetById(long userId);
         Task<long> Insert(DTOTejasLogin model);
         Task<int> Update(DTOTejasLogin model);

@@ -17,9 +17,9 @@ namespace Lab_Mvc.Controllers.Tejas
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] long? shopId = null)
         {
-            var result = await _tejasFood.GetAll();
+            var result = await _tejasFood.GetAll(shopId);
             return Ok(result);
         }
 

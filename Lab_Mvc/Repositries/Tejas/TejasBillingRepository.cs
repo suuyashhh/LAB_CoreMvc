@@ -15,13 +15,15 @@ namespace Lab_Mvc.Repositries.Tejas
         {
         }
 
-        public async Task<IEnumerable<TejasBill>> GetAllBills()
+        public async Task<IEnumerable<TejasBill>> GetAllBills(long? shopId = null)
         {
             var query = @"
-                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt],
+                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt], b.[TEJAS_SHOPES_ID], s.[SHOP_NAME] AS [ShopName],
                        i.[Id], i.[BillId], i.[FoodId], i.[Name], i.[Price], i.[Quantity], i.[Image]
                 FROM [dbo].[Tejas_Bill] b
+                LEFT JOIN [dbo].[Tejas_Shopes] s ON b.[TEJAS_SHOPES_ID] = s.[TEJAS_SHOPES_ID]
                 LEFT JOIN [dbo].[Tejas_BillItem] i ON b.[Id] = i.[BillId]
+                WHERE (@ShopId IS NULL OR b.[TEJAS_SHOPES_ID] = @ShopId)
                 ORDER BY b.[CreatedAt] DESC";
 
             using (var connection = CreateConnection())
@@ -45,6 +47,7 @@ namespace Lab_Mvc.Repositries.Tejas
                         }
                         return billEntry;
                     },
+                    new { ShopId = shopId },
                     splitOn: "Id"
                 );
 
@@ -52,14 +55,16 @@ namespace Lab_Mvc.Repositries.Tejas
             }
         }
 
-        public async Task<IEnumerable<TejasBill>> GetBillsByDateRange(System.DateTime startDate, System.DateTime endDate)
+        public async Task<IEnumerable<TejasBill>> GetBillsByDateRange(System.DateTime startDate, System.DateTime endDate, long? shopId = null)
         {
             var query = @"
-                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt],
+                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt], b.[TEJAS_SHOPES_ID], s.[SHOP_NAME] AS [ShopName],
                        i.[Id], i.[BillId], i.[FoodId], i.[Name], i.[Price], i.[Quantity], i.[Image]
                 FROM [dbo].[Tejas_Bill] b
+                LEFT JOIN [dbo].[Tejas_Shopes] s ON b.[TEJAS_SHOPES_ID] = s.[TEJAS_SHOPES_ID]
                 LEFT JOIN [dbo].[Tejas_BillItem] i ON b.[Id] = i.[BillId]
                 WHERE b.[CreatedAt] >= @StartDate AND b.[CreatedAt] <= @EndDate
+                  AND (@ShopId IS NULL OR b.[TEJAS_SHOPES_ID] = @ShopId)
                 ORDER BY b.[CreatedAt] DESC";
 
             using (var connection = CreateConnection())
@@ -83,7 +88,7 @@ namespace Lab_Mvc.Repositries.Tejas
                         }
                         return billEntry;
                     },
-                    new { StartDate = startDate, EndDate = endDate },
+                    new { StartDate = startDate, EndDate = endDate, ShopId = shopId },
                     splitOn: "Id"
                 );
 
@@ -94,9 +99,10 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<TejasBill?> GetBillById(string id)
         {
             var query = @"
-                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt],
+                SELECT b.[Id], b.[BillNumber], b.[Subtotal], b.[GrandTotal], b.[CreatedAt], b.[UpdatedAt], b.[TEJAS_SHOPES_ID], s.[SHOP_NAME] AS [ShopName],
                        i.[Id], i.[BillId], i.[FoodId], i.[Name], i.[Price], i.[Quantity], i.[Image]
                 FROM [dbo].[Tejas_Bill] b
+                LEFT JOIN [dbo].[Tejas_Shopes] s ON b.[TEJAS_SHOPES_ID] = s.[TEJAS_SHOPES_ID]
                 LEFT JOIN [dbo].[Tejas_BillItem] i ON b.[Id] = i.[BillId]
                 WHERE b.[Id] = @Id";
 
@@ -132,8 +138,8 @@ namespace Lab_Mvc.Repositries.Tejas
         public async Task<string> InsertBill(TejasBill bill)
         {
             var insertBillQuery = @"
-                INSERT INTO [dbo].[Tejas_Bill] ([Id], [BillNumber], [Subtotal], [GrandTotal], [CreatedAt], [UpdatedAt])
-                VALUES (@Id, @BillNumber, @Subtotal, @GrandTotal, @CreatedAt, @UpdatedAt)";
+                INSERT INTO [dbo].[Tejas_Bill] ([Id], [BillNumber], [Subtotal], [GrandTotal], [CreatedAt], [UpdatedAt], [TEJAS_SHOPES_ID])
+                VALUES (@Id, @BillNumber, @Subtotal, @GrandTotal, @CreatedAt, @UpdatedAt, @TEJAS_SHOPES_ID)";
 
             var insertItemQuery = @"
                 INSERT INTO [dbo].[Tejas_BillItem] ([BillId], [FoodId], [Name], [Price], [Quantity])
@@ -167,7 +173,8 @@ namespace Lab_Mvc.Repositries.Tejas
                 UPDATE [dbo].[Tejas_Bill]
                 SET [Subtotal] = @Subtotal,
                     [GrandTotal] = @GrandTotal,
-                    [UpdatedAt] = @UpdatedAt
+                    [UpdatedAt] = @UpdatedAt,
+                    [TEJAS_SHOPES_ID] = @TEJAS_SHOPES_ID
                 WHERE [Id] = @Id";
 
             var deleteItemsQuery = @"DELETE FROM [dbo].[Tejas_BillItem] WHERE [BillId] = @Id";
@@ -219,17 +226,34 @@ namespace Lab_Mvc.Repositries.Tejas
             }
         }
 
-        public async Task<string> GetNextBillNumber()
+        public async Task<string> GetNextBillNumber(long? shopId = null)
         {
-            var query = @"
-                SELECT MAX(TRY_CAST(SUBSTRING([BillNumber], 3, LEN([BillNumber]) - 2) AS INT))
-                FROM [dbo].[Tejas_Bill]
-                WHERE [BillNumber] LIKE 'BR%'";
-
-            using (var connection = CreateConnection())
+            if (shopId.HasValue && shopId.Value > 1)
             {
-                var maxId = await connection.ExecuteScalarAsync<int?>(query) ?? 0;
-                return "BR" + (maxId + 1);
+                var prefix = $"BR{shopId}-";
+                var query = @"
+                    SELECT MAX(TRY_CAST(SUBSTRING([BillNumber], LEN(@Prefix) + 1, LEN([BillNumber])) AS INT))
+                    FROM [dbo].[Tejas_Bill]
+                    WHERE [BillNumber] LIKE @PrefixPattern";
+
+                using (var connection = CreateConnection())
+                {
+                    var maxId = await connection.ExecuteScalarAsync<int?>(query, new { Prefix = prefix, PrefixPattern = prefix + "%" }) ?? 0;
+                    return prefix + (maxId + 1);
+                }
+            }
+            else
+            {
+                var query = @"
+                    SELECT MAX(TRY_CAST(SUBSTRING([BillNumber], 3, LEN([BillNumber]) - 2) AS INT))
+                    FROM [dbo].[Tejas_Bill]
+                    WHERE [BillNumber] LIKE 'BR%' AND [BillNumber] NOT LIKE 'BR%-%'";
+
+                using (var connection = CreateConnection())
+                {
+                    var maxId = await connection.ExecuteScalarAsync<int?>(query) ?? 0;
+                    return "BR" + (maxId + 1);
+                }
             }
         }
     }

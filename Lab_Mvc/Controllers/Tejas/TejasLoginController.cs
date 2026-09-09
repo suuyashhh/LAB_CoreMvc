@@ -39,7 +39,9 @@ namespace Lab_Mvc.Controllers.Tejas
                         useR_NAME = result.USER_NAME,
                         contact = result.CONTACT,
                         useR_IMG = result.USER_IMG,
-                        role = result.ROLE
+                        role = result.ROLE,
+                        tejas_shopes_id = result.TEJAS_SHOPES_ID,
+                        shop_name = result.SHOP_NAME
                     }
                 });
             }
